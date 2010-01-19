@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>AllNotifications</key>
+	<array>
+		<string>Saved Files</string>
+		<string>Downloaded all images</string>
+		<string>Post Sent</string>
+		<string>Dump Completed</string>
+		<string>New Thread</string>
+	</array>
+	<key>TicketVersion</key>
+	<integer>1</integer>
+</dict>
+</plist>

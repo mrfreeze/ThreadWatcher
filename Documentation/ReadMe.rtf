@@ -1,0 +1,113 @@
+{\rtf1\ansi\ansicpg1252\cocoartf1038\cocoasubrtf250
+{\fonttbl\f0\fnil\fcharset0 HelveticaNeue;}
+{\colortbl;\red255\green255\blue255;\red0\green0\blue255;\red0\green22\blue176;\red38\green18\blue82;
+}
+\paperw11900\paperh16840\margl1440\margr1440\vieww18920\viewh15820\viewkind0
+\pard\tx566\tx1133\tx1700\tx2267\tx2834\tx3401\tx3968\tx4535\tx5102\tx5669\tx6236\tx6803\ql\qnatural\pardirnatural
+
+\f0\b\fs36 \cf0 Watcher\
+
+\b0\fs24  
+\b\fs36 \
+
+\b0\fs24 Once you have given a watcher window a thread URL, it will go and fetch the images from the thread. Once they have been downloaded you can apply tags or ratings to them - click on the dots to change them to ratings stars, and click on the tags button to open the tags editor.  Press space while an image is selected to use quicklook.\
+\
+
+\b Tags/Ratings
+\b0 \
+If you select multiple images, only the tags that are shared by the selected images will appear. For example you have an image with tags \{"Railgun", "Biri-Biri"\} and another with \{"Railgun", "Saten-san"\} selecting both will only show the tag "Railgun" (other tags are still stored, just not shown"). To clear all the tags on all images or a selection of images, use the menu commands. By default the tags are set on files using openmeta. This means you can search for them using tag:sometag in spotlight. The ratings use the same ratings metadata used by Apple apps and can be searched for with "starrating:1" to find all files rated as 1 star.\
+\
+It is also possible to make ThreadWatcher write tags to the spotlight comments of a file. Unfortunately, the Finder doesn't appear to read the spotlight comments from the extended attributes of a file, rather from the .DS_Store file, and the current API for setting extended attributes doesn't write them to the .DS_Store file properly (they are written, just not quite in the way that the Finder uses). So spotlight comments will not show up in the Get Info window in the Finder. However they are still searchable with spotlight, and will show up in other file browsers like Path Finder. For this, and various other reasons (storing an array of tags as a single string isn't ideal, and finder comments are easily erased), it is recommended to just use the openmeta method of tagging files.\
+\
+
+\b Browser URL
+\b0 \
+It is possible to automatically get the URL from the front most browser window so you don't need to copy/paste. This will currently only work for Webkit, Safari or Firefox (and will look for browsers in that order).  If you use Firefox, ThreadWatcher will have to manually switch to Firefox and copy/paste the URL since Firefox's applescript support is currently broken.\
+\
+
+\b Saving
+\b0 \
+Images are not permanently saved as they are downloaded - they are only permanently saved after you use one of the save commands. ThreadWatcher keeps a record of where you have saved an image, and by default if you try to re-save the image to the same location, it will not create a new file (although it will apply any changes you have made to tags or ratings)., so you can run the save command multiple times without worrying about creating duplicates. If you save to a different folder it will always write a new file. This behaviour can be overridden in the preferences window. (For automatic saving as files are downloaded, see the available applescript commands below).\
+\
+
+\b Reply
+\b0 \
+The Watcher also allows you to post a reply to the thread it is currently watching, just click the reply button, and optionally drag an image to the image well. If you select some image(s) and click reply, the comment field will automatically be pre-filled with links to those posts.\
+
+\b\fs36 \
+Dumper\
+
+\b0\fs24  
+\b\fs26 \
+
+\b0\fs24 To use the dumper, just pick a board or existing thread, drag some images (or a folder of images*) onto the table, add the name/email, subject and op comment you want, and click start. You can pile on as many images on as you want - just keep dragging stuff into the table. Click the minus button to remove items. Images should be posted in the order they appear in the table, so you can drag them about to rearrange them if you want, or sort them by size. You can also add more images while the dumper is running, or change the order of the images, and it should post the new images or recognise the changed order as expected. \
+You can also use quicklook on the images in the list to check what they are.\
+\
+*Note: when dragging folders it will only look one level deep and will not look at subfolders.
+\b\fs36 \
+\
+Scripting
+\b0\fs24 \
+ \
+Most users will just need to make adjustments to the example script, but if you want to know exactly what all the available commands do, read on\'85\
+\
+The two commands you are most likely to want are:\
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\tx7280\tx7840\tx8400\tx8960\tx9520\tx10080\tx10640\tx11200\tx11760\tx12320\tx12880\tx13440\tx14000\tx14560\tx15120\tx15680\tx16240\tx16800\tx17360\tx17920\tx18480\tx19040\tx19600\tx20160\tx20720\tx21280\tx21840\tx22400\tx22960\tx23520\tx24080\tx24640\tx25200\tx25760\tx26320\tx26880\tx27440\tx28000\tx28560\tx29120\tx29680\tx30240\tx30800\tx31360\tx31920\tx32480\tx33040\tx33600\tx34160\tx34720\tx35280\tx35840\tx36400\tx36960\tx37520\tx38080\tx38640\tx39200\tx39760\tx40320\tx40880\tx41440\tx42000\tx42560\tx43120\tx43680\tx44240\tx44800\tx45360\tx45920\tx46480\tx47040\tx47600\tx48160\tx48720\tx49280\tx49840\tx50400\tx50960\tx51520\tx52080\tx52640\tx53200\tx53760\tx54320\tx54880\tx55440\tx56000\fi-1\ql\qnatural\pardirnatural
+
+\b \cf2 fetchThreadFromBrowser 
+\b0 \cf0 and 
+\b \cf2 watchThreadFromBrowser
+\b0 \cf0  \
+the first gets the url of the front most browser window (browsers are checked in the following order: Webkit, Safari, Firefox) and downloads the images.  The second does the same, but also starts watching the thread.\
+Both of these commands have an optional \cf2 to\cf0  parameter which will result in all the images being saved once they have been downloaded. For example, using:\
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\tx7280\tx7840\tx8400\tx8960\tx9520\tx10080\tx10640\tx11200\tx11760\tx12320\tx12880\tx13440\tx14000\tx14560\tx15120\tx15680\tx16240\tx16800\tx17360\tx17920\tx18480\tx19040\tx19600\tx20160\tx20720\tx21280\tx21840\tx22400\tx22960\tx23520\tx24080\tx24640\tx25200\tx25760\tx26320\tx26880\tx27440\tx28000\tx28560\tx29120\tx29680\tx30240\tx30800\tx31360\tx31920\tx32480\tx33040\tx33600\tx34160\tx34720\tx35280\tx35840\tx36400\tx36960\tx37520\tx38080\tx38640\tx39200\tx39760\tx40320\tx40880\tx41440\tx42000\tx42560\tx43120\tx43680\tx44240\tx44800\tx45360\tx45920\tx46480\tx47040\tx47600\tx48160\tx48720\tx49280\tx49840\tx50400\tx50960\tx51520\tx52080\tx52640\tx53200\tx53760\tx54320\tx54880\tx55440\tx56000\li2497\fi-2498\ql\qnatural\pardirnatural
+
+\b \cf2 fetchThreadFromBrowser
+\b0 \cf0  \cf2 to\cf0  
+\b \cf3 path to
+\b0 \cf0  \cf4 downloads folder\cf0 \
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\tx7280\tx7840\tx8400\tx8960\tx9520\tx10080\tx10640\tx11200\tx11760\tx12320\tx12880\tx13440\tx14000\tx14560\tx15120\tx15680\tx16240\tx16800\tx17360\tx17920\tx18480\tx19040\tx19600\tx20160\tx20720\tx21280\tx21840\tx22400\tx22960\tx23520\tx24080\tx24640\tx25200\tx25760\tx26320\tx26880\tx27440\tx28000\tx28560\tx29120\tx29680\tx30240\tx30800\tx31360\tx31920\tx32480\tx33040\tx33600\tx34160\tx34720\tx35280\tx35840\tx36400\tx36960\tx37520\tx38080\tx38640\tx39200\tx39760\tx40320\tx40880\tx41440\tx42000\tx42560\tx43120\tx43680\tx44240\tx44800\tx45360\tx45920\tx46480\tx47040\tx47600\tx48160\tx48720\tx49280\tx49840\tx50400\tx50960\tx51520\tx52080\tx52640\tx53200\tx53760\tx54320\tx54880\tx55440\tx56000\fi-1\ql\qnatural\pardirnatural
+\cf0 will save the images to the downloads folder (~/Downloads) once they have all been downloaded. If you use the \cf2 to\cf0  parameter with the 
+\b \cf2 watchThreadFromBrowser
+\b0 \cf0  command, ThreadWatcher will save newly posted images to the destination as they are downloaded. (Note: if after using this you manually turn off watching in the document window, and then turn it back on, the destination will not be remembered and further files will not be saved as they are added).\
+\
+These commands have a couple more optional parameters. The \cf2 SaveSheet\cf0  boolean parameter tells ThreadWatcher to display the save sheet after the files have been downloaded. This lets you chose the save location. In the case of 
+\b \cf2 watchThreadFromBrowser
+\b0 \cf0  the sheet is shown after the initial batch of images are downloaded, and the chosen folder is remembered for new images posted to the thread (until you uncheck the watch thread button, then the destination is cleared and further images added to the document are not saved till you use the save button, or further applescript commands). If true, this parameter overrides any provided destination folder from the \cf2 to\cf0  parameter, but the default is not to display the sheet, so there is no need to use: 
+\b without
+\b0  \cf2 SaveSheet\cf0 .\
+\
+The \cf2 tags \cf0 parameter allows you to provide tags that will be stored with the images once they are saved. The tags must be a string, with tags separated by a single comma followed by a space ( ", "). If you want to provide the tags as an applescript list, use \cf2 tagsList\cf0  (obviously you don't need to use commas to separate tags when they are in a list). If you are using the 
+\b \cf2 watchThreadFromBrowser 
+\b0 \cf0 command the tags will be applied to newly posted images as they are downloaded. You can safely change tags manually in the GUI after they have been tagged by a script command; tags are only applied to images as they are downloaded (of course if you use a command that tells ThreadWatcher to save the images once they are downloaded, you will need to reserve the images to update the tags written to the file).\
+\
+The \cf2 ratings \cf0 parameter takes a number and sets the rating on the images. The number should be between 0 and 5. Larger values are interpreted as 5. As with the tags, the rating from a script command is set when the image is first downloaded and you can safely modify it in the GUI.\
+\
+It is also possible to tell a document to save all already downloaded images with the command 
+\b \cf2 saveImages
+\b0 \cf0 , which takes an optional \cf2 to\cf0  if you want to specify the location (otherwise ThreadWatcher will prompt). Only run this once you are sure all the images are downloaded - images added after this command is run will not be saved till you run the command again. You can provide tags and ratings to save the images by using the same tags/rating parameters as described above, tags from the script will be added to any tags you have already set in the GUI.\
+\
+If you use a browser that isn't Safari, Webkit or Firefox, or you just want to input a url directly, you can use the 
+\b \cf2 fetch 
+\b0 withURL \cf0 command. This may also be useful if Firefox's applescript support gets fixed and you want to get the url directly rather than using ThreadWatchers hack method. The Chrome developers are planning to add Applescript support that mirrors the Safari dictionary soon (if not already), so you could use this after doing getURL on a Chrome document. This command also supports all the optional parameters described above (\cf2 to, tags, tagsList, ratings,  saveSheet\cf0 ), as well as a boolean \cf2 watch\cf0  parameter to trigger thread watching (watching is not activated if you do not use the parameter). \
+\
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\tx7280\tx7840\tx8400\tx8960\tx9520\tx10080\tx10640\tx11200\tx11760\tx12320\tx12880\tx13440\tx14000\tx14560\tx15120\tx15680\tx16240\tx16800\tx17360\tx17920\tx18480\tx19040\tx19600\tx20160\tx20720\tx21280\tx21840\tx22400\tx22960\tx23520\tx24080\tx24640\tx25200\tx25760\tx26320\tx26880\tx27440\tx28000\tx28560\tx29120\tx29680\tx30240\tx30800\tx31360\tx31920\tx32480\tx33040\tx33600\tx34160\tx34720\tx35280\tx35840\tx36400\tx36960\tx37520\tx38080\tx38640\tx39200\tx39760\tx40320\tx40880\tx41440\tx42000\tx42560\tx43120\tx43680\tx44240\tx44800\tx45360\tx45920\tx46480\tx47040\tx47600\tx48160\tx48720\tx49280\tx49840\tx50400\tx50960\tx51520\tx52080\tx52640\tx53200\tx53760\tx54320\tx54880\tx55440\tx56000\fi-1\ql\qnatural\pardirnatural
+
+\b \cf0 If something goes wrong
+\b0 \
+Please do report any crashes/bugs.\
+If it crashes after downloading images, but before you get a chance to save , you will probably be able to recover images it has downloaded by looking in /tmp/ThreadWatcher\
+\
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\tx7280\tx7840\tx8400\tx8960\tx9520\tx10080\tx10640\tx11200\tx11760\tx12320\tx12880\tx13440\tx14000\tx14560\tx15120\tx15680\tx16240\tx16800\tx17360\tx17920\tx18480\tx19040\tx19600\tx20160\tx20720\tx21280\tx21840\tx22400\tx22960\tx23520\tx24080\tx24640\tx25200\tx25760\tx26320\tx26880\tx27440\tx28000\tx28560\tx29120\tx29680\tx30240\tx30800\tx31360\tx31920\tx32480\tx33040\tx33600\tx34160\tx34720\tx35280\tx35840\tx36400\tx36960\tx37520\tx38080\tx38640\tx39200\tx39760\tx40320\tx40880\tx41440\tx42000\tx42560\tx43120\tx43680\tx44240\tx44800\tx45360\tx45920\tx46480\tx47040\tx47600\tx48160\tx48720\tx49280\tx49840\tx50400\tx50960\tx51520\tx52080\tx52640\tx53200\tx53760\tx54320\tx54880\tx55440\tx56000\fi-1\ql\qnatural\pardirnatural
+
+\b\fs30 \cf0 Plans for future releases:
+\b0\fs24 \
+(maybe, don't count on anything)\
+\
+- option to switch to base-2 size measurement (1024 bytes in the kibibyte). currently uses base-10 SI units (1000 bytes in the kilobyte)\
+- applescript support for dumping images\
+- option to view text only posts as well as posts with images in the watcher window\
+- some kind of preview panel in the dumper window so you can see which image is which without having to use spotlight\
+\
+\
+}
