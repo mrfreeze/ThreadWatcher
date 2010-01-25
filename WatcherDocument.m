@@ -15,8 +15,8 @@
 
 
 // strings for checking against server response when posting
-NSString *const uploadedResponse = @"uploaded! Updating page.";
-NSString *const noImageResponse = @"Updating page.";
+NSString *const uploadedResponse = @"Post successful!";
+NSString *const noImageResponse = @"Post successful!";
 NSString *const duplicateResponse = @"Error: Duplicate file entry detected";
 NSString *const floodResponse = @"Error: Flood detected";
 NSString *const limitResponse = @"Max limit of";

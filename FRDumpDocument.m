@@ -1050,7 +1050,8 @@
 	[boardSelection removeAllItems];
 	
 	NSMutableArray *boards = [NSMutableArray array];
-	[boards addObject:@"/a/ - Anime & Manga"];       
+	[boards addObject:@"/a/ - Anime & Manga"];  
+	[boards addObject:@"/adv/ - Advice"];  
 	[boards addObject:@"/an/ - Animals & Nature"];   
 	[boards addObject:@"/b/ - Random"];              
 	[boards addObject:@"/c/ - Anime/Cute"];          
@@ -1066,16 +1067,20 @@
 	[boards addObject:@"/h/ - Hentai"];
 	[boards addObject:@"/hr/ - High Resolution"];
 	[boards addObject:@"/ic/ - Artwork/Critique"];
+	[boards addObject:@"/int/ - International"];
 	[boards addObject:@"/jp/ - Japan/General"];
 	[boards addObject:@"/k/ - Weapons"];
+	[boards addObject:@"/lit/ - Literature"];
 	[boards addObject:@"/m/ - Mecha"];
 	[boards addObject:@"/mu/ - Music"];
 	[boards addObject:@"/n/ - Transportation"];
+	[boards addObject:@"/new/ - News"];
 	[boards addObject:@"/o/ - Auto"];
 	[boards addObject:@"/p/ - Photo"];
 	[boards addObject:@"/r/ - Request"];
 	[boards addObject:@"/r9k/ - ROBOT9000"];
 	[boards addObject:@"/s/ - Sexy Beautiful Women"];
+	[boards addObject:@"/sci/ - Science & Maths"];
 	[boards addObject:@"/sp/ - Sports"];
 	[boards addObject:@"/t/ - Torrents"];
 	[boards addObject:@"/tg/ - Traditional Games"];
@@ -1088,6 +1093,7 @@
 	[boards addObject:@"/wg/ - Wallpapers/General"];
 	[boards addObject:@"/x/ - Paranormal"];
 	[boards addObject:@"/y/ - Yaoi"];
+	[boards addObject:@"/3/ - 3DCG"];
 	
 	[boardSelection addItemsWithTitles:boards];
 	NSUInteger selection = [[NSUserDefaults standardUserDefaults] integerForKey:FRDumpBoard];
