@@ -14,6 +14,7 @@
 - (void)calcSize;
 - (void)createLinks;
 - (void)setupTextView;
+- (BOOL)validLink:(NSString *)link;
 @end
 
 
@@ -140,26 +141,82 @@
 {
 	if (theText) 
 	{
+		// find any links
 		NSScanner *scanner = [NSScanner scannerWithString:theText];
 		NSString *linkStart = @">>";
 		NSMutableArray *links = [[NSMutableArray alloc] init];
-		
-		// find any links
+		NSMutableArray *linkLocations = [[NSMutableArray alloc] init];
 		while (![scanner isAtEnd]) 
 		{
 			NSString *aLink = nil;
 			[scanner scanUpToString:linkStart intoString:nil];
+			[linkLocations addObject:[NSNumber numberWithInt:[scanner scanLocation]]];
 			[scanner scanString:linkStart intoString:nil]; 
-			[scanner scanUpToCharactersFromSet:[NSCharacterSet whitespaceAndNewlineCharacterSet] intoString:&aLink];
-			
-			if (aLink)
+			[scanner scanUpToCharactersFromSet:[NSCharacterSet whitespaceAndNewlineCharacterSet] 
+									intoString:&aLink];
+
+			if ([self validLink:aLink])
 				[links addObject:aLink];
+			else 
+				[linkLocations removeLastObject];
 		} 
 		
-		NSMutableAttributedString *textWithLinks = [[NSMutableAttributedString alloc] initWithString:theText];
+		// find any quotes
+		NSScanner *quoteScanner = [NSScanner scannerWithString:theText];
+		NSString *quoteStart = @">";
+		NSMutableArray *quotes = [[NSMutableArray alloc] init];
+		while (![quoteScanner isAtEnd]) 
+		{
+			NSString *aQuote = nil;
+			[quoteScanner scanUpToString:quoteStart intoString:nil];
+			
+			// ignore if it's a link rather than a quote
+			BOOL link = FALSE;
+			for (NSNumber *n in linkLocations)
+			{
+				if ([quoteScanner scanLocation] == [n intValue])
+				{
+					link = TRUE;
+					break;
+				}
+			}
+			
+			if (link)
+			{
+				// get rid of the second > character so we don't hit it 
+				// again next time
+				[quoteScanner scanString:quoteStart intoString:nil];
+				[quoteScanner scanString:quoteStart intoString:nil];
+				continue;
+			}
+					 
+			// scan the actual quoted text
+			[quoteScanner scanUpToCharactersFromSet:[NSCharacterSet newlineCharacterSet] 
+										 intoString:&aQuote];
+			if (aQuote) 
+				[quotes addObject:aQuote];
+		} 
+		
+		NSMutableAttributedString *textWithLinks = 
+			[[NSMutableAttributedString alloc] initWithString:theText];
+		
+		// set quotes in green
+		[textWithLinks beginEditing];
+		for (NSString *s in quotes)
+		{
+			NSRange range = [theText rangeOfString:s];
+			NSRange r = NSMakeRange(range.location, range.length);
+			
+			// TODO: see if we can find a better green colour here
+			[textWithLinks addAttribute:NSForegroundColorAttributeName 
+								  value:[NSColor colorWithCalibratedRed:0.1 
+																  green:0.5 
+																   blue:0.15 
+																  alpha:1.0]
+								  range:r];
+		}
 		
 		// make the links clickable
-		[textWithLinks beginEditing];
 		for (NSString *s in links)
 		{
 			NSRange range = [theText rangeOfString:s];
@@ -172,6 +229,31 @@
 		[[postTextField textStorage] setAttributedString:textWithLinks];
 	}
 }
+
+- (BOOL)validLink:(NSString *)link
+{
+	if (!link)
+		return NO;
+	
+	NSNumberFormatter *formatter = [[NSNumberFormatter alloc] init];
+	NSNumber *num = [formatter numberFromString:link];
+	
+	if (num)
+		return YES;
+	else 
+		return NO;
+}
+
+- (void)createGreenText
+{
+	if (theText) 
+	{
+
+		
+		
+	}
+}
+
 
 // select linked post
 - (BOOL)textView:(NSTextView *)aTextView clickedOnLink:(id)link atIndex:(NSUInteger)charIndex
