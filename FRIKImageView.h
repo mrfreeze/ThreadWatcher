@@ -14,13 +14,15 @@
 // the image view used in the post sheet of the watcher window
 // allows user to drag an image onto it
 
-@interface FRIKImageView : IKImageView 
+@interface FRIKImageView : NSImageView 
 {
 	NSURL *imageFileURL;
-	IBOutlet FRPostImageBox *containingBox;
-	IBOutlet NSWindow *theWindow; // outlet to the window so we can set the first responder
+	__weak IBOutlet FRPostImageBox *containingBox;
+	__weak IBOutlet NSWindow *theWindow; // outlet to the window so we can set the first responder
 	NSUInteger boardMaxSize; // max size of the board we are posting to
 }
+
+- (void)setImageWithURL:(NSURL*)url;
 
 @property (readwrite, retain) NSURL *imageFileURL;
 @property (readwrite) NSUInteger boardMaxSize;

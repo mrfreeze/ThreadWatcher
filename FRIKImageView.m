@@ -7,6 +7,8 @@
 //
 
 #import "FRIKImageView.h"
+#import "TabStripController.h"
+#import "FRPreferenceController.h"
 
 
 @implementation FRIKImageView
@@ -45,11 +47,9 @@
 			[containingBox setNeedsDisplay:YES];
 			return NO;
 		}
-			
 		
 		// only get the first url, ignore others if the user has dragged a group of images
 		NSURL *url = [urls objectAtIndex:0];
-		
 		[self setImageWithURL:url];
 		return YES;
 	}
@@ -62,10 +62,11 @@
 	return NO;
 }
 
-- (void)setImageWithURL: (NSURL*)url
+- (void)setImageWithURL:(NSURL*)url
 {
 	[self setImageFileURL:url];
-	[super setImageWithURL:url];
+	NSImage *new = [[NSImage alloc] initWithContentsOfURL:url];
+	[self setImage:new];
 }
 
 - (NSDragOperation)draggingEntered:(id <NSDraggingInfo>)sender
@@ -95,6 +96,8 @@
 			[containingBox setHighlighted:YES];
 			[containingBox setNeedsDisplay:YES];
 			[containingBox setFocusRect:[self frame]];
+			NSCursor *dragCursor = [NSCursor dragCopyCursor];
+			[dragCursor push];
 			return NSDragOperationEvery;
 		}
 	}
@@ -105,13 +108,37 @@
 
 - (void)draggingExited:(id <NSDraggingInfo>)sender
 {
+	[NSCursor pop];
 	[containingBox setHighlighted:NO];
-	[containingBox setNeedsDisplay:YES];
+	[theWindow display];
 }
 
 - (BOOL)prepareForDragOperation:(id <NSDraggingInfo>)sender
 {	
-	return YES;
+	if ([sender draggingSource] == self) 
+		return NO;
+	
+	NSPasteboard *pb = [sender draggingPasteboard];
+	NSArray *types = [pb types];
+	if ([types containsObject:NSURLPboardType]) 
+	{
+		// check the pasteboard contains an image
+		NSArray *classes = [NSArray arrayWithObject:[NSURL class]];
+		NSMutableDictionary *options = [NSMutableDictionary dictionary];
+		NSArray *acceptedTypes = [NSImage imageTypes];
+		
+		[options setObject:acceptedTypes
+					forKey:NSPasteboardURLReadingContentsConformToTypesKey];
+		[options setObject:[NSNumber numberWithBool:YES] 
+					forKey:NSPasteboardURLReadingFileURLsOnlyKey];
+		
+		NSArray *urls = [pb readObjectsForClasses:classes
+										  options:options];
+		if ([urls count] == 1) 
+			return YES;
+	}
+	
+	return NO;
 }
 
 - (BOOL)performDragOperation:(id <NSDraggingInfo>)sender
@@ -130,9 +157,9 @@
 - (void)concludeDragOperation:(id <NSDraggingInfo>)sender
 {
 	[containingBox setHighlighted:NO];
-	[containingBox setNeedsDisplay:YES];
+	[theWindow display];
+	[NSCursor pop];
 }
-
 
 /*!
     @method     
@@ -140,7 +167,7 @@
     @discussion clicking opens a modal open dialog that only 
 				allows selection of image files
 */
-- (void)mouseDown:(NSEvent *)theEvent
+/*- (void)mouseDown:(NSEvent *)theEvent
 {
 	// set up open panel
 	NSOpenPanel *oPanel = [NSOpenPanel openPanel];
@@ -151,18 +178,38 @@
 	NSArray *types = [NSImage imageTypes];
 	[oPanel setAllowedFileTypes:types];
 	
-	void (^chooseFile)(NSInteger) = ^(NSInteger result)
-	{
-		if (result == NSFileHandlingPanelOKButton) 
-		{
-			[self setImageWithURL:[oPanel URL]];
-		}
-	};
+	GTMWindowSheetController *sheetController = 
+	[[[[[self delegate] ourView] window] windowController] sheetController];
 	
-	[oPanel beginSheetModalForWindow:theWindow
-				   completionHandler:chooseFile];
+	SEL didEndSelector = @selector(openPanelDidEnd:returnCode:contextInfo:);
+	NSValue *selectorValue = [NSValue valueWithPointer:didEndSelector];
+	NSString *dirPath = [[NSUserDefaults standardUserDefaults] 
+						 objectForKey:FRLastSaveLocation];
+	
+	NSArray *parameters = [NSArray arrayWithObjects:dirPath, @"", 
+						   types, [NSNull null], self, 
+						   selectorValue, self, nil];
+	
+	[sheetController beginSystemSheet:oPanel 
+						 modalForView:[[self delegate] ourView] 
+					   withParameters:parameters];
+
 	[super mouseDown:theEvent];
 }
+
+- (void)openPanelDidEnd:(NSOpenPanel *)panel 
+			 returnCode:(int)returnCode  
+			contextInfo:(void  *)contextInfo
+{
+	if (returnCode == NSFileHandlingPanelOKButton) 
+	{
+		[self setImageWithURL:[panel URL]];
+		NSString *location = 
+		[[[panel URL] path] stringByDeletingLastPathComponent];
+		NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
+		[defaults setObject:location forKey:FRFinderCommentKey];
+	}
+}*/
 
 @synthesize imageFileURL;
 @synthesize boardMaxSize;
