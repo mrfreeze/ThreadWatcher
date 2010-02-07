@@ -96,7 +96,7 @@
 	folderPath = [self createTempFolder];
 	
 	// get the OP image from the thread (it won't be included in the reply nodes)
-	NSString *xpathQueryOP = @"//span[@class='filesize']";
+	NSString *xpathQueryOP = @"//span[@class='filesize' and not(..[class='reply'])]";
 	NSError *opNodeError;
 	NSArray *opNodes = [rootNode nodesForXPath:xpathQueryOP 
 										 error:&opNodeError];
@@ -106,15 +106,17 @@
 		NSXMLElement *opNode = [opNodes objectAtIndex:0];
 		opImageInfo = [self imageURLAndNameFromNode:opNode];
 	}
-	else 
-		return TRUE;
-	
-	// get text of op post (should be first blockquote)
-	NSString *opBlockQuoteQuery = @"//blockquote";
+
+	// get text of op post (blockquote element that is not the child of a reply node)
+	NSString *opBlockQuoteQuery = @"//blockquote[not(..[@class='reply'])]";
 	NSError *opBlockQuoteError;
 	NSArray *opBlockquoteNodes = [rootNode nodesForXPath:opBlockQuoteQuery 
-										 error:&opBlockQuoteError];
-	NSString *opPostText = [[opBlockquoteNodes objectAtIndex:0] stringValue];
+												   error:&opBlockQuoteError];
+	NSString *opPostText = nil;
+	if ([opBlockquoteNodes count] > 0) 
+		opPostText = [[opBlockquoteNodes objectAtIndex:0] stringValue];
+	else 
+		opPostText = [NSString new];
 	
 	// get the url of the op post
 	NSString *xpathQueryOPName = @"//a[@name]";
@@ -146,7 +148,7 @@
 	}
 	
 	[_delegate performSelectorOnMainThread:@selector(pageWasLoaded:)
-								withObject:[NSNumber numberWithInt:[opBlockquoteNodes count]]
+								withObject:[NSNumber numberWithInt:[replyNodes count]+1]
 							 waitUntilDone:YES];
 	
 	[self addImageWithInfo:opImageInfo 
@@ -246,9 +248,9 @@
 // first element of returned array is url, second is name
 - (NSArray *)imageURLAndNameFromNode:(NSXMLElement *)node
 {
+	
 	NSArray *childrenLinks = [node elementsForName:@"a"];
 	NSArray *childrenNames = [node elementsForName:@"span"];
-	
 	NSString *relativeString = [[[childrenLinks lastObject] attributeForName:@"href"] stringValue];
 	NSString *origName = [[[childrenNames lastObject] attributeForName:@"title"] stringValue];
 	NSURL *url = [NSURL URLWithString:relativeString relativeToURL:baseURL];
