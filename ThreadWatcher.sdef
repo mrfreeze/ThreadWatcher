@@ -175,15 +175,31 @@
 	<suite name="ThreadWatcher Suite" code="twsu">
 		<class name="document" code="docu" description="A ThreadWatcher document">
 			<cocoa class="MyDocument"/>
-			<property name="name" code="pnam" description="Its name." type="text" access="r">
+			<element description="Tabs in the window." type="tab" access="r">
+				<cocoa key="tabs"/>
+				<accessor style="index"/>
+			</element>
+			<property name="current tab" code="curt" description="The current tab." type="tab" access="r">
+				<cocoa key="currentTab"/>
+			</property>
+			<responds-to command="close">
+				<cocoa method="close:"/>
+			</responds-to>
+			<responds-to command="newTab">
+				<cocoa method="newTab:"/>
+			</responds-to>
+		</class>
+		<class name="tab" code="wtab" description="A watcher window tab." plural="tabs">
+			<cocoa class="FRWatcherTabContentsController"/>
+			<property name="name" code="pnam" description="The name of the thread" type="text" access="r">
 				<cocoa key="displayName"/>
 			</property>
 			<property name="modified" code="imod" description="Has it been modified since the last save?" type="boolean" access="r">
 				<cocoa key="isDocumentEdited"/>
 			</property>
-			<responds-to command="close">
-				<cocoa method="handleCloseScriptCommand:"/>
-			</responds-to>
+			<property name="index" code="pidx" description="The index of the tab, ordered left to right." type="integer" access="r">
+				<cocoa key="tabIndex"/>
+			</property>
 			<responds-to command="fetchThreadFromBrowser">
 				<cocoa method="applescriptGetURL:"/>
 			</responds-to>
@@ -196,10 +212,13 @@
 			<responds-to command="fetch">
 				<cocoa method="scriptFetch:"/>
 			</responds-to>
+			<responds-to command="close tab">
+				<cocoa method="handleCloseScriptCommand:"/>
+			</responds-to>
 		</class>
 		<command name="fetchThreadFromBrowser" code="borwsurl" description="Get the URL of the front window of the browser, and start fetching the images">
 			<cocoa class="NSScriptCommand"/>
-			<direct-parameter type="document"/>
+			<direct-parameter type="tab"/>
 			<parameter name="to" code="insh" description="Location to save the images to." type="file" optional="yes">
 				<cocoa key="ToLocation"/>
 			</parameter>
@@ -219,7 +238,7 @@
 		</command>
 		<command name="watchThreadFromBrowser" code="watchthr" description="Gets a thread url from the browser and watches the thread">
 			<cocoa class="NSScriptCommand"/>
-			<direct-parameter type="document"/>
+			<direct-parameter type="tab"/>
 			<parameter name="to" code="insh" description="Location to save the images to." type="file" optional="yes">
 				<cocoa key="ToLocation"/>
 			</parameter>
@@ -239,7 +258,7 @@
 		</command>
 		<command name="saveImages" code="twsaveim" description="Save all images that have been downloaded.">
 			<cocoa class="NSScriptCommand"/>
-			<direct-parameter type="document"/>
+			<direct-parameter type="tab"/>
 			<parameter name="to" code="insh" description="Location to save the images to" type="file" optional="yes">
 				<cocoa key="ToLocation"/>
 			</parameter>
@@ -255,7 +274,7 @@
 			</parameter>
 		</command>
 		<command name="fetch" code="fetchurl" description="Fetch the given url">
-			<direct-parameter type="document" optional="yes"/>
+			<direct-parameter type="tab" optional="yes"/>
 			<parameter name="withURL" code="wurl" description="The url of a thread, as text" type="text">
 				<cocoa key="URL"/>
 			</parameter>
@@ -278,6 +297,12 @@
 			<parameter name="watch" code="twwt" description="Optional parameter to watch the thread" type="boolean" optional="yes">
 				<cocoa key="Watch"/>
 			</parameter>
+		</command>
+		<command name="close tab" code="closetab" description="Close a tab.">
+			<direct-parameter type="tab"/>
+		</command>
+		<command name="newTab" code="newwdtab" description="Opens a new tab">
+			<direct-parameter type="document"/>
 		</command>
 	</suite>
 </dictionary>

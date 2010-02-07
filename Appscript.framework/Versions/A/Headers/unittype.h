@@ -40,3 +40,4 @@
 
 void AEMGetDefaultUnitTypeDefinitions(NSDictionary **definitionsByName,
 									  NSDictionary **definitionsByCode);
+

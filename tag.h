@@ -8,6 +8,11 @@
 
 #import <Foundation/Foundation.h>
 
+// represents a single tag. kind of redundant since it on;y contains a single NSString
+// TODO: get rid of this and just use NSStrings directly, 
+// unless there is some other kind of information we might need to store with the tags...
+
+
 @interface tag : NSObject 
 {
 	NSString *tagString;

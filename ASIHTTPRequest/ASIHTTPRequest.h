@@ -159,7 +159,7 @@ extern unsigned long const ASIWWANBandwidthThrottleAmount;
 	id uploadProgressDelegate;
 	
 	// Delegate for displaying download progress (usually an NSProgressIndicator, but you can supply a different object and handle this yourself)
-	id downloadProgressDelegate;
+	__weak id downloadProgressDelegate;
 	
 	// Whether we've seen the headers of the response yet
     BOOL haveExaminedHeaders;
@@ -631,7 +631,7 @@ extern unsigned long const ASIWWANBandwidthThrottleAmount;
 @property (assign) id delegate;
 @property (assign) id queue;
 @property (assign) id uploadProgressDelegate;
-@property (assign) id downloadProgressDelegate;
+@property (assign) __weak id downloadProgressDelegate;
 @property (assign) BOOL useKeychainPersistance;
 @property (assign) BOOL useSessionPersistance;
 @property (retain) NSString *downloadDestinationPath;

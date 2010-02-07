@@ -1,12 +1,12 @@
 //
-//  WatcherDocument.h
+//  FRWatcherTabContentsController.h
 //  ThreadWatcher
 //
-//  Created by Mr Freeze on 09/12/2009.
-//  Copyright 2009 Mr. Freeze. All rights reserved.
+//  Created by Mr. Freeze on 30/01/2010.
+//  Copyright 2010 Mr. Freeze. All rights reserved.
 //
 
-// for defaults strings see FRPreferenceController.m
+// TODO: split this file up into a controller and a model
 
 #import <Cocoa/Cocoa.h>
 #import <Quartz/Quartz.h>
@@ -19,6 +19,9 @@
 #import "FRDraggableImageView.h"
 #import "FRIKImageView.h"
 #import "AnimatingTabView.h"
+#import "MyDocument.h"
+#import "ToolbarController.h"
+#import "TabStripController.h"
 
 #import "appscript-glue/SFGlue/SFGlue.h"
 #import "appscript-glue/WKGlue/WKGlue.h"
@@ -32,10 +35,15 @@
 #import "openmeta/OpenMetaPrefs.h"
 
 #import "AMCollectionView.h"
+#import "BWToolkitFramework.framework/Versions/A/Headers/BWGradientBox.h"
 
 @class FRImageViewer;
 @class FRAppDelegate;
 @class FRIconCollectionView;
+@class MyDocument;
+@class ToolbarController;
+@class TabStripController;
+
 
 // -------------------------------------------------
 extern NSString *const uploadedResponse;
@@ -55,10 +63,17 @@ extern NSString *const failedResponse;
 
 // -------------------------------------------------------
 
-@interface WatcherDocument : NSDocument <FRLinkFetcherDelegate, QLPreviewPanelDelegate, 
-									QLPreviewPanelDataSource, NSCollectionViewDelegate,
-									NSSplitViewDelegate, NSToolbarDelegate, NSWindowDelegate>
+@interface FRWatcherTabContentsController : NSViewController <FRLinkFetcherDelegate, 
+															  QLPreviewPanelDelegate, 
+															  QLPreviewPanelDataSource, 
+															  NSCollectionViewDelegate,
+															  NSSplitViewDelegate, 
+															  NSToolbarDelegate, 
+															  NSWindowDelegate>
 {
+	// the document that contains us
+	MyDocument *myDocument;
+	
 	// data about the thread
 	NSMutableArray *links;
 	NSMutableArray *allPosts;
@@ -89,6 +104,7 @@ extern NSString *const failedResponse;
 	NSOperationQueue *operationQueue;
 	NSOperationQueue *prevQueue;
 	FRLinkFetcher *fetcher;
+	NSOperationQueue *postQueue;
 	
 	// timer used to check thread periodically
 	NSTimer *repeatingTimer;
@@ -97,36 +113,9 @@ extern NSString *const failedResponse;
 	BOOL growling;
 	
 	// user input
-	IBOutlet NSTextField *URLInput;
-	IBOutlet NSButton *goButton;
-	IBOutlet NSButton *saveSelectedButton;
-	IBOutlet NSButton *saveButton;
-	IBOutlet NSButton *timerToggleCheckBox;
-	IBOutlet NSSegmentedControl *viewToggle;
-	
-	// toolbar items
-	NSToolbar *theToolbar;
-	IBOutlet NSView *urlTextBoxView;
-	NSToolbarItem *urlToolbar;
-	NSToolbarItem *watchingToolbarItem;
-	IBOutlet NSView *watchingToolbarView;
-	NSToolbarItem *goToolbarButton;
-	IBOutlet NSView *goToolbarView;
-	NSToolbarItem *saveToolbarButton;
-	IBOutlet NSView *saveToolbarView;
-	NSToolbarItem *saveAllToolbarButton;
-	IBOutlet NSView *saveAllToolbarView;
-	NSToolbarItem *quicklookToolbarItem;
-	IBOutlet NSView *quicklookToolbarView;
-	NSToolbarItem *postReplyToolbarItem;
-	IBOutlet NSView *postReplyToolbarView;
-	NSToolbarItem *viewSwitcherToolbarItem;
-	IBOutlet NSView *viewSwitcherToolbarView;
+	NSString *userEnteredURL;
 	
 	// outlets to give the user information
-	IBOutlet NSProgressIndicator *progressSpinner; // part of the goTB toolbar item
-	IBOutlet NSProgressIndicator *timerSpinner; //  part of the watchingTB toolbar item
-	IBOutlet NSProgressIndicator *replySpinner; // spins when a reply is being posted
 	IBOutlet NSProgressIndicator *downloadBar;
 	IBOutlet NSProgressIndicator *smallDownloadBar;
 	IBOutlet NSTextField *statusText; // the text below the progress bars that gives user feedback
@@ -138,17 +127,20 @@ extern NSString *const failedResponse;
 	IBOutlet NSTableView *tagTableView;
 	
 	// outlets for various objects in the nib
-	IBOutlet NSWindow *theWindow;
+	IBOutlet NSView *ourView;
 	IBOutlet FRIconCollectionView *ourCollectionView;
 	IBOutlet NSScrollView *ourScrollView; // scroll view enclosing the collectionview
 	IBOutlet FRDraggableImageView *previewViewer; // the image well view
 	IBOutlet NSArrayController *theController;
 	IBOutlet FRAppDelegate *applicationDelegate;
 	IBOutlet NSArrayController *tagsController;
+	IBOutlet NSArrayController *fullThreadController;
 	IBOutlet AnimatingTabView *viewSwitcher;
 	IBOutlet NSTabViewItem *iconTabItem;
 	IBOutlet NSView *iconTabView;
 	IBOutlet AMCollectionView *fullThreadView;
+	IBOutlet BWGradientBox *bottomGradient;
+	IBOutlet NSTextView *commentView;
 	
 	// appscript stuff
 	SFApplication *safari;
@@ -165,28 +157,48 @@ extern NSString *const failedResponse;
 	NSURL *scriptSaveLocation;
 	NSMutableArray *scriptTags;
 	NSNumber *scriptRating;
+	int tabIndex; // index of the tab in teh strip, left to right
 	
 	// posting
 	IBOutlet NSWindow *postSheet;
 	NSString *postComment;
 	NSString *postSubject;
-	IBOutlet FRIKImageView *imageToPost;
-	IBOutlet NSButton *postButton;
-	IBOutlet NSTextView *commentView;
+	__weak IBOutlet FRIKImageView *imageToPost;
+	IBOutlet NSTextView *postCommentTextField;
+	
+	BOOL sheetOpen;
+	BOOL downloadingThread;
+	
+	int changeCount;
 }
+
+// initialisation
+- (id)initWithNibName:(NSString*)name
+			 document:(MyDocument *)doc;
+
+// tabs
+- (void)ensureContentsVisible;
+- (void)willBecomeSelectedTab;
+- (void)willBecomeUnselectedTab;
+- (void)didBecomeSelected;
+- (void)wasHidden;
+- (void)didBecomeMain;
+- (void)didResignMain;
 
 // tags methods
 - (void)setTagsOfSelectedImages:(NSMutableArray *)newSet;
 - (void)removeObjectFromTagsOfSelectedImagesAtIndex:(int)indexu;
 - (void)insertObject:(tag *)t inTagsOfSelectedImagesAtIndex:(int)indexu;
 - (IBAction)createTag:(id)sender;
+- (IBAction)clearAllTags:(id)sender;
+- (IBAction)clearSelectedTags:(id)sender;
 
 // post reply methods
 - (IBAction)showPostSheet:(id)sender;
 - (IBAction)endPostSheet:(id)sender;
 - (IBAction)postReply:(id)sender;
 - (IBAction)clearImageToPost:(id)sender;
-   
+
 // main action methods
 - (IBAction)startFetcher:(id)sender;
 - (IBAction)saveFiles:(id)sender;
@@ -218,13 +230,20 @@ extern NSString *const failedResponse;
 - (BOOL)wantsAnimation;
 - (void)wasCancelled;
 
+- (void)close;
 
+- (ToolbarController *)toolbarController;
+- (TabStripController *)tabStripController;
+
+- (BOOL)isLoading;
+
+@property (readwrite, retain) MyDocument *myDocument;
 @property (readwrite, retain) NSMutableArray *links;
 @property (readwrite, assign) FRLinkFetcher *fetcher;
 @property (readwrite, retain, nonatomic) NSIndexSet *selectedIndexes;
 @property (readwrite, retain, nonatomic) NSArray *selectedImages;
 @property (readwrite, retain, nonatomic) NSString *threadName;
-@property (retain) NSTimer *repeatingTimer;
+@property (readwrite, retain) NSTimer *repeatingTimer;
 @property (readwrite) NSUInteger sizeOfAllFiles;
 @property (readwrite, retain) NSString *threadNumber;
 @property (readwrite, retain) NSString *postComment;
@@ -232,15 +251,17 @@ extern NSString *const failedResponse;
 @property (readwrite, retain) NSURL *boardPostURL;
 @property (readwrite, retain) NSIndexSet *selectedPosts;
 @property (readwrite, retain) NSMutableArray *allPosts;
+@property (readwrite, retain) NSString *userEnteredURL;
+@property (readwrite, assign) NSOperationQueue *operationQueue;
+@property (readonly, assign) NSOperationQueue *postQueue;
+@property (readwrite) BOOL sheetOpen;
+@property (readwrite) BOOL downloadingThread;
+@property (readwrite) int tabIndex;
+@property (assign) __weak FRIKImageView *imageToPost;
+@property (readwrite) int changeCount;
 
-@property (assign) IBOutlet NSWindow *theWindow;
+@property (assign) IBOutlet NSView *ourView;
 @property (assign) IBOutlet NSArrayController *theController;
-@property (assign) IBOutlet NSView *urlTextBoxView;
-@property (assign) IBOutlet NSView *watchingToolbarView;
-@property (assign) IBOutlet NSView *goToolbarView;
-@property (assign) IBOutlet NSView *saveToolbarView;
-@property (assign) IBOutlet NSView *saveAllToolbarView;
-@property (assign) IBOutlet NSView *quicklookToolbarView;
 @property (assign) IBOutlet FRIconCollectionView *ourCollectionView;
 @property (assign) IBOutlet FRAppDelegate *applicationDelegate;
 @property (assign) IBOutlet NSScrollView *ourScrollView;
@@ -251,10 +272,8 @@ extern NSString *const failedResponse;
 @property (assign) IBOutlet NSTextField *numberOfImages;
 @property (assign) IBOutlet NSTextField *statusText;
 @property (assign) IBOutlet NSProgressIndicator *downloadBar;
-@property (assign) IBOutlet NSProgressIndicator *timerSpinner;
-@property (assign) IBOutlet NSProgressIndicator *progressSpinner;
-@property (assign) IBOutlet NSButton *saveSelectedButton;
-@property (assign) IBOutlet NSButton *saveButton;
-@property (assign) IBOutlet NSTextField *URLInput;
+@property (readonly, assign) IBOutlet AnimatingTabView *viewSwitcher;
+@property (readonly, assign) IBOutlet NSTabViewItem *iconTabItem;
+@property (assign) IBOutlet NSArrayController *fullThreadController;
 
 @end

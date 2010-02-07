@@ -26,5 +26,13 @@
 	return [tagString hash];
 }
 
+- (BOOL)isEqual:(id)object
+{
+	if ([object class] != [self class])
+		return NO;
+	
+	return [[self tagString] isEqual:[object tagString]];
+}
+
 @synthesize tagString;
 @end

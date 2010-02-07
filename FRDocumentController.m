@@ -7,7 +7,7 @@
 //
 
 #import "FRDocumentController.h"
-#import "WatcherDocument.h"
+#import "MyDocument.h"
 #import "FRDumpDocument.h"
 
 
@@ -17,8 +17,8 @@
 - (IBAction)newWatcher:(id)sender
 {
 	NSError *openError = nil;
-	WatcherDocument *watchDoc = [self makeUntitledDocumentOfType:@"Watcher" 
-														 error:&openError];
+	MyDocument *watchDoc = [self makeUntitledDocumentOfType:@"Watcher" 
+													  error:&openError];
 	
 	if (!watchDoc) 
 		NSLog(@"Error creating watcher document: %@", openError);

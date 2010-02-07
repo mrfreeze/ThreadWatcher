@@ -9,7 +9,7 @@
 #import "FRLinkFetcher.h"
 #import "ASIHTTPRequest/ASIHTTPRequest.h"
 #import "FRDumpDocument.h"
-#import "WatcherDocument.h"
+#import "MyDocument.h"
 
 // private methods
 @interface FRLinkFetcher ()

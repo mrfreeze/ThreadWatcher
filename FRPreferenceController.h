@@ -17,6 +17,9 @@ extern NSString *const FRPostName;
 extern NSString *const FRPostEmail;
 extern NSString *const FRDumpBoard;
 extern NSString *const FRUserAgent;
+extern NSString *const FRLastSaveLocation;
+extern NSString *const FRShowCloseWindowAlert;
+extern NSString *const FRShowQuitWindowAlert;
 
 // preferences controller
 

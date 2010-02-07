@@ -24,7 +24,7 @@
 			<key>CFBundleTypeRole</key>
 			<string>Editor</string>
 			<key>NSDocumentClass</key>
-			<string>WatcherDocument</string>
+			<string>MyDocument</string>
 			<key>NSPersistentStoreTypeKey</key>
 			<string>InMemory</string>
 		</dict>

@@ -52,3 +52,4 @@ typedef enum {
 /**********************************************************************/
 
 NSString *ASDescriptionForError(OSStatus err);
+

@@ -9,7 +9,7 @@
 #import "FRUploadOperation.h"
 #import "ASIHTTPRequest/ASIFormDataRequest.h"
 #import "FRDumpDocument.h"
-#import "WatcherDocument.h"
+#import "FRWatcherTabContentsController.h"
 #import "FRPreferenceController.h"
 
 // private methods

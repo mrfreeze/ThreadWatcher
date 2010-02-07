@@ -18,6 +18,9 @@ NSString *const FRPostName = @"PostWithName";
 NSString *const FRPostEmail = @"PostWithEmail";
 NSString *const FRDumpBoard = @"DefaultDumpBoard";
 NSString *const FRUserAgent = @"UserAgent";
+NSString *const FRLastSaveLocation = @"LastSaveLocation";
+NSString *const FRShowCloseWindowAlert = @"ShowCloseWindowAlert";
+NSString *const FRShowQuitWindowAlert = @"ShowQuitAlert";
 
 @implementation FRPreferenceController
 

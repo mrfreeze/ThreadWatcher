@@ -1,17 +1,18 @@
 //
-//  WatcherDocument.m
+//  FRWatcherTabContentsController.m
 //  ThreadWatcher
 //
-//  Created by Mr Freeze on 09/12/2009.
-//  Copyright 2009 Mr. Freeze. All rights reserved.
+//  Created by Mr. Freeze on 30/01/2010.
+//  Copyright 2010 Mr. Freeze. All rights reserved.
 //
 
-#import "WatcherDocument.h"
+#import "FRWatcherTabContentsController.h"
 #import "FRPostedImage.h"
 #import "FRPreferenceController.h"
 #include <sys/xattr.h>
 #import <objc/objc-auto.h>
 #import "ASIHTTPRequest/ASIFormDataRequest.h"
+#import "TabStripController.h"
 
 
 // strings for checking against server response when posting
@@ -51,7 +52,7 @@ NSString *const failedResponse = @"Error: Upload failed.";
 //--------------------------------------------------------------------------------------------------
 
 // private methods
-@interface WatcherDocument ()
+@interface FRWatcherTabContentsController ()
 // cleanup
 - (void)removeDownloadedFiles;
 
@@ -77,7 +78,6 @@ NSString *const failedResponse = @"Error: Upload failed.";
 - (void)updateStatusLabel:(NSString *)newStatus;
 - (void)updateDownloadBar:(NSArray *)numbers;
 
-
 // methods for updating the preview view
 - (void)changePreviewImageTo:(NSImage *)newImage;
 - (void)changeSelectedFileURLTo:(NSURL *)aURL;
@@ -98,22 +98,33 @@ NSString *const failedResponse = @"Error: Upload failed.";
 - (void)postSent;
 - (void)uploadErrorTypeFromResponse:(NSString *)response;
 - (void)identifyBoard:(NSString *)s;
+
+// window / tab focus
+- (void)updateDockBadge;
+
+- (void)incrementChangeCount;
 @end
 
 
-@implementation WatcherDocument
+@implementation FRWatcherTabContentsController
 
-- (id)init
+- (id)initWithNibName:(NSString *)name
+			 document:(MyDocument *)doc
 {
-	self = [super init];
-	if (self) 
+	self = [super initWithNibName:name
+						   bundle:[NSBundle mainBundle]];
+	if (self)
 	{
+		myDocument = doc;
+		//tabStripController = [[myDocument tabStripModel] controller];
+		
 		links = [[NSMutableArray alloc] init];
 		allPosts = [[NSMutableArray alloc] init];
 		
 		operationQueue = [[NSOperationQueue alloc] init];
 		fetcher = nil;
 		prevQueue = [[NSOperationQueue alloc] init];
+		postQueue = nil; // created when we need it
 		
 		// create a unique string to label the temp 
 		// directory associated with this window
@@ -154,11 +165,148 @@ NSString *const failedResponse = @"Error: Upload failed.";
 		scriptSaveLocation = nil;
 		scriptTags = nil;
 		scriptRating = nil;
+		tabIndex = 0; // this will get set to the correct value once the tab is inserted into the model
 		
 		selecting = FALSE;
+		
+		changeCount = 0;
+		
+		[self loadView];
+		
+		// ==================================================================================
+		// set up items in the view
+		NSFont *smaller = [NSFont fontWithName:@"Lucida Grande" size:11.0];
+		[numberOfImages setFont:smaller];
+		[[numberOfImages cell] setBackgroundStyle:NSBackgroundStyleRaised];
+		[numberOfImages setTitleWithMnemonic:@"No Images"];
+		
+		// initial states of buttons and text
+		[statusText setTitleWithMnemonic:@""];
+		[downloadBar setIndeterminate:FALSE];
+		[downloadBar setUsesThreadedAnimation:YES];
+
+		[fullThreadView setContent:allPosts];
+		[fullThreadView setAllowsMultipleSelection:YES];
+		[fullThreadView setDrawsBackground:NO];
+		[fullThreadView setRowHeight:143.0];
+		[[NSNotificationCenter defaultCenter] addObserver:self
+												 selector:@selector(selectionDidChange:) 
+													 name:AMCollectionViewSelectionDidChangeNotification 
+												   object:nil];
+		
+		// give the IKImageview a blank image on startup
+		// to prevent it displaying garbage from the backing store
+		// see: http://openradar.appspot.com/7333961
+		/*NSImage *blank = [[NSImage alloc] init];
+		[imageToPost setImage:(CGImageRef)blank imageProperties:NULL];*/
 	}
 	return self;
 }
+
+#pragma mark Tabs
+
+// Returns YES if the tab represented by this controller is the front-most.
+- (BOOL)isCurrentTab 
+{
+	// We're the current tab if we're in the view hierarchy, otherwise some other
+	// tab is.
+	return [[self view] superview] ? YES : NO;
+}
+
+- (void)willBecomeSelectedTab;
+{
+	
+}
+
+- (void)willBecomeUnselectedTab;
+{
+	// prepare tab to be deselected
+	[self unbind:@"userEnteredURL"];
+}
+
+- (void)wasHidden
+{
+	
+}
+
+- (void)didBecomeMain
+{
+	[self updateDockBadge];
+	NSColor *start = [NSColor colorWithCalibratedRed:0.796 
+											   green:0.796 
+												blue:0.796 
+											   alpha:1.0];
+	NSColor *end = [NSColor colorWithCalibratedRed:0.652 
+											 green:0.652 
+											  blue:0.652 
+											 alpha:1.0];
+	[bottomGradient setFillStartingColor:start];
+	[bottomGradient setFillEndingColor:end];
+}
+
+- (void)didBecomeSelected
+{
+	[[self toolbarController] changeToNewTab:self];
+	[self bind:@"userEnteredURL" 
+	  toObject:[self toolbarController]
+   withKeyPath:@"urlString" 
+	   options:nil];
+	
+	if ([[[self view] window] isMainWindow]) 
+		[self didBecomeMain];
+	else 
+	{
+		[self updateDockBadge];
+		[self didResignMain];
+	}
+		
+}
+
+- (void)didResignMain
+{
+	NSColor *start = [NSColor colorWithCalibratedRed:0.918 
+											   green:0.918 
+												blue:0.918 
+											   alpha:1.0];
+	NSColor *end = [NSColor colorWithCalibratedRed:0.847 
+											   green:0.847 
+												blue:0.847 
+											   alpha:1.0];
+	[bottomGradient setFillStartingColor:start];
+	[bottomGradient setFillEndingColor:end];
+}
+
+// Call when the tab view is properly sized and the render widget host view
+// should be put into the view hierarchy.
+- (void)ensureContentsVisible 
+{
+
+}
+
+// run to remove the count from this tab from the dock badge, and clear the tab badge
+- (void)updateDockBadge
+{
+	NSDockTile *tile = [[NSApplication sharedApplication] dockTile];
+	@synchronized (tile)
+	{
+		NSString *oldBadge = [tile badgeLabel];
+		if (oldBadge) 
+		{
+			int newNum = [oldBadge intValue] - newImages;
+			if (newNum > 0) 
+			{
+				NSString *newBadge = [NSString stringWithFormat:@"%d", newNum];
+				[tile setBadgeLabel:newBadge];
+			}
+			else 
+				[tile setBadgeLabel:nil];
+			
+			newImages = 0;
+			[[myDocument tabStripModel] changeNewImageCount:newImages forTabContents:self];
+		}
+	}
+}
+
 // ---------------------------------------------------------------------------------
 #pragma mark selection methods
 // methods related to images being selected in the collectionview
@@ -197,7 +345,7 @@ NSString *const failedResponse = @"Error: Upload failed.";
 					{
 						// we have reached the index item. the number of images so far (j)
 						// gives us the index in the links array
-
+						
 						[newIndexSet addIndex:j];
 						break;
 					}
@@ -205,9 +353,9 @@ NSString *const failedResponse = @"Error: Upload failed.";
 				}
 				k++;
 			}
-			current_index = [indexset indexGreaterThanIndex: current_index];
+			current_index = [indexset indexGreaterThanIndex:current_index];
 		}
-
+		
 		selecting = TRUE;
 		[theController setSelectionIndexes:newIndexSet];
 		selecting = FALSE;
@@ -232,7 +380,7 @@ NSString *const failedResponse = @"Error: Upload failed.";
 			[tempSet unionSet:[selected tags]];
 			[tempSet intersectSet:[selected tags]];
 		}
-
+		
 		[self setTagsOfSelectedImages:[NSMutableArray arrayWithArray:[tempSet allObjects]]];
 		
 		// if a single image is selected, diplay it in the preview panel
@@ -261,7 +409,7 @@ NSString *const failedResponse = @"Error: Upload failed.";
 			};
 			
 			[prevQueue addOperationWithBlock:getImageFromDisk];
-			[saveSelectedButton setEnabled:YES];
+			[[self toolbarController] imagesSelected:YES];
 		}	
 		else 
 		{
@@ -271,9 +419,9 @@ NSString *const failedResponse = @"Error: Upload failed.";
 			
 			// make sure save button is in the correct state
 			if ([indexset count] == 0)
-				[saveSelectedButton setEnabled:NO];
+				[[self toolbarController] imagesSelected:NO];
 			else
-				[saveSelectedButton setEnabled:YES];
+				[[self toolbarController] imagesSelected:YES];
 		}
 		
 		if(!selecting)
@@ -393,6 +541,25 @@ NSString *const failedResponse = @"Error: Upload failed.";
 	[self didChange:NSKeyValueChangeInsertion valuesAtIndexes:ind forKey:@"allPosts"];
 }
 
+- (ToolbarController *)toolbarController
+{
+	if	([[myDocument tabStripModel] selectedTabContents] == self)
+		return [[[[self view] window] windowController] toolbarController];
+	else 
+		return nil;
+}
+
+- (TabStripController *)tabStripController
+{
+	return [[myDocument tabStripModel] controller];
+}
+
+- (void)incrementChangeCount
+{
+	int old = [self changeCount];
+	[self setChangeCount:old+1];
+}
+
 // -----------------------------------------------------------------------------------
 #pragma mark file renaming and saving methods
 
@@ -403,24 +570,49 @@ NSString *const failedResponse = @"Error: Upload failed.";
 	[oPanel setCanChooseFiles:NO];
 	[oPanel setCanCreateDirectories:YES];
 	[oPanel setAllowsMultipleSelection:NO];
-
-	void (^saveTriggerBlock)(NSInteger) = ^(NSInteger result)
-	{
-		if (result == NSFileHandlingPanelOKButton) 
-		{
-			[self saveImages:images withURL:[oPanel URL]];
-		}
-	};
 	
-	[oPanel beginSheetModalForWindow:theWindow 
-				   completionHandler:saveTriggerBlock];
+	GTMWindowSheetController *sheetController = 
+		[[[[self view] window] windowController] sheetController];
+	
+	SEL didEndSelector = @selector(openPanelDidEnd:returnCode:contextInfo:);
+	NSValue *selectorValue = [NSValue valueWithPointer:didEndSelector];
+	NSValue *contextValue = [NSValue valueWithPointer:images];
+	NSString *dirPath = [[NSUserDefaults standardUserDefaults] 
+								objectForKey:FRLastSaveLocation];
+	NSArray *parameters = [NSArray arrayWithObjects:dirPath, @"", 
+						   [NSArray array], [NSNull null], self, 
+						   selectorValue, contextValue, nil];
+	
+	[sheetController beginSystemSheet:oPanel 
+						 modalForView:[self ourView] 
+					   withParameters:parameters];
+	
+	[[self toolbarController] sheetOpened];
+	[self setSheetOpen:YES];
 }
-	  
+
+- (void)openPanelDidEnd:(NSOpenPanel *)panel 
+			 returnCode:(int)returnCode  
+			contextInfo:(void  *)contextInfo
+{
+	[self setSheetOpen:NO];
+	[[self toolbarController] sheetClosed];
+	
+	if (returnCode == NSFileHandlingPanelOKButton) 
+	{
+		[self saveImages:contextInfo withURL:[panel URL]];
+		NSString *location = [[panel URL] path];
+		NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
+		[defaults setObject:location forKey:FRLastSaveLocation];
+	}
+}
+
 // this gets run from a block when user clicks ok in the save sheet
 // so ui updates should be run back on the main thread
 - (void)saveImages:(NSArray *)images withURL:(NSURL *)target
 {
-	[self performSelectorOnMainThread:@selector(updateStatusLabel:) withObject:@"Saving…" waitUntilDone:YES];
+	[self performSelectorOnMainThread:@selector(updateStatusLabel:) 
+						   withObject:@"Saving…" waitUntilDone:YES];
 	NSNumber *current = [NSNumber numberWithDouble:0.0];
 	NSNumber *max = [NSNumber numberWithDouble:(double)[images count]];
 	NSArray *barStats = [NSArray arrayWithObjects:current, max, nil];
@@ -472,7 +664,11 @@ NSString *const failedResponse = @"Error: Upload failed.";
 	}
 	
 	if ([images isEqual:links]) // we saved all images, so mark the doc as clean
-		[self updateChangeCount:NSChangeCleared];
+		[self incrementChangeCount];
+		
+	//[myDocument updateChangeCount:NSChangeCleared];
+	[self setChangeCount:0];
+	
 	
 	// update UI to show result
 	NSString *s;
@@ -593,7 +789,7 @@ NSString *const failedResponse = @"Error: Upload failed.";
 	}
 	else // files were written, so add the tags
 		[self writeTagsToFile:url tags:tags rating:rating];
-
+	
 	return written;
 }
 
@@ -753,8 +949,7 @@ NSString *const failedResponse = @"Error: Upload failed.";
 				
 				// bring ourselves back to the front
 				[NSApp activateIgnoringOtherApps:YES];
-				[[[self windowControllers] lastObject] showWindow:self]; // does this work properly when
-																		 // there are several windows open?
+				[[[[self view] window] windowController] showWindow:self];
 			}
 		}
 	}
@@ -766,12 +961,12 @@ NSString *const failedResponse = @"Error: Upload failed.";
 		// check the url is a 4chan url
 		if ([self validURL:browserURLString])
 		{
-			[URLInput setStringValue:browserURLString];
-			[self startFetcher:self];
+			[self setUserEnteredURL:browserURLString];
+			[[self toolbarController] go:self];
 		}
 		else 
 		{
-			[statusText setTitleWithMnemonic:@"Front window is not a 4chan thread."];
+			[statusText setTitleWithMnemonic:@"Not a 4chan thread."];
 			[[NSApplication sharedApplication] requestUserAttention:NSInformationalRequest];
 			[self resetScriptParameters];
 		}
@@ -788,14 +983,16 @@ NSString *const failedResponse = @"Error: Upload failed.";
 
 - (IBAction)startFetcher:(id)sender
 {
+	[[self toolbarController] startedFetcher];
 	// get the url the user typed in
-	NSString *s = [URLInput stringValue];
+	NSString *s = [userEnteredURL copy];
 	
 	// if the urltext box is empty, do nothing
 	if ([s length] == 0)
 	{
 		[statusText setTitleWithMnemonic:@"Please enter a URL."];
-		[[URLInput window] makeFirstResponder:URLInput];
+		[[self toolbarController] focusURLInputField];
+		[[self toolbarController] fetchedAllImages];
 		return;
 	}
 	
@@ -806,13 +1003,14 @@ NSString *const failedResponse = @"Error: Upload failed.";
 	// the timer while a fetch was already happening
 	if ([operationQueue operationCount] > 0) 
 	{
-		if (sender == repeatingTimer) 
+		if (sender == repeatingTimer)
 			return;
 	}
 	
 	// check that the URL is a 4chan URL
 	if (![self validURL:s])
 	{
+		[[self toolbarController] fetchedAllImages];
 		[statusText setTitleWithMnemonic:@"Not a 4chan thread URL."];
 		return;
 	}
@@ -831,6 +1029,10 @@ NSString *const failedResponse = @"Error: Upload failed.";
 	// set first responder to the collectionview to make
 	// using quicklook easier and avoid extra input into url text box
 	[[ourCollectionView window] makeFirstResponder:ourCollectionView];
+	
+	[self setDownloadingThread:YES];
+	int indexu = [[self tabStripController] modelIndexForContentsView:[self view]];
+	[[self tabStripController] updateThrobberForTabContents:self atIndex:indexu];
 }
 
 
@@ -849,7 +1051,7 @@ NSString *const failedResponse = @"Error: Upload failed.";
 // action that is run when the user clicks the watch thread checkbox
 - (IBAction)toggleTimer:(id)sender
 {
-	if ([timerToggleCheckBox state] == NSOnState) 
+	if ([(NSButton *)sender state] == NSOnState) 
 	{
 		double interval = [[NSUserDefaults standardUserDefaults] boolForKey:FRIntervalKey];
 		NSTimeInterval t = interval * 60.0; // t is in seconds, interval is in mins
@@ -862,10 +1064,10 @@ NSString *const failedResponse = @"Error: Upload failed.";
 															 repeats:YES];
 			[self setRepeatingTimer:timer];
 		}
-
-		[timerSpinner startAnimation:self];
+		
+		[[self toolbarController] startedWatching];
 	}
-	else if ([timerToggleCheckBox state] == NSOffState)
+	else if ([(NSButton *)sender state] == NSOffState)
 	{
 		// if the user started the timer from a script
 		// but then manually turned it off, automatic saving is turned off
@@ -873,7 +1075,7 @@ NSString *const failedResponse = @"Error: Upload failed.";
 		
 		[[self repeatingTimer] invalidate];
 		[self setRepeatingTimer:nil];
-		[timerSpinner stopAnimation:self];
+		[[self toolbarController] stoppedWatching];
 	}
 }
 
@@ -936,27 +1138,27 @@ NSString *const failedResponse = @"Error: Upload failed.";
 	if (clickedSegment == 0) 
 	{
 		[viewSwitcher selectFirstTabViewItem:sender];
-		[theWindow makeFirstResponder:ourCollectionView];
+		[[ourView window] makeFirstResponder:ourCollectionView];
 	}
 	else if (clickedSegment == 1)
 	{
 		[viewSwitcher selectLastTabViewItem:sender];
-		[theWindow makeFirstResponder:fullThreadView];
+		[[ourView window] makeFirstResponder:fullThreadView];
 	}
 }
 
 - (void)switchToIconView:(id)sender
 {
-	[viewToggle setSelectedSegment:0];
+	[[self toolbarController] changeToIconView];
 	[viewSwitcher selectFirstTabViewItem:sender];
-	[theWindow makeFirstResponder:ourCollectionView];
+	[[ourView window] makeFirstResponder:ourCollectionView];
 }
 
 - (void)switchToFullThreadView:(id)sender
 {
-	[viewToggle setSelectedSegment:1];
+	[[self toolbarController] changeToFullThreadView];
 	[viewSwitcher selectLastTabViewItem:sender];
-	[theWindow makeFirstResponder:fullThreadView];
+	[[ourView window] makeFirstResponder:fullThreadView];
 }
 
 
@@ -973,7 +1175,7 @@ NSString *const failedResponse = @"Error: Upload failed.";
 		NSDictionary *args = [command evaluatedArguments];
 		scriptSaveLocation = [args objectForKey:@"ToLocation"];
 		scriptSaveSheet = [[args objectForKey:@"WantSaveSheet"] boolValue];
-
+		
 		[self checkForTags:args];
 		[self checkForRating:args];
 		
@@ -985,7 +1187,7 @@ NSString *const failedResponse = @"Error: Upload failed.";
 		{
 			willSave = TRUE;
 			[self fetchBrowserURL:self];
-			[timerToggleCheckBox setState:NSOnState];
+			[[self toolbarController] watcherStarted];
 			[self toggleTimer:self];
 		}
 	}
@@ -1061,7 +1263,7 @@ NSString *const failedResponse = @"Error: Upload failed.";
 		scriptSaveSheet = [[args objectForKey:@"WantSaveSheet"] boolValue];
 		
 		if (scriptSaveLocation)
-			[URLInput setStringValue:scriptURL];
+			[self setUserEnteredURL:scriptURL];
 		
 		[self checkForTags:args];
 		[self checkForRating:args];
@@ -1069,16 +1271,18 @@ NSString *const failedResponse = @"Error: Upload failed.";
 		if ([args objectForKey:@"Watch"]) 
 		{
 			willSave = [[args objectForKey:@"Watch"] boolValue];
-			[timerToggleCheckBox setState:NSOnState];
+			[[self toolbarController] watcherStarted];
 			[self toggleTimer:self];
 		}
 		
-		[self startFetcher:self];
+		// send this through the toolbarcontroller so it knows to update the 
+		// states of the buttons
+		[[self toolbarController] go:self];
 	}
 	else
 		NSLog(@"applescript command was not well formed"); // we should return a proper error to the applescripter here
 }
-					  
+
 - (void)resetScriptParameters
 {
 	willSave = FALSE;
@@ -1092,17 +1296,6 @@ NSString *const failedResponse = @"Error: Upload failed.";
 
 - (void)addNewImage:(id)i
 {	
-	// get the existing number in the dock badge
-	// (we can't use 'numberBeforeDownload' since there 
-	// may be other windows open)
-	NSDockTile *tile = [[NSApplication sharedApplication] dockTile];
-	NSString *oldBadge = [tile badgeLabel];
-	unsigned int oldNumber;
-	if (oldBadge == nil || [oldBadge length] == 0)
-		 oldNumber = 0;
-	else 
-		oldNumber = [oldBadge intValue];
-	
 	if ([i class] == [FRPostedImage class]) 
 	{
 		// add the object to our arrays
@@ -1111,10 +1304,10 @@ NSString *const failedResponse = @"Error: Upload failed.";
 		
 		[self addPostObject:i];
 		[fullThreadView setContent:allPosts];
+		[self setSizeOfAllFiles:(sizeOfAllFiles+[i filebytes])];
 		
 		[downloadBar incrementBy:1.0];
-		[self setSizeOfAllFiles:(sizeOfAllFiles+[i filebytes])];
-		[saveButton setEnabled:YES];
+		[[self toolbarController] imageWasDownloaded];
 		
 		if ([links count] == 1)
 		{
@@ -1131,25 +1324,39 @@ NSString *const failedResponse = @"Error: Upload failed.";
 		}
 		
 		// update dock badge if we added a new image, and we are not the main window
-		if (![theWindow isMainWindow] && [i theImage]) // should we update for new text only posts as well?
+		if (![[ourView window] isMainWindow] && [i theImage]) // should we update for new text only posts as well?
 		{
-			oldNumber++;
-			newImages++;
-			NSString *newBadge = [NSString stringWithFormat:@"%d", oldNumber];
-			[tile setBadgeLabel:newBadge];
+			NSDockTile *tile = [[NSApplication sharedApplication] dockTile];
+			@synchronized (tile)
+			{
+				// get the existing number in the dock badge
+				// (we can't use 'numberBeforeDownload' since there 
+				// may be other windows open)
+				
+				NSString *oldBadge = [tile badgeLabel];
+				unsigned int oldNumber;
+				if (oldBadge == nil || [oldBadge length] == 0)
+					oldNumber = 0;
+				else 
+					oldNumber = [oldBadge intValue];
+				
+				oldNumber++;
+				newImages++;
+				[[myDocument tabStripModel] changeNewImageCount:newImages forTabContents:self];
+				NSString *newBadge = [NSString stringWithFormat:@"%d", oldNumber];
+				[tile setBadgeLabel:newBadge];
+			}
 		}
 		
 		// increment change count, to make sure document gets marked as drity
-		[self updateChangeCount:NSChangeDone];
+		//[myDocument updateChangeCount:NSChangeDone];
+		[self incrementChangeCount];
 	}
 }
 
-// methods to update UI to show we are working
+// update UI to show we are working
 - (void)loadingPage
-{
-	[goButton setImage:[NSImage imageNamed:NSImageNameStopProgressTemplate]];
-	[goButton setAction:@selector(cancel:)];
-	[progressSpinner startAnimation:self];
+{	
 	[statusText setTitleWithMnemonic:@"Fetching Page…"];
 }
 
@@ -1171,18 +1378,19 @@ NSString *const failedResponse = @"Error: Upload failed.";
 	[downloadBar setMinValue:0];
 	[downloadBar setMaxValue:newnum];
 	[downloadBar setDoubleValue:0.0];
-	[postButton setEnabled:YES];
+	[[self toolbarController] threadFound];
 }
 
 // run when finished downloading all images
 - (void)fetchedAllImages
 {
-	[progressSpinner stopAnimation:self];
+	// tell the toolbar whats happening
+	[[self toolbarController] fetchedAllImages];
+
 	[downloadBar setMaxValue:1.0];
 	[downloadBar setDoubleValue:1.0];
 	[smallDownloadBar setDoubleValue:0.0];
-	[goButton setImage:[NSImage imageNamed:NSImageNameRefreshTemplate]];
-	[goButton setAction:@selector(startFetcher:)];
+
 	if ([allPosts count] > numberPostsBeforeDownload)
 	{
 		int numDownloaded = [links count] - numberBeforeDownload;
@@ -1191,7 +1399,7 @@ NSString *const failedResponse = @"Error: Upload failed.";
 		numberPostsBeforeDownload = [allPosts count];
 		
 		NSString *growlstat = [NSString stringWithFormat:
-						  @"%d new posts.\r Downloaded %d images.", numPostsDownloaded, numDownloaded];
+							   @"%d new posts.\r Downloaded %d images.", numPostsDownloaded, numDownloaded];
 		NSString *stat= [NSString stringWithFormat: @"Downloaded %d images.", numDownloaded];
 		[statusText setTitleWithMnemonic:stat];
 		if (growling) 
@@ -1224,6 +1432,10 @@ NSString *const failedResponse = @"Error: Upload failed.";
 		if (!willSave) 
 			[self resetScriptParameters];
 	}
+	
+	[self setDownloadingThread:NO];
+	int indexu = [[self tabStripController] modelIndexForContentsView:[self view]];
+	[[self tabStripController] updateThrobberForTabContents:self atIndex:indexu];
 }
 
 // if we found a title for the thread
@@ -1232,6 +1444,9 @@ NSString *const failedResponse = @"Error: Upload failed.";
 {
 	[self setValue:n
 			forKey:@"threadName"];
+	
+	// tell the tab model that the name change
+	[[myDocument tabStripModel] changeTabTitle:[self threadName] forTabContents:self];
 }
 
 // this method is run when FRLinkFetcher encounters a problem
@@ -1239,10 +1454,11 @@ NSString *const failedResponse = @"Error: Upload failed.";
 // during cancelling)
 - (void)returnedError:(NSString *)errorMessage
 {
-	[progressSpinner stopAnimation:self];
+	[[self toolbarController] fetchedAllImages];
+	
 	[downloadBar setDoubleValue:0.0];
-	[goButton setImage:[NSImage imageNamed:NSImageNameRefreshTemplate]];
 	[statusText setTitleWithMnemonic:errorMessage];
+	
 	[self resetScriptParameters];
 	
 	// provide additional notification to the user
@@ -1260,13 +1476,16 @@ NSString *const failedResponse = @"Error: Upload failed.";
 }
 
 - (void)wasCancelled
-{
-	[progressSpinner stopAnimation:self];
+{	
+	[[self toolbarController] fetchedAllImages];
+	
 	[downloadBar setDoubleValue:0.0];
-	[goButton setImage:[NSImage imageNamed:NSImageNameRefreshTemplate]];
-	[goButton setAction:@selector(startFetcher:)]; 
 	[statusText setTitleWithMnemonic:@"Cancelled."];
 	[self resetScriptParameters];
+	
+	[self setDownloadingThread:NO];
+	int indexu = [[self tabStripController] modelIndexForContentsView:[self view]];
+	[[self tabStripController] updateThrobberForTabContents:self atIndex:indexu];
 }
 
 - (BOOL)wantsAnimation;
@@ -1295,7 +1514,7 @@ NSString *const failedResponse = @"Error: Upload failed.";
 	
 	return [pasteboard setPropertyList:fileList forType:NSFilenamesPboardType];
 }
-		 
+
 // -----------------------------------------------------------------------------------------------------------
 #pragma mark quicklook
 // all the delegate methods required for quicklook
@@ -1403,18 +1622,20 @@ NSString *const failedResponse = @"Error: Upload failed.";
 
 - (IBAction)showTagsSheet:(id)sender
 {
-	[NSApp beginSheet:tagsSheet
-	   modalForWindow:theWindow
-		modalDelegate:nil
-	   didEndSelector:NULL
-		  contextInfo:NULL];
+	[[self tabStripController] attachConstrainedWindow:tagsSheet 
+										  toTab:self];
+	[[self toolbarController] sheetOpened];
+	[self setSheetOpen:YES];
 }
 
 - (IBAction)endTagsSheet:(id)sender
 {
+	[self setSheetOpen:NO];
+	[[self toolbarController] sheetClosed];
+	
 	// end any editing
 	[tagsSheet makeFirstResponder:tagsSheet];
-
+	
 	[NSApp endSheet:tagsSheet];
 	[tagsSheet orderOut:sender];
 	
@@ -1439,7 +1660,6 @@ NSString *const failedResponse = @"Error: Upload failed.";
 		[tagsController remove:sender];
 }
 
-// set new tags on selected images.
 - (void)setTagsOfSelectedImages:(NSMutableArray *)newArray
 {
 	if (newArray == tagsOfSelectedImages)
@@ -1449,17 +1669,12 @@ NSString *const failedResponse = @"Error: Upload failed.";
 	
 	for (tag *t in tagsOfSelectedImages)
 		[self startObservingTag:t];
-	
-	for (FRPostedImage *selected in selectedImages)
-		[selected setTags:[NSSet setWithArray:tagsOfSelectedImages]];
 }
 
 - (void)addScriptTagsToAllImages
 {
 	if (scriptTags)
-	{
 		[self addTags:scriptTags toImages:links];
-	}
 }
 
 - (void)addScriptRatingToAllImages
@@ -1483,7 +1698,7 @@ NSString *const failedResponse = @"Error: Upload failed.";
 	{
 		NSMutableSet *oldTags = [im tags];
 		[oldTags addObjectsFromArray:newTags];
-		if (removedTags)
+		if ([removedTags count] > 0)
 			[oldTags minusSet:removedTags];
 		[im tagsWereUpdated];
 	}
@@ -1591,129 +1806,25 @@ NSString *const failedResponse = @"Error: Upload failed.";
 }
 
 // --------------------------------------------------------------------------------------
-#pragma mark toolbar delegate methods
+#pragma mark status
 
-/*!
-    @method     
-    @abstract   toolbar delegate method
-    @discussion returns array of allowed toolbar items
-*/
-- (NSArray *)toolbarAllowedItemIdentifiers:(NSToolbar *)toolbar
+- (BOOL)isLoading
 {
-	NSArray *items = [NSArray arrayWithObjects:@"viewSwitcherTB", @"urlTB", @"goTB", @"quicklookTB", 
-					  @"saveTB", @"saveAllTB", @"postReply", NSToolbarFlexibleSpaceItemIdentifier, 
-					  @"watchingTB", nil];
-	return items;
-}
-
-/*!
-    @method     
-    @abstract   returns list of toolbar identifiers
-    @discussion returns list of toolbar identifiers
-*/
-- (NSArray *)toolbarDefaultItemIdentifiers:(NSToolbar *)toolbar
-{
-	NSArray *defaultItems = [NSArray arrayWithObjects:@"viewSwitcherTB", @"urlTB", @"goTB", @"quicklookTB", 
-							 @"saveTB", @"saveAllTB", @"postReply", NSToolbarFlexibleSpaceItemIdentifier, 
-							 @"watchingTB", nil];
-	return defaultItems;
-}
-
-/*!
-    @method     
-    @abstract   prepare toolbar items
-    @discussion constructs the toolbar items as they are requested
-*/
-- (NSToolbarItem *)toolbar:(NSToolbar *)toolbar 
-	 itemForItemIdentifier:(NSString *)itemIdentifier 
- willBeInsertedIntoToolbar:(BOOL)flag
-{
-	if (itemIdentifier == @"viewSwitcherTB") 
-	{
-		viewSwitcherToolbarItem = [[NSToolbarItem alloc] initWithItemIdentifier:@"viewSwitcherTB"];
-		[viewSwitcherToolbarItem setView:viewSwitcherToolbarView];
-		[viewSwitcherToolbarItem setLabel:@"View"];
-		[viewSwitcherToolbarItem setMaxSize:NSMakeSize(67.0, 25.0)];
-		[viewSwitcherToolbarItem setMinSize:NSMakeSize(67.0, 25.0)];
-		return viewSwitcherToolbarItem;
-	}
-	if (itemIdentifier == @"urlTB") 
-	{
-		urlToolbar = [[NSToolbarItem alloc] initWithItemIdentifier:@"urlTB"];
-		[urlToolbar setView:urlTextBoxView];
-		[urlToolbar setLabel:@"Thread URL"];
-		[urlToolbar setMaxSize:NSMakeSize(374.0, 25.0)];
-		[urlToolbar setMinSize:NSMakeSize(374.0, 22.0)];
-		return urlToolbar;
-	}
-	if (itemIdentifier == @"goTB") 
-	{
-		goToolbarButton = [[NSToolbarItem alloc] initWithItemIdentifier:@"goTB"];
-		NSImage *icon = [NSImage imageNamed:NSImageNameRefreshTemplate];
-		[goButton setImage:icon];
-		[goToolbarButton setView:goToolbarView];
-		[goToolbarButton setMaxSize:NSMakeSize(60.0, 25.0)];
-		[goToolbarButton setMinSize:NSMakeSize(60.0, 25.0)];
-		return goToolbarButton;
-	}
-	if (itemIdentifier == @"watchingTB") 
-	{
-		watchingToolbarItem = [[NSToolbarItem alloc] initWithItemIdentifier:@"watchingTB"];
-		[watchingToolbarItem setView:watchingToolbarView];
-		[watchingToolbarItem setMaxSize:NSMakeSize(80.0, 22.0)];
-		[watchingToolbarItem setMinSize:NSMakeSize(80.0, 22.0)];
-		[watchingToolbarItem setLabel:@"Watch Thread"];
-		return watchingToolbarItem;
-	}
-	if (itemIdentifier == @"saveTB") 
-	{
-		saveToolbarButton = [[NSToolbarItem alloc] initWithItemIdentifier:@"saveTB"];
-		[saveToolbarButton setView:saveToolbarView];
-		[saveToolbarButton setLabel:@"Save"];
-		[saveToolbarButton setMaxSize:NSMakeSize(38.0, 25.0)];
-		[saveToolbarButton setMinSize:NSMakeSize(38.0, 25.0)];
-		return saveToolbarButton;
-	}
-	if (itemIdentifier == @"saveAllTB") 
-	{
-		saveAllToolbarButton = [[NSToolbarItem alloc] initWithItemIdentifier:@"saveAllTB"];
-		[saveAllToolbarButton setView:saveAllToolbarView];
-		[saveAllToolbarButton setLabel:@"Save All"];
-		[saveAllToolbarButton setMaxSize:NSMakeSize(38.0, 25.0)];
-		[saveAllToolbarButton setMinSize:NSMakeSize(38.0, 25.0)];
-		return saveAllToolbarButton;
-	}
-	if (itemIdentifier == @"quicklookTB") 
-	{
-		quicklookToolbarItem = [[NSToolbarItem alloc] initWithItemIdentifier:@"quicklookTB"];
-		[quicklookToolbarItem setView:quicklookToolbarView];
-		[quicklookToolbarItem setLabel:@"Quicklook"];
-		[quicklookToolbarItem setMaxSize:NSMakeSize(38.0, 25.0)];
-		[quicklookToolbarItem setMinSize:NSMakeSize(38.0, 25.0)];
-		return quicklookToolbarItem;
-	}
-	if (itemIdentifier == @"postReply") 
-	{
-		postReplyToolbarItem = [[NSToolbarItem alloc] initWithItemIdentifier:@"postReply"];
-		[postReplyToolbarItem setView:postReplyToolbarView];
-		[postReplyToolbarItem setLabel:@"Post Reply"];
-		[postReplyToolbarItem setMaxSize:NSMakeSize(90.0, 25.0)];
-		[postReplyToolbarItem setMinSize:NSMakeSize(90.0, 25.0)];
-		return postReplyToolbarItem;
-	}
-	
-	return nil;
+	if ([self downloadingThread]) 
+		return YES;
+	else 
+		return NO;
 }
 
 #pragma mark posting stuff
 /*!
-    @method     
-    @abstract   show the sheet that lets the user post a reply
-    @discussion before sheet is shown, the comments field is pre-filled
-				with quote strings for the selected images.
-				when there is an error the user is given a chance to re-open
-				this sheet, in which case the old contents are preserved
-*/
+ @method     
+ @abstract   show the sheet that lets the user post a reply
+ @discussion before sheet is shown, the comments field is pre-filled
+ with quote strings for the selected images.
+ when there is an error the user is given a chance to re-open
+ this sheet, in which case the old contents are preserved
+ */
 - (IBAction)showPostSheet:(id)sender
 {
 	// if sender is the application delegate, we were told to run this method by growl,
@@ -1746,39 +1857,38 @@ NSString *const failedResponse = @"Error: Upload failed.";
 		}
 	}
 	
-	[NSApp beginSheet:postSheet
-	   modalForWindow:theWindow
-		modalDelegate:nil
-	   didEndSelector:NULL
-		  contextInfo:NULL];
-	
-	[postSheet makeFirstResponder:commentView];
+	[[self tabStripController] attachConstrainedWindow:postSheet
+												 toTab:self];
+	[self setSheetOpen:YES];
+	[[self toolbarController] sheetOpened];
 }
 
 /*!
-    @method     
-    @abstract   close post sheet
-    @discussion ends editing, then closes the post sheet
-*/
+ @method     
+ @abstract   close post sheet
+ @discussion ends editing, then closes the post sheet
+ */
 - (IBAction)endPostSheet:(id)sender
 {
+	[self setSheetOpen:NO];
+	[[self toolbarController] sheetClosed];
+	
 	// end any editing
-	[tagsSheet makeFirstResponder:postSheet];
+	[postSheet makeFirstResponder:postSheet];
 	
 	[NSApp endSheet:postSheet];
 	[postSheet orderOut:sender];
 }
 
 /*!
-    @method     
-    @abstract   post a reply
-    @discussion work is done on another thread
-*/
+ @method     
+ @abstract   post a reply
+ @discussion work is done on another thread
+ */
 - (IBAction)postReply:(id)sender
 {
 	[self endPostSheet:self];
-	[postButton setEnabled:NO];
-	[replySpinner startAnimation:self];
+	[[self toolbarController] postingReply];
 	
 	// big block that does the work of costructing and sending the post
 	void (^postImage)(void) = ^(void)
@@ -1787,8 +1897,7 @@ NSString *const failedResponse = @"Error: Upload failed.";
 		if (![self postComment] && ![imageToPost imageFileURL]) 
 		{
 			// just do nothing if there was no imput
-			[postButton setEnabled:YES];
-			[replySpinner stopAnimation:self];
+			[[self toolbarController] replyWasSent];
 			return;
 		}
 		
@@ -1854,19 +1963,21 @@ NSString *const failedResponse = @"Error: Upload failed.";
 			// clear the fields in the postSheet, ready for next time
 			[self postSent];
 		}
-		[postButton setEnabled:YES];
-		[replySpinner stopAnimation:self];
+
+		[[self toolbarController] replyWasSent];
 	};
 	
-	NSOperationQueue *postQueue = [[NSOperationQueue alloc] init];
+	if (!postQueue) 
+		postQueue = [[NSOperationQueue alloc] init];
+
 	[postQueue addOperationWithBlock:postImage];	
 }
 
 /*!
-    @method     
-    @abstract   determins error type from server response to post attempt
-    @discussion provides growl notification, or if growl isnot running, a modal dialog box
-*/
+ @method     
+ @abstract   determins error type from server response to post attempt
+ @discussion provides growl notification, or if growl isnot running, a modal dialog box
+ */
 - (void)uploadErrorTypeFromResponse:(NSString *)response
 {
 	NSString *err;
@@ -1938,12 +2049,12 @@ NSString *const failedResponse = @"Error: Upload failed.";
 }
 
 /*!
-    @method     
-    @abstract   clean up post sheet
-    @discussion used after a post was sent sucessfully. name & email
-				are stored in user defaults and persist across posts
-				so are not cleared
-*/
+ @method     
+ @abstract   clean up post sheet
+ @discussion used after a post was sent sucessfully. name & email
+ are stored in user defaults and persist across posts
+ so are not cleared
+ */
 - (void)postSent
 {
 	[imageToPost setImageWithURL:nil];
@@ -1978,96 +2089,6 @@ NSString *const failedResponse = @"Error: Upload failed.";
 - (IBAction)clearImageToPost:(id)sender
 {
 	[imageToPost setImageWithURL:nil];
-}
-
-// ------------------------------------------------------------------------------------
-#pragma mark window setup
-
-- (NSString *)windowNibName
-{
-	return @"WatcherDocument";
-}
-
-- (void)windowControllerDidLoadNib:(NSWindowController *) aController
-{
-	// create the border along the bottom of the window
-	// and format the textbox
-	[theWindow setContentBorderThickness:24.0 forEdge:NSMinYEdge];
-	NSFont *smaller = [NSFont fontWithName:@"Lucida Grande" size:11.0];
-	[numberOfImages setFont:smaller];
-	[[numberOfImages cell] setBackgroundStyle:NSBackgroundStyleRaised];
-	[numberOfImages setTitleWithMnemonic:@"No Images"];
-	
-	// initalise the toolbar
-	theToolbar = [[NSToolbar alloc] initWithIdentifier:@"mainToolbar"];
-	[theToolbar setDelegate:self];
-	[theToolbar setAllowsUserCustomization:YES];
-	[theWindow setToolbar:theToolbar];
-	
-	// initial states of buttons and text
-	[progressSpinner setUsesThreadedAnimation:YES];
-	[statusText setTitleWithMnemonic:@""];
-	[downloadBar setIndeterminate:FALSE];
-	[downloadBar setUsesThreadedAnimation:YES];
-	[saveButton setEnabled:NO];
-	[saveSelectedButton setEnabled:NO];
-	[postButton setEnabled:NO];
-	
-	[fullThreadView setContent:allPosts];
-	[fullThreadView setAllowsMultipleSelection:YES];
-	[fullThreadView setDrawsBackground:NO];
-	[fullThreadView setRowHeight:143.0];
-	[[NSNotificationCenter defaultCenter] addObserver:self
-											 selector:@selector(selectionDidChange:) 
-												 name:AMCollectionViewSelectionDidChangeNotification 
-											   object:nil];
-	
-	// give the IKImageview a blank image on startup
-	// to prevent it displaying garbage from the backing store
-	// see: http://openradar.appspot.com/7333961
-	NSImage *blank = [[NSImage alloc] init];
-	[imageToPost setImage:(CGImageRef)blank imageProperties:NULL];
-	
-    [super windowControllerDidLoadNib:aController];
-}
-
-- (NSData *)dataOfType:(NSString *)typeName error:(NSError **)outError
-{
-    if ( outError != NULL ) {
-		*outError = [NSError errorWithDomain:NSOSStatusErrorDomain 
-										code:unimpErr 
-									userInfo:NULL];
-	}
-	return nil;
-}
-
-- (BOOL)readFromData:(NSData *)data ofType:(NSString *)typeName error:(NSError **)outError
-{
-    if ( outError != NULL ) {
-		*outError = [NSError errorWithDomain:NSOSStatusErrorDomain 
-										code:unimpErr 
-									userInfo:NULL];
-	}
-    return YES;
-}		
-
-- (void)windowDidBecomeMain:(NSNotification *)notification
-{
-	NSDockTile *tile = [[NSApplication sharedApplication] dockTile];
-	NSString *oldBadge = [tile badgeLabel];
-	if (oldBadge) 
-	{
-		int newNum = [oldBadge intValue] - newImages;
-		if (newNum > 0) 
-		{
-			NSString *newBadge = [NSString stringWithFormat:@"%d", newNum];
-			[tile setBadgeLabel:newBadge];
-		}
-		else 
-			[tile setBadgeLabel:nil];
-		
-		newImages = 0;
-	}
 }
 
 // -----------------------------------------------------------------------------------------------
@@ -2110,78 +2131,7 @@ NSString *const failedResponse = @"Error: Upload failed.";
 }
 
 // ---------------------------------------------------------------------------------------
-#pragma mark menu setup
-
-- (BOOL)validateMenuItem:(NSMenuItem *)theMenuItem
-{
-	BOOL enabled = TRUE; // default state unless one 
-						 // of below criteria is met
-	
-	// Fetch Images menu item
-	if ([theMenuItem action] == @selector(startFetcher:))
-	{
-		// if we are already fetching, menu is disabled
-		if ([operationQueue operationCount] > 0) 
-			enabled = FALSE;
-	}
-	// Cancel Downloads menu item
-	if ([theMenuItem action] == @selector(cancel:)) 
-	{
-		// if we aren't fetching, menu is disabled
-		if ([operationQueue operationCount] == 0) 
-			enabled = FALSE;
-	}
-	// Save All… menu item
-	if ([theMenuItem action] == @selector(saveFiles:))
-	{
-		// diable if no images downloaded yet
-		if ([links count] == 0) 
-			enabled = FALSE;
-	}
-	// Save Selected… menu item
-	if ([theMenuItem action] == @selector(saveSelected:))
-	{
-		// diable if no images selected
-		if ([selectedIndexes count] == 0) 
-			enabled = FALSE;
-	}
-	// Clear All Tags
-	if ([theMenuItem action] == @selector(clearAllTags:))
-	{
-		// diable if no images downloaded
-		if ([links count] == 0)
-			enabled = FALSE;
-	}
-	if ([theMenuItem action] == @selector(clearSelectedTags:))
-	{
-		// diable if no images selected
-		if ([selectedIndexes count] == 0) 
-			enabled = FALSE;
-	}
-	if ([theMenuItem action] == @selector(showPostSheet:)) 
-	{
-		// disable if we haven't got a thread to post to yet
-		if (threadNumber == nil)
-			enabled = FALSE;
-	}
-	if ([theMenuItem action] == @selector(switchToIconView:) )
-	{
-		if ([viewSwitcher selectedTabViewItem] == iconTabItem) 
-			[theMenuItem setState:NSOnState];
-		else 
-			[theMenuItem setState:NSOffState];
-	}	
-	if ([theMenuItem action] == @selector(switchToFullThreadView:))
-	{
-		// disable if we are already in full thread view
-		if ([viewSwitcher selectedTabViewItem] == iconTabItem) 
-			[theMenuItem setState:NSOffState];
-		else 
-			[theMenuItem setState:NSOnState];
-	}
-	
-	return enabled;
-}
+#pragma mark sheet delegate
 
 // a delegate method for the tags sheet window, so that it uses
 // the nsundomanager from WatcherDocument.
@@ -2203,33 +2153,32 @@ NSString *const failedResponse = @"Error: Upload failed.";
 	
 	[self removeDownloadedFiles];
 	
-	// remove images from this document from the dock badge
+	// remove images from this tab from the dock badge
 	NSDockTile *tile = [[NSApplication sharedApplication] dockTile];
-	NSString *oldBadge = [tile badgeLabel];
-	if (oldBadge) 
+	@synchronized (tile)
 	{
-		int newNum = [oldBadge intValue] - newImages;
-		if (newNum > 0) 
+		NSString *oldBadge = [tile badgeLabel];
+		if (oldBadge) 
 		{
-			NSString *newBadge = [NSString stringWithFormat:@"%d", newNum];
-			[tile setBadgeLabel:newBadge];
+			int newNum = [oldBadge intValue] - newImages;
+			if (newNum > 0) 
+			{
+				NSString *newBadge = [NSString stringWithFormat:@"%d", newNum];
+				[tile setBadgeLabel:newBadge];
+			}
+			else 
+				[tile setBadgeLabel:nil];
 		}
-		else 
-			[tile setBadgeLabel:nil];
 	}
 	
 	if ([self repeatingTimer]) 
 		[repeatingTimer invalidate];
-	
-	[[NSGarbageCollector defaultCollector] collectExhaustively]; 
-	
-	[super close];
 }
 
 // clean up the temp directory we created
 - (void)removeDownloadedFiles
 {
-	NSLog(@"Removing Temporary Files");
+	//NSLog(@"Removing Temporary Files");
 	NSFileManager *fm = [[NSFileManager alloc] init];
 	
 	NSError *error = nil;
@@ -2255,14 +2204,7 @@ NSString *const failedResponse = @"Error: Upload failed.";
 @synthesize selectedImages; 
 @synthesize selectedIndexes;
 @synthesize sizeOfAllFiles;
-@synthesize theWindow;
 @synthesize theController;
-@synthesize urlTextBoxView;
-@synthesize watchingToolbarView; 
-@synthesize goToolbarView;
-@synthesize saveAllToolbarView;
-@synthesize saveToolbarView; 
-@synthesize quicklookToolbarView;
 @synthesize applicationDelegate;
 @synthesize ourCollectionView;
 @synthesize ourScrollView;
@@ -2272,13 +2214,21 @@ NSString *const failedResponse = @"Error: Upload failed.";
 @synthesize numberOfImages;
 @synthesize statusText;
 @synthesize downloadBar;
-@synthesize timerSpinner;
-@synthesize progressSpinner;
-@synthesize saveSelectedButton;
-@synthesize saveButton;
-@synthesize URLInput;
 @synthesize boardPostURL;
 @synthesize allPosts;
 @synthesize selectedPosts;
+@synthesize userEnteredURL;
+@synthesize operationQueue;
+@synthesize viewSwitcher;
+@synthesize iconTabItem;
+@synthesize postQueue;
+@synthesize myDocument;
+@synthesize ourView;
+@synthesize sheetOpen;
+@synthesize downloadingThread;
+@synthesize fullThreadController;
+@synthesize tabIndex;
+@synthesize imageToPost;
+@synthesize changeCount;
 
 @end

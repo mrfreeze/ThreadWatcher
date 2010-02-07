@@ -521,7 +521,8 @@
 		}
 		previousObject = object;
 	}
-	if ((selectedRow != NSNotFound) && previousObject) {
+	if ((selectedRow != NSNotFound) && previousObject) 
+	{
 		// select previous object
 		[self selectItemsForObjects:[NSArray arrayWithObject:previousObject]];
 		[self performSelector:@selector(scrollObjectToVisible:) withObject:previousObject afterDelay:0.0];
@@ -545,7 +546,8 @@
 		}
 		previousObject = object;
 	}
-	if ((selectedRow != NSNotFound) && previousObject) {
+	if ((selectedRow != NSNotFound) && previousObject) 
+	{
 		// select following object
 		[self selectItemsForObjects:[NSArray arrayWithObject:previousObject]];
 		[self performSelector:@selector(scrollObjectToVisible:) withObject:previousObject afterDelay:0.0];

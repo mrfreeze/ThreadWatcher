@@ -10,7 +10,7 @@
 #import <Quartz/Quartz.h>
 #import "doubleToMins.h"
 #import "Growl.framework/Headers/GrowlApplicationBridge.h"
-#import "WatcherDocument.h"
+#import "MyDocument.h"
 @class FRPreferenceController;
 
 // app delegate that allows us to open the quicklook panel
@@ -19,6 +19,10 @@
 @interface FRAppDelegate : NSObject <NSApplicationDelegate, GrowlApplicationBridgeDelegate>
 {
 	FRPreferenceController *preferenceController;
+	
+	IBOutlet NSMenuItem *closeTabMenuItem_;
+	IBOutlet NSMenuItem *closeWindowMenuItem_;
+	BOOL fileMenuUpdatePending_;
 	
 	/* 
 	 * because clickback from growl seems to send 
@@ -29,8 +33,14 @@
 }
 
 + (void)initialiseValueTransformers;
+
+// toggle the quicklook panel
 - (IBAction)togglePreviewPanel:(id)previewPanel;
+
+// open  the preferences window
 - (IBAction)showPreferencePanel:(id)sender;
+
+// growl delegate method that recieves clickbacks
 - (void)growlNotificationWasClicked:(id)clickContext;
 
 @end
