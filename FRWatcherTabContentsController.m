@@ -377,8 +377,8 @@ NSString *const failedResponse = @"Error: Upload failed.";
 		NSMutableSet *tempSet = [NSMutableSet set];
 		for (FRPostedImage *selected in selectedImages)
 		{
-			[tempSet unionSet:[selected tags]];
 			[tempSet intersectSet:[selected tags]];
+			[tempSet unionSet:[selected tags]];
 		}
 		
 		[self setTagsOfSelectedImages:[NSMutableArray arrayWithArray:[tempSet allObjects]]];
@@ -1660,6 +1660,7 @@ NSString *const failedResponse = @"Error: Upload failed.";
 		[tagsController remove:sender];
 }
 
+// setter for |tagsOfSelectedImages|, called when the selection changes
 - (void)setTagsOfSelectedImages:(NSMutableArray *)newArray
 {
 	if (newArray == tagsOfSelectedImages)
