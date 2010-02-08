@@ -228,51 +228,6 @@
 		9909F4E7110346D3007E0B6A /* FRTextView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FRTextView.m; sourceTree = "<group>"; };
 		9909F8671103C445007E0B6A /* BWToolkitFramework.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = BWToolkitFramework.framework; sourceTree = "<group>"; };
 		9909FD9D110616F5007E0B6A /* Appscript.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = Appscript.framework; sourceTree = SOURCE_ROOT; };
-		991A2E00111E0E8D00266571 /* BWAnchoredButton.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BWAnchoredButton.h; sourceTree = "<group>"; };
-		991A2E01111E0E8D00266571 /* BWAnchoredButtonBar.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BWAnchoredButtonBar.h; sourceTree = "<group>"; };
-		991A2E02111E0E8D00266571 /* BWAnchoredButtonCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BWAnchoredButtonCell.h; sourceTree = "<group>"; };
-		991A2E03111E0E8D00266571 /* BWAnchoredPopUpButton.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BWAnchoredPopUpButton.h; sourceTree = "<group>"; };
-		991A2E04111E0E8D00266571 /* BWAnchoredPopUpButtonCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BWAnchoredPopUpButtonCell.h; sourceTree = "<group>"; };
-		991A2E05111E0E8D00266571 /* BWGradientBox.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BWGradientBox.h; sourceTree = "<group>"; };
-		991A2E06111E0E8D00266571 /* BWHyperlinkButton.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BWHyperlinkButton.h; sourceTree = "<group>"; };
-		991A2E07111E0E8D00266571 /* BWHyperlinkButtonCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BWHyperlinkButtonCell.h; sourceTree = "<group>"; };
-		991A2E08111E0E8D00266571 /* BWInsetTextField.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BWInsetTextField.h; sourceTree = "<group>"; };
-		991A2E09111E0E8D00266571 /* BWSelectableToolbar.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BWSelectableToolbar.h; sourceTree = "<group>"; };
-		991A2E0A111E0E8D00266571 /* BWSheetController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BWSheetController.h; sourceTree = "<group>"; };
-		991A2E0B111E0E8D00266571 /* BWSplitView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BWSplitView.h; sourceTree = "<group>"; };
-		991A2E0C111E0E8D00266571 /* BWStyledTextField.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BWStyledTextField.h; sourceTree = "<group>"; };
-		991A2E0D111E0E8D00266571 /* BWStyledTextFieldCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BWStyledTextFieldCell.h; sourceTree = "<group>"; };
-		991A2E0E111E0E8D00266571 /* BWTexturedSlider.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BWTexturedSlider.h; sourceTree = "<group>"; };
-		991A2E0F111E0E8D00266571 /* BWTexturedSliderCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BWTexturedSliderCell.h; sourceTree = "<group>"; };
-		991A2E10111E0E8D00266571 /* BWTokenAttachmentCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BWTokenAttachmentCell.h; sourceTree = "<group>"; };
-		991A2E11111E0E8D00266571 /* BWTokenField.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BWTokenField.h; sourceTree = "<group>"; };
-		991A2E12111E0E8D00266571 /* BWTokenFieldCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BWTokenFieldCell.h; sourceTree = "<group>"; };
-		991A2E13111E0E8D00266571 /* BWToolbarItem.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BWToolbarItem.h; sourceTree = "<group>"; };
-		991A2E14111E0E8D00266571 /* BWToolbarShowColorsItem.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BWToolbarShowColorsItem.h; sourceTree = "<group>"; };
-		991A2E15111E0E8D00266571 /* BWToolbarShowFontsItem.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BWToolbarShowFontsItem.h; sourceTree = "<group>"; };
-		991A2E16111E0E8D00266571 /* BWToolkitFramework.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BWToolkitFramework.h; sourceTree = "<group>"; };
-		991A2E17111E0E8D00266571 /* BWTransparentButton.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BWTransparentButton.h; sourceTree = "<group>"; };
-		991A2E18111E0E8D00266571 /* BWTransparentButtonCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BWTransparentButtonCell.h; sourceTree = "<group>"; };
-		991A2E19111E0E8D00266571 /* BWTransparentCheckbox.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BWTransparentCheckbox.h; sourceTree = "<group>"; };
-		991A2E1A111E0E8D00266571 /* BWTransparentCheckboxCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BWTransparentCheckboxCell.h; sourceTree = "<group>"; };
-		991A2E1B111E0E8D00266571 /* BWTransparentPopUpButton.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BWTransparentPopUpButton.h; sourceTree = "<group>"; };
-		991A2E1C111E0E8D00266571 /* BWTransparentPopUpButtonCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BWTransparentPopUpButtonCell.h; sourceTree = "<group>"; };
-		991A2E1D111E0E8D00266571 /* BWTransparentScroller.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BWTransparentScroller.h; sourceTree = "<group>"; };
-		991A2E1E111E0E8D00266571 /* BWTransparentScrollView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BWTransparentScrollView.h; sourceTree = "<group>"; };
-		991A2E1F111E0E8D00266571 /* BWTransparentSlider.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BWTransparentSlider.h; sourceTree = "<group>"; };
-		991A2E20111E0E8D00266571 /* BWTransparentSliderCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BWTransparentSliderCell.h; sourceTree = "<group>"; };
-		991A2E21111E0E8D00266571 /* BWTransparentTableView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BWTransparentTableView.h; sourceTree = "<group>"; };
-		991A2E22111E0E8D00266571 /* BWTransparentTableViewCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BWTransparentTableViewCell.h; sourceTree = "<group>"; };
-		991A2E23111E0E8D00266571 /* BWTransparentTextFieldCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BWTransparentTextFieldCell.h; sourceTree = "<group>"; };
-		991A2E24111E0E8D00266571 /* BWUnanchoredButton.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BWUnanchoredButton.h; sourceTree = "<group>"; };
-		991A2E25111E0E8D00266571 /* BWUnanchoredButtonCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BWUnanchoredButtonCell.h; sourceTree = "<group>"; };
-		991A2E26111E0E8D00266571 /* NSApplication+BWAdditions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSApplication+BWAdditions.h"; sourceTree = "<group>"; };
-		991A2E27111E0E8D00266571 /* NSColor+BWAdditions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSColor+BWAdditions.h"; sourceTree = "<group>"; };
-		991A2E28111E0E8D00266571 /* NSImage+BWAdditions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSImage+BWAdditions.h"; sourceTree = "<group>"; };
-		991A2E29111E0E8D00266571 /* NSTokenAttachment.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NSTokenAttachment.h; sourceTree = "<group>"; };
-		991A2E2A111E0E8D00266571 /* NSTokenAttachmentCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NSTokenAttachmentCell.h; sourceTree = "<group>"; };
-		991A2E2B111E0E8D00266571 /* NSView+BWAdditions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSView+BWAdditions.h"; sourceTree = "<group>"; };
-		991A2E2C111E0E8D00266571 /* NSWindow+BWAdditions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSWindow+BWAdditions.h"; sourceTree = "<group>"; };
 		99402A0C10FA44BA009D38C6 /* OpenMetaAuthenticate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OpenMetaAuthenticate.h; sourceTree = "<group>"; };
 		99402A0D10FA44BA009D38C6 /* OpenMetaAuthenticate.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = OpenMetaAuthenticate.m; sourceTree = "<group>"; };
 		99402A1510FA454C009D38C6 /* Security.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Security.framework; path = System/Library/Frameworks/Security.framework; sourceTree = SDKROOT; };
@@ -567,7 +522,6 @@
 			children = (
 				9909EDBA1100CF7A007E0B6A /* AMCollectionView */,
 				99EDB73210F52D1100836B30 /* ASIHTTPRequest */,
-				991A2DFB111E0E7300266571 /* BWToolkit */,
 				99E7003310EFA539006533A7 /* openmeta */,
 				9995A7F810D2E5C000EE41A6 /* appscript-glue */,
 				99EDC59C10F923AD00836B30 /* Watcher */,
@@ -646,58 +600,6 @@
 				9909EDBE1100CF90007E0B6A /* AMCollectionViewItem.m */,
 			);
 			name = AMCollectionView;
-			sourceTree = "<group>";
-		};
-		991A2DFB111E0E7300266571 /* BWToolkit */ = {
-			isa = PBXGroup;
-			children = (
-				991A2E00111E0E8D00266571 /* BWAnchoredButton.h */,
-				991A2E01111E0E8D00266571 /* BWAnchoredButtonBar.h */,
-				991A2E02111E0E8D00266571 /* BWAnchoredButtonCell.h */,
-				991A2E03111E0E8D00266571 /* BWAnchoredPopUpButton.h */,
-				991A2E04111E0E8D00266571 /* BWAnchoredPopUpButtonCell.h */,
-				991A2E05111E0E8D00266571 /* BWGradientBox.h */,
-				991A2E06111E0E8D00266571 /* BWHyperlinkButton.h */,
-				991A2E07111E0E8D00266571 /* BWHyperlinkButtonCell.h */,
-				991A2E08111E0E8D00266571 /* BWInsetTextField.h */,
-				991A2E09111E0E8D00266571 /* BWSelectableToolbar.h */,
-				991A2E0A111E0E8D00266571 /* BWSheetController.h */,
-				991A2E0B111E0E8D00266571 /* BWSplitView.h */,
-				991A2E0C111E0E8D00266571 /* BWStyledTextField.h */,
-				991A2E0D111E0E8D00266571 /* BWStyledTextFieldCell.h */,
-				991A2E0E111E0E8D00266571 /* BWTexturedSlider.h */,
-				991A2E0F111E0E8D00266571 /* BWTexturedSliderCell.h */,
-				991A2E10111E0E8D00266571 /* BWTokenAttachmentCell.h */,
-				991A2E11111E0E8D00266571 /* BWTokenField.h */,
-				991A2E12111E0E8D00266571 /* BWTokenFieldCell.h */,
-				991A2E13111E0E8D00266571 /* BWToolbarItem.h */,
-				991A2E14111E0E8D00266571 /* BWToolbarShowColorsItem.h */,
-				991A2E15111E0E8D00266571 /* BWToolbarShowFontsItem.h */,
-				991A2E16111E0E8D00266571 /* BWToolkitFramework.h */,
-				991A2E17111E0E8D00266571 /* BWTransparentButton.h */,
-				991A2E18111E0E8D00266571 /* BWTransparentButtonCell.h */,
-				991A2E19111E0E8D00266571 /* BWTransparentCheckbox.h */,
-				991A2E1A111E0E8D00266571 /* BWTransparentCheckboxCell.h */,
-				991A2E1B111E0E8D00266571 /* BWTransparentPopUpButton.h */,
-				991A2E1C111E0E8D00266571 /* BWTransparentPopUpButtonCell.h */,
-				991A2E1D111E0E8D00266571 /* BWTransparentScroller.h */,
-				991A2E1E111E0E8D00266571 /* BWTransparentScrollView.h */,
-				991A2E1F111E0E8D00266571 /* BWTransparentSlider.h */,
-				991A2E20111E0E8D00266571 /* BWTransparentSliderCell.h */,
-				991A2E21111E0E8D00266571 /* BWTransparentTableView.h */,
-				991A2E22111E0E8D00266571 /* BWTransparentTableViewCell.h */,
-				991A2E23111E0E8D00266571 /* BWTransparentTextFieldCell.h */,
-				991A2E24111E0E8D00266571 /* BWUnanchoredButton.h */,
-				991A2E25111E0E8D00266571 /* BWUnanchoredButtonCell.h */,
-				991A2E26111E0E8D00266571 /* NSApplication+BWAdditions.h */,
-				991A2E27111E0E8D00266571 /* NSColor+BWAdditions.h */,
-				991A2E28111E0E8D00266571 /* NSImage+BWAdditions.h */,
-				991A2E29111E0E8D00266571 /* NSTokenAttachment.h */,
-				991A2E2A111E0E8D00266571 /* NSTokenAttachmentCell.h */,
-				991A2E2B111E0E8D00266571 /* NSView+BWAdditions.h */,
-				991A2E2C111E0E8D00266571 /* NSWindow+BWAdditions.h */,
-			);
-			name = BWToolkit;
 			sourceTree = "<group>";
 		};
 		994AD0641114C91F00EF6FA8 /* Tabbed Window Views */ = {
