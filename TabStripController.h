@@ -128,55 +128,82 @@ extern NSString *const kTabStripNumberOfTabsChanged;
 // closure.
 - (BOOL)inRapidClosureMode;
 
+// Called by the CAAnimation delegate when the tab completes the closing
+// animation.
 - (void)animationDidStopForController:(TabController *)controller
                              finished:(BOOL)finished;
 
+// Called when a notification is received from the model to insert a new tab
+// at |modelIndex|.
 - (void)insertTabWithContents:(FRWatcherTabContentsController *)contents
                       atIndex:(NSInteger)modelIndex
                  inForeground:(BOOL)inForeground;
 
+// Called when a notification is received from the model to select a particular
+// tab. Swaps in the content area associated with |newContents|.
 - (void)selectTabWithContents:(FRWatcherTabContentsController *)newContents
              previousContents:(FRWatcherTabContentsController *)oldContents
                       atIndex:(NSInteger)modelIndex
                   userGesture:(BOOL)wasUserGesture;
 
+// remove a tab from the strip and animate it out
 - (void)removeTabAtIndex:(int)indexu;
 
+// insert a placefolder at position given by |frame|
+// will relayout the tabs to make space
 - (void)insertPlaceholderForTab:(TabView *)tab
                           frame:(NSRect)frame
                   yStretchiness:(CGFloat)yStretchiness;
 
+// this will return no if there are pending animations
 - (BOOL)tabDraggingAllowed;
 
+// Move the given tab at index |from| in this window to the location of the
+// current placeholder.
 - (void)moveTabFromIndex:(NSInteger)from;
 
+// drop tab contents at the poitino of the current placeholder. Goes to the end if there 
+// is no placholder
 - (void)dropTabContents:(FRWatcherTabContentsController *)contents withFrame:(NSRect)frame;
 
+// Called when a tab is moved (usually by drag&drop). Keep our parallel arrays
+// in sync with the tab strip model.
 - (void)tabMovedWithContents:(FRWatcherTabContentsController *)contents
                    fromIndex:(NSInteger)modelFrom
                      toIndex:(NSInteger)modelTo;
 
+// Finds the Tab Contents Controller associated with the given index into the tab
+// model and swaps out the sole child of the contentArea to display its
+// contents.
 - (void)swapInTabAtIndex:(NSInteger)modelIndex;
 
+// Handles setting the title of the tab at |index| 
 - (void)setTabTitle:(NSString *)newTitle forTab:(int)index;
+
+// Handles setting the image count for the tab badge of the tab at |index| 
 - (void)setNewImageCount:(int)newCount forTab:(int)index;
-
-- (void)quickTabSelect:(FRWatcherTabContentsController *)newContents atIndex:(NSInteger)modelIndex;
-
-- (void)resetPlaceholder;
 
 - (NSInteger)modelIndexForContentsView:(NSView*)view;
 
+// attaches the given |window| as a sheet to the contents of the tab
 - (void)attachConstrainedWindow:(NSWindow *)window 
 						  toTab:(FRWatcherTabContentsController *)tabController;
 
-- (void)sheetDidEnd:(NSWindow *)sheet returnCode:(NSInteger)returnCode contextInfo:(void *)contextInfo;
+// called by the tab contents controller to let us know that a sheet ended
+// makes the tab draggable again
+- (void)sheetDidEnd:(NSWindow *)sheet 
+		 returnCode:(NSInteger)returnCode 
+		contextInfo:(void *)contextInfo;
 
+// Handles changing the throbber state
 - (void)updateThrobberForTabContents:(FRWatcherTabContentsController *)tabContentsController
 							 atIndex:(NSInteger)modelIndex;
 
+// tells the model to create a new tab and add it to the end of the tabstrip
 - (void)newTab:(id)sender;
 
+// Called when the user closes a tab. Asks the model to close the tab. |sender|
+// is the TabView that is potentially going away.
 - (void)closeTab:(id)sender;
 
 // Default height for tabs.

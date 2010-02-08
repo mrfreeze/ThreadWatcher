@@ -760,13 +760,13 @@ const int kPinnedTabWidth = 56;
 	[self layoutTabsWithAnimation:initialLayoutComplete_ regenerateSubviews:YES];
 }
 
-// Handles setting the title of the tab based on the given |contents|. Uses
-// a canned string if |contents| is NULL.
+// Handles setting the title of the tab at |index| 
 - (void)setTabTitle:(NSString *)newTitle forTab:(int)index 
 {
 	[[tabArray_ objectAtIndex:index] setTitle:newTitle];
 }
 
+// Handles setting the image count for the tab badge of the tab at |index| 
 - (void)setNewImageCount:(int)newCount forTab:(int)index
 {
 	[(TabController *)[tabArray_ objectAtIndex:index] setCount:newCount];
@@ -831,30 +831,8 @@ const int kPinnedTabWidth = 56;
 														object:self];
 }
 
-// change the tab selection without re-laying out the tabs
-// prevents tabs jumping around as we close them
-- (void)quickTabSelect:(FRWatcherTabContentsController *)newContents atIndex:(NSInteger)modelIndex
-{
-	if (newContents == currentTab_) 
-		return;
-	
-	// Take closing tabs into account.
-	NSInteger index = [self indexFromModelIndex:modelIndex];
-	
-	// De-select all other tabs and select the new tab.
-	int i = 0;
-	for (TabController *current in tabArray_) 
-	{
-		[current setSelected:(i == index) ? YES : NO];
-		++i;
-	}
-	
-	// Swap in the contents for the new tab.
-	[self swapInTabAtIndex:modelIndex];
-}
-
 // Called when a notification is received from the model to select a particular
-// tab. Swaps in the toolbar and content area associated with |newContents|.
+// tab. Swaps in the content area associated with |newContents|.
 - (void)selectTabWithContents:(FRWatcherTabContentsController *)newContents
              previousContents:(FRWatcherTabContentsController *)oldContents
                       atIndex:(NSInteger)modelIndex
@@ -1087,11 +1065,6 @@ const int kPinnedTabWidth = 56;
 		location++;
 	}
 	return location;
-}
-
-- (void)resetPlaceholder
-{
-	placeholderTab_ = nil;
 }
 
 // Move the given tab at index |from| in this window to the location of the

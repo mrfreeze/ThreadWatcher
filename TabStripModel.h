@@ -62,6 +62,8 @@
 - (void)moveTabContentsAtIndex:(int)from to:(int)toIndex select:(BOOL)select;
 
 // returns the tab contents controller of the currently selected tab
+// will return nil if there is no selected contents 
+// (for example when a tab is draged out of a window with a single tab)
 - (FRWatcherTabContentsController *)selectedTabContents;
 
 // create a new tab and instert it inot the tab strip at the end
