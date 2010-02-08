@@ -34,7 +34,7 @@
 
 - (void)setupInitialStates
 {
-	[goSpinner setUsesThreadedAnimation:YES];
+
 	[saveAllButton setEnabled:NO];
 	[saveSelectedButton setEnabled:NO];
 	[postReplyButton setEnabled:NO];
@@ -62,7 +62,6 @@
 
 - (void)fetchedAllImages
 {
-	[goSpinner stopAnimation:self];
 	[goButton setImage:[NSImage imageNamed:NSImageNameRefreshTemplate]];
 	[goButton setAction:@selector(go:)];
 }
@@ -144,7 +143,6 @@
 {
 	[goButton setImage:[NSImage imageNamed:NSImageNameStopProgressTemplate]];
 	[goButton setAction:@selector(cancel:)];
-	[goSpinner startAnimation:self];
 }
 
 // =======================================================================================
@@ -246,13 +244,11 @@
 		// to the correct states
 		if ([[tabController operationQueue] operationCount] > 0)
 		{
-			[goSpinner startAnimation:self];
 			[goButton setImage:[NSImage imageNamed:NSImageNameStopProgressTemplate]];
 			[goButton setAction:@selector(cancel:)];
 		}
 		else 
 		{
-			[goSpinner stopAnimation:self];
 			[goButton setImage:[NSImage imageNamed:NSImageNameRefreshTemplate]];
 			[goButton setAction:@selector(go:)];
 		}

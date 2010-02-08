@@ -31,7 +31,6 @@
 	IBOutlet NSSegmentedControl *viewSwitchButton;
 	IBOutlet NSTextField *urlTextBox;
 	IBOutlet NSButton *goButton;
-	IBOutlet NSProgressIndicator *goSpinner;
 	IBOutlet NSButton *quicklookButton;
 	IBOutlet NSButton *saveAllButton;
 	IBOutlet NSButton *saveSelectedButton;
