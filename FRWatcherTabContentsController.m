@@ -242,6 +242,10 @@ NSString *const failedResponse = @"Error: Upload failed.";
 											 alpha:1.0];
 	[bottomGradient setFillStartingColor:start];
 	[bottomGradient setFillEndingColor:end];
+	
+	// clear the badge in the tab
+	newImages = 0;
+	[[myDocument tabStripModel] changeNewImageCount:newImages forTabContents:self];
 }
 
 - (void)didBecomeSelected
@@ -259,7 +263,6 @@ NSString *const failedResponse = @"Error: Upload failed.";
 		[self updateDockBadge];
 		[self didResignMain];
 	}
-		
 }
 
 - (void)didResignMain
@@ -300,9 +303,6 @@ NSString *const failedResponse = @"Error: Upload failed.";
 			}
 			else 
 				[tile setBadgeLabel:nil];
-			
-			newImages = 0;
-			[[myDocument tabStripModel] changeNewImageCount:newImages forTabContents:self];
 		}
 	}
 }
@@ -662,13 +662,9 @@ NSString *const failedResponse = @"Error: Upload failed.";
 								waitUntilDone:YES];
 		}			
 	}
-	
-	if ([images isEqual:links]) // we saved all images, so mark the doc as clean
-		[self incrementChangeCount];
 		
 	//[myDocument updateChangeCount:NSChangeCleared];
 	[self setChangeCount:0];
-	
 	
 	// update UI to show result
 	NSString *s;

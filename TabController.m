@@ -242,19 +242,12 @@
 - (void)setCount:(int)newCount
 {
 	if (newCount == 0)
-	{
 		[(TabView *)[self view] expandTitleFrame];
-		[tabBadge_ setCount:newCount];
-		[tabBadge_ setNeedsDisplay:YES];
-		[[self view] setNeedsDisplay:YES];
-	}
 	else
-	{
 		[(TabView *)[self view] reduceTitleFrame];
-		[tabBadge_ setCount:newCount];
-		[tabBadge_ setNeedsDisplay:YES];
-		[[self view] setNeedsDisplay:YES];
-	}
+
+	[tabBadge_ setCount:newCount];
+	[tabBadge_ setNeedsDisplay:YES];
 }
 
 // Returns YES if we should show the icon. When tabs get too small, we clip

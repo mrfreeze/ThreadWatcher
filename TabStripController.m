@@ -769,7 +769,8 @@ const int kPinnedTabWidth = 56;
 // Handles setting the image count for the tab badge of the tab at |index| 
 - (void)setNewImageCount:(int)newCount forTab:(int)index
 {
-	[(TabController *)[tabArray_ objectAtIndex:index] setCount:newCount];
+	int newIndex = [self indexFromModelIndex:index];
+	[(TabController *)[tabArray_ objectAtIndex:newIndex] setCount:newCount];
 }
 
 // Called when a notification is received from the model to insert a new tab
