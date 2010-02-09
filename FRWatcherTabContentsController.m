@@ -1493,6 +1493,15 @@ NSString *const failedResponse = @"Error: Upload failed.";
 	return [[NSUserDefaults standardUserDefaults] boolForKey:FRAnimatedThumbsKey];
 }
 
+// called by the link fetcher when a thread 404s so we don't keep checking
+- (void)threadDied
+{
+	[self resetScriptParameters];
+	[[self repeatingTimer] invalidate];
+	[self setRepeatingTimer:nil];
+	[[self toolbarController] stoppedWatching];
+}
+
 // ---------------------------------------------------------------------------------------------------------
 #pragma mark collectionview delegate methods
 

@@ -22,6 +22,7 @@
 - (BOOL)wantsAnimation;
 - (void)setFetcher:(id)newFetcher;
 - (void)wasCancelled;
+- (void)threadDied;
 @end
 
 @interface FRLinkFetcher : NSOperation 

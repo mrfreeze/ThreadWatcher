@@ -229,6 +229,7 @@ extern NSString *const failedResponse;
 - (void)returnedError:(NSString *)errorMessage;
 - (BOOL)wantsAnimation;
 - (void)wasCancelled;
+- (void)threadDied;
 
 - (void)close;
 

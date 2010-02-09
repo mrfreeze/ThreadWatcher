@@ -372,6 +372,9 @@
 		[_delegate performSelectorOnMainThread:@selector(returnedError:)
 									withObject:@"Thread 404'd." 
 								 waitUntilDone:NO];
+		[_delegate performSelectorOnMainThread:@selector(threadDied)
+									withObject:nil 
+								 waitUntilDone:YES];
 		return;
 	}
 	
