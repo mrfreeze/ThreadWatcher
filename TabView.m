@@ -915,6 +915,76 @@ const CGFloat kRapidCloseDist = 2.5;
 	}
 }
 
+- (NSMenu *)menuForEvent:(NSEvent *)event
+{
+	NSMenu *theMenu = [[self class] defaultMenu];
+	return theMenu;
+}
 
++ (NSMenu *)defaultMenu
+{
+	NSMenu *theMenu = [[NSMenu alloc] initWithTitle:@"Tab Menu"];
+	[theMenu insertItemWithTitle:@"Reload"
+						  action:@selector(reloadTab)
+				   keyEquivalent:@"" 
+						 atIndex:0];
+	[theMenu insertItemWithTitle:@"Close Tab" 
+						  action:@selector(closeTab)
+				   keyEquivalent:@"" 
+						 atIndex:1];
+	[theMenu insertItemWithTitle:@"Close Other Tabs"
+						  action:@selector(closeOtherTabs)
+				   keyEquivalent:@""
+						 atIndex:2];
+	[theMenu insertItem:[NSMenuItem separatorItem]
+				atIndex:3];
+	[theMenu insertItemWithTitle:@"New Tab" 
+						  action:@selector(newTab)
+				   keyEquivalent:@""
+						 atIndex:4];
+	return theMenu;
+}
+
+- (void)reloadTab
+{
+	NSInteger modelIndex= [[(TabbedWindowController *)[[self window] 
+								 windowController] tabStripController] modelIndexForTabView:self];
+	TabStripModel *model = [(TabbedWindowController *)[[self window] windowController] tabStripModel];
+	[[model getTabContentsAt:modelIndex] startFetcher:self];
+}
+
+- (void)closeTab
+{
+	[[(TabbedWindowController *)[[self window] 
+	   windowController] tabStripController] closeTab:self];
+}
+
+- (void)closeOtherTabs
+{
+	NSInteger modelIndex= [[(TabbedWindowController *)[[self window] 
+									windowController] tabStripController] modelIndexForTabView:self];
+	TabStripModel *model = [(TabbedWindowController *)[[self window] windowController] tabStripModel];
+	[model closeAllExcept:modelIndex];
+}
+
+- (void)newTab
+{
+	NSInteger modelIndex= [[(TabbedWindowController *)[[self window] 
+									windowController] tabStripController] modelIndexForTabView:self];
+	TabStripModel *model = [(TabbedWindowController *)[[self window] windowController] tabStripModel];
+	[model addNewTabAtIndex:modelIndex+1];
+}
+
+- (BOOL)validateMenuItem:(NSMenuItem *)menuItem
+{
+	BOOL result = YES; // enable all by default
+	if ([menuItem action] == @selector(closeOtherTabs)) 
+	{
+		TabStripModel *model = [(TabbedWindowController *)[[self window] windowController] tabStripModel];
+		if ([model count] < 2)
+			result = NO;
+	}
+	return result;
+}
 
 @end

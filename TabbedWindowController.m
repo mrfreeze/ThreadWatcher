@@ -41,6 +41,7 @@ const int kScrollbarWidth = 25;
 @synthesize tabContentsArea;
 @synthesize toolbarController;
 @synthesize sheetController = sheetController_;
+@synthesize tabStripModel;
 
 - (id)initWithWindow:(NSWindow*)window 
 {

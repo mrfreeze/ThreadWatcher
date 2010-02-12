@@ -70,6 +70,7 @@
 @property (readonly, nonatomic) NSView *tabContentsArea;
 @property (readonly, retain) __weak ToolbarController *toolbarController;
 @property (readonly, retain) GTMWindowSheetController *sheetController;
+@property (readonly) TabStripModel *tabStripModel;
 
 // create a window for the given document, and create a single new blank tab
 - (id)initWithMyDocument:(MyDocument *)document;

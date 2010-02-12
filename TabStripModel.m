@@ -348,9 +348,26 @@
 	}
 }
 
+- (void)closeAllExcept:(NSInteger)index
+{
+	int total = [self count];
+	
+	for (int i = total-1; i > -1; i--)
+	{
+		if (i != index)
+			[self closeTabContentsAtIndex:i];
+	}
+}
 
 
 
 
+- (void)addNewTabAtIndex:(NSInteger)index
+{
+	FRWatcherTabContentsController *new = 
+		[[FRWatcherTabContentsController alloc] initWithNibName:@"WatcherTabContents"
+													   document:delegate];
+	[self insertTabContents:new atIndex:index bringToFront:YES];
+}
 
 @end

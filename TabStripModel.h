@@ -109,4 +109,10 @@
 // closed, and only after it has been hidden from view
 - (void)closeAllTabs;
 
+// close all the tabs, except the one at |index|
+- (void)closeAllExcept:(NSInteger)index;
+
+// create a new tab at |index|. Tabs at or after |index| will be shifted to the right
+- (void)addNewTabAtIndex:(NSInteger)index;
+
 @end
