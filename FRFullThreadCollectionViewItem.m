@@ -119,10 +119,10 @@
 	float grow = [layoutManager usedRectForTextContainer:textContainer].size.height;
 	
 	// make sure our view is always at least the minimum size
-	if (grow < 92.0) 
-		grow = 92.0;
+	if (grow < 99.0) 
+		grow = 99.0;
 	
-	viewHeight = 143.0 + (grow - 92.0);
+	viewHeight = 143.0 + (grow - 99.0);
  }
 
 - (NSSize)sizeForViewWithProposedSize:(NSSize)newSize
@@ -131,7 +131,12 @@
 		return NSZeroSize;
 
 	[self calcSize];
-	return NSMakeSize(newSize.width, viewHeight);
+	NSSize new = NSMakeSize(newSize.width, viewHeight);
+	
+	if (!NSEqualSizes(newSize, new))
+		[postTextField setNeedsDisplay:YES];
+		
+	return new;
 }
 
 // -----------------------------------------------------------------------------
