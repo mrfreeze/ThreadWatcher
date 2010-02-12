@@ -241,7 +241,6 @@ static const float kAnimationIntervalSeconds = 0.03;  // 30ms
 
 + (ThrobberTimer*)sharedThrobberTimer 
 {
-	// Leaked.  That's OK, it's scoped to the lifetime of the application.
 	static id sharedInstance = nil;
 	if (sharedInstance == nil) 
 		sharedInstance = [[ThrobberTimer alloc] init];
@@ -292,10 +291,8 @@ static const float kAnimationIntervalSeconds = 0.03;  // 30ms
 	// The call to [throbber animate] may result in the ThrobberView calling
 	// removeThrobber: if it decides it's done animating.  That would invalidate
 	// the iterator, making it impossible to correctly get to the next element
-	// in the set.  To prevent that from happening, a second iterator is used
-	// and incremented before calling [throbber animate].
-	
-	// Does just taking a snapshot solve this problem? 
+	// in the set.  To prevent that from happening, a snapshot of the array is used
+	// to iterate over.
 	
 	NSArray *snapshot = [throbbers_ allObjects];
 	NSEnumerator *enumerator = [snapshot objectEnumerator];

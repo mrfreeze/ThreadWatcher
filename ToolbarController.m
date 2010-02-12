@@ -217,7 +217,7 @@
 	else 
 	{
 		// Does the tab have any images downlaoded?
-		if ([[tabController links] count] == 0) 
+		if ([[tabController postedImages] count] == 0) 
 		{
 			[saveSelectedButton setEnabled:NO];
 			[saveAllButton setEnabled:NO];

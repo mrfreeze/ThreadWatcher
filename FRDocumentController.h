@@ -16,7 +16,10 @@
 
 }
 
+// create a new watcher document and display it
 - (IBAction)newWatcher:(id)sender;
+
+// create a new image dump document and display it
 - (IBAction)newDumper:(id)sender;
 
 @end

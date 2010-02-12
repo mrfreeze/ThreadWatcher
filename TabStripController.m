@@ -39,7 +39,7 @@ const NSTimeInterval kAnimationDuration = 0.12; // chromium source uses 0.2 here
 												// than the official chrome build
 const int kPinnedTabWidth = 56;
 
-// this is based on a C++ class in the chromium code, but probably doesn't
+// This is based on a C++ class in the chromium code, but probably doesn't
 // make much sense in the pure obj-c version, since we don't use 
 // scoped_nsobject, so we have to call end manually anyway. MF, 29/01/2010
 @interface ScopedNSAnimationContextGroup : NSObject
@@ -230,15 +230,12 @@ const int kPinnedTabWidth = 56;
 		// (see |-addSubviewToPermanentList:|) will be wiped out.
 		permanentSubviews_ = [[NSMutableArray alloc] init];
 		
-		// TODO(viettrungluu): WTF? "For some reason, if the view is present in the
-		// nib a priori, it draws correctly. If we create it in code and add it to
-		// the tab view, it draws with all sorts of crazy artifacts."
 		newTabButton_ = [view newTabButton];
 		[self addSubviewToPermanentList:newTabButton_];
 		[newTabButton_ setTarget:self];
 		[newTabButton_ setAction:@selector(newTab:)];
 		[newTabButton_ setTag:34014];
-		//[newTabButton_ setTag:IDC_NEW_TAB];
+
 		// Set the images from code because Cocoa fails to find them in our sub
 		// bundle during tests.
 		[newTabButton_ setImage:[NSImage imageNamed:kNewTabImage]];
@@ -331,10 +328,6 @@ const int kPinnedTabWidth = 56;
 		(TabbedWindowController *)[[switchView_ window] windowController];
 	GTMWindowSheetController *sheetController = [windowController sheetController];
 	[sheetController setActiveView:[controller ourView]];
-	
-	// Tell per-tab sheet manager about currently selected tab.
-	/*if (sheetController_) 
-		[sheetController_ setActiveView:newView];*/
 }
 
 
@@ -371,7 +364,7 @@ const int kPinnedTabWidth = 56;
 		return index;
 	
 	NSInteger i = 0;
-	for (TabController* controller in tabArray_) 
+	for (TabController *controller in tabArray_) 
 	{
 		if ([closingControllers_ containsObject:controller]) 
 		{
@@ -391,7 +384,7 @@ const int kPinnedTabWidth = 56;
 - (NSInteger)modelIndexForTabView:(NSView *)view 
 {
 	NSInteger index = 0;
-	for (TabController* current in tabArray_) 
+	for (TabController *current in tabArray_) 
 	{
 		// If |current| is closing, skip it.
 		if ([closingControllers_ containsObject:current])
@@ -532,11 +525,6 @@ const int kPinnedTabWidth = 56;
 // the ordering in the TabStripModel. This call isn't that expensive, though
 // it is O(n) in the number of tabs. Tabs will animate to their new position
 // if the window is visible and |animate| is YES.
-// TODO(pinkerton): Handle drag placeholders via proxy objects, perhaps a
-// subclass of TabContentsController with everything stubbed out or by
-// abstracting a base class interface.
-// TODO(pinkerton): Note this doesn't do too well when the number of min-sized
-// tabs would cause an overflow.
 - (void)layoutTabsWithAnimation:(BOOL)animate
              regenerateSubviews:(BOOL)doUpdate 
 {
@@ -788,7 +776,7 @@ const int kPinnedTabWidth = 56;
 		[tabContentsArray_ insertObject:contents atIndex:index];
 	
 	// Make a new tab and add it to the strip. Keep track of its controller.
-	TabController * newController = [self newTab];
+	TabController *newController = [self newTab];
 	if ([tabArray_ count] == index) 
 		[tabArray_ addObject:newController];
 	else 
@@ -799,8 +787,6 @@ const int kPinnedTabWidth = 56;
 	// Set the originating frame to just below the strip so that it animates
 	// upwards as it's being initially layed out. Oddly, this works while doing
 	// something similar in |-layoutTabs| confuses the window server.
-	// TODO(pinkerton): I'm not happy with this animiation either, but it's
-	// a little better that just sliding over (maybe?).
 	[newView setFrame:NSOffsetRect([newView frame],
 								   0, -[[self class] defaultTabHeight])];
 	
@@ -903,7 +889,7 @@ const int kPinnedTabWidth = 56;
 
 // Remove all knowledge about this tab and its associated controller, and remove
 // the view from the strip.
-- (void)removeTab:(TabController*)controller 
+- (void)removeTab:(TabController *)controller 
 {
 	NSUInteger index = [tabArray_ indexOfObject:controller];
 
@@ -914,18 +900,15 @@ const int kPinnedTabWidth = 56;
 	[tabContentsArray_ removeObjectAtIndex:index];
 	
 	// Remove the view from the tab strip.
-	NSView* tab = [controller view];
+	NSView *tab = [controller view];
 	[tab removeFromSuperview];
 	
 	// Remove ourself as an observer.
-	[[NSNotificationCenter defaultCenter]
-	 removeObserver:self
-	 name:NSViewDidUpdateTrackingAreasNotification
-	 object:tab];
+	[[NSNotificationCenter defaultCenter] removeObserver:self
+													name:NSViewDidUpdateTrackingAreasNotification
+												  object:tab];
 	
 	// Clear the tab controller's target.
-	// TODO(viettrungluu): [crbug.com/23829] Find a better way to handle the tab
-	// controller's target.
 	[controller setTarget:nil];
 	
 	if ([hoveredTab_ isEqual:tab])
@@ -1007,8 +990,7 @@ const int kPinnedTabWidth = 56;
 	[tabArray_ removeObjectAtIndex:from];
 	[tabArray_ insertObject:movedTabController atIndex:to];
 	
-	// TODO(viettrungluu): I don't think this is needed. Investigate. See also
-	// |-tabPinnedStateChangedWithContents:...|.
+	// Is this needed?
 	[self layoutTabs];
 }
 										 

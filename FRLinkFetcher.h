@@ -17,7 +17,7 @@
 - (void)fetchedAllImages;
 - (void)addNewImage:(id)i;
 - (void)setWindowNameTo:(NSString *)n;
-- (NSMutableArray *)links;
+- (NSMutableArray *)postedImages;
 - (void)returnedError:(NSString *)errorMessage;
 - (BOOL)wantsAnimation;
 - (void)setFetcher:(id)newFetcher;

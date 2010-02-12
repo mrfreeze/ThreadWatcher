@@ -26,14 +26,12 @@
 #define ICON_WIDTH 16
 #define ICON_HEIGHT_OFFSET 2
 
-
 @implementation FRTabBadge
 
 @synthesize count = count_;
 
-
-
-- (id)initWithFrame:(NSRect)frame {
+- (id)initWithFrame:(NSRect)frame
+{
     self = [super initWithFrame:frame];
     if (self) 
 	{
@@ -51,7 +49,6 @@
 	
 	NSString *badge = [NSString stringWithFormat:@"%d", [self count]];
 	NSFont *badgeFont = [NSFont fontWithName:@"Helvetica-Bold" size:11];
-	//NSDictionary *attributes = [NSDictionary dictionaryWithObject:badgeFont forKey:NSFontAttributeName];
 	NSSize badgeNumSize = [badge sizeWithAttributes:nil];
 	
 	// Calculate the badge's coordinates.
@@ -80,16 +77,7 @@
 	BOOL isWindowFront = [[self window] isMainWindow];
 	BOOL isTabSelected = [[(TabView *)[self superview] controller] selected];
 	
-	if (isWindowFront && isTabSelected && FALSE) // this was when the cell was selected
-	{
-		[[NSColor whiteColor] set];
-		[badgePath fill];
-		NSDictionary *dict = [[NSMutableDictionary alloc] init];
-		[dict setValue:badgeFont forKey:NSFontAttributeName];
-		[dict setValue:[NSColor alternateSelectedControlColor] forKey:NSForegroundColorAttributeName];
-		[badge drawAtPoint:NSMakePoint(badgeNumX,badgeY) withAttributes:dict];
-	}
-	else if (isWindowFront && isTabSelected) // // cell unselected
+	if (isWindowFront && isTabSelected) // selected. we don't use this
 	{
 		[[NSColor colorWithCalibratedRed:.53 green:.60 blue:.74 alpha:1.0] set];
 		[badgePath fill];

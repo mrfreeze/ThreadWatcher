@@ -48,7 +48,6 @@ IMP SwizzleImplementedInstanceMethods(Class aClass, const SEL originalSelector, 
 	const char* originalTypes = method_getTypeEncoding(original);
 	const char* alternateTypes = method_getTypeEncoding(alternate);
 
-
 	if (!originalTypes || !alternateTypes ||
 		strcmp(originalTypes, alternateTypes))
 		return NULL;

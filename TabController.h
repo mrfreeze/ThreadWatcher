@@ -14,7 +14,6 @@
 #import "TabView.h"
 #import "FRTabBadge.h"
 
-
 enum TabLoadingState {
 	kTabDone,
 	kTabLoading,
@@ -22,9 +21,7 @@ enum TabLoadingState {
 	kTabCrashed,
 };
 
-
 @class TabView;
-
 
 @interface TabController : NSViewController 
 {
@@ -92,7 +89,5 @@ enum TabLoadingState {
 
 // set the number to be shown in the tab badge
 - (void)setCount:(int)newCount;
-
-
 
 @end

@@ -16,7 +16,7 @@
 
 @interface TabStripModel : NSObject 
 {
-	NSMutableArray *objects; // array of objects representing the tabs
+	NSMutableArray *tabs;
 	
 	int selectedIndex;
 	int nextSelectedIndex;
@@ -35,7 +35,7 @@
 @property (readwrite) int selectedIndex;
 @property (readwrite, retain) __weak TabStripController *controller;
 @property (readwrite, retain) MyDocument *delegate;
-@property (readonly) NSMutableArray *objects;
+@property (readonly) NSMutableArray *tabs;
 
 // the number of tabs
 - (int)count;
@@ -85,7 +85,7 @@
 - (void)appendTabContents:(FRWatcherTabContentsController *)contents bringToFront:(BOOL)fore;
 
 // returns an array of FRWatcherTabContentsController objects, which are the tabs in the model
-- (NSArray *)objects;
+- (NSArray *)tabs;
 
 // change the title of |contents|, lets the tab strip controller know about the change
 - (void)changeTabTitle:(NSString *)title forTabContents:(FRWatcherTabContentsController *)contents;
@@ -113,6 +113,7 @@
 - (void)closeAllExcept:(NSInteger)index;
 
 // create a new tab at |index|. Tabs at or after |index| will be shifted to the right
+// |index| must be >= to the number of open tabs
 - (void)addNewTabAtIndex:(NSInteger)index;
 
 @end

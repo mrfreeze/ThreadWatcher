@@ -25,7 +25,6 @@
 @end
 
 
-
 @implementation WindowFrameView
 
 + (void)load 
@@ -98,9 +97,8 @@
 	// If this isn't the window class we expect, then pass it on to the
 	// original implementation.
 	[self drawRectOriginal:rect];
-	if (![[self window] isKindOfClass:[TabbedWindow class]]) {
+	if (![[self window] isKindOfClass:[TabbedWindow class]])
 		return;
-	}
 	
 	// Set up our clip
 	NSWindow* window = [self window];
@@ -140,7 +138,8 @@
 	NSImage* overlayImage = [theme valueForAttribute:@"overlay"
 											   style:GTMThemeStyleWindow
 											   state:state];
-	if (overlayImage) {
+	if (overlayImage) 
+	{
 		// Anchor to top-left and don't scale.
 		NSSize overlaySize = [overlayImage size];
 		NSRect imageFrame = NSMakeRect(0, 0, overlaySize.width, overlaySize.height);
@@ -162,9 +161,8 @@
 		mouseInGroup = [window mouseInGroup:widget];
 	}
 	else if ([super respondsToSelector:@selector(_mouseInGroup:)]) 
-	{
 		mouseInGroup = [super _mouseInGroup:widget];
-	}
+
 	return mouseInGroup;
 }
 
@@ -178,8 +176,5 @@
 		[window updateTrackingAreas];
 	}
 }
-
-
-
 
 @end

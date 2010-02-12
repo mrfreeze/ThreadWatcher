@@ -38,7 +38,6 @@ const NSTimeInterval kTearDuration = 0.333;
 const CGFloat kRapidCloseDist = 2.5;
 
 @interface TabView ()
-
 - (void)resetLastGlowUpdateTime;
 - (NSTimeInterval)timeElapsedSinceLastGlowUpdate;
 - (void)adjustGlowValue;
@@ -52,7 +51,6 @@ const CGFloat kRapidCloseDist = 2.5;
 @synthesize hoverAlpha = hoverAlpha_;
 @synthesize alertAlpha = alertAlpha_;
 @synthesize closing = closing_;
-
 
 - (id)initWithFrame:(NSRect)frame 
 {
@@ -135,6 +133,7 @@ const CGFloat kRapidCloseDist = 2.5;
 {
 	if ([self isClosing])
 		return NO;
+	
 	NSWindowController* controller = [sourceWindow_ windowController];
 	if ([controller isKindOfClass:[TabbedWindowController class]]) 
 	{
@@ -181,9 +180,6 @@ const CGFloat kRapidCloseDist = 2.5;
 
 // Handle clicks and drags in this button. We get here because we have
 // overridden acceptsFirstMouse: and the click is within our bounds.
-// TODO(pinkerton/alcor): This routine needs *a lot* of work to marry Cole's
-// ideas of dragging cocoa views between windows and how the Browser and
-// TabStrip models want to manage tabs.
 - (void)mouseDown:(NSEvent*)theEvent 
 {
 	if ([self isClosing])
@@ -234,9 +230,7 @@ const CGFloat kRapidCloseDist = 2.5;
 	
 	// If there's more than one potential window to be a drop target, we want to
 	// treat a drag of a tab just like dragging around a tab that's already
-	// detached. Note that unit tests might have |-numberOfTabs| reporting zero
-	// since the model won't be fully hooked up. We need to be prepared for that
-	// and not send them into the "magnetic" codepath.
+	// detached. 
 	NSArray* targets = [self dropTargetsForController:sourceController_];
 	moveWindowOnDrag_ =
 	([sourceController_ numberOfTabs] < 2 && ![targets count]) ||
@@ -257,12 +251,12 @@ const CGFloat kRapidCloseDist = 2.5;
 	
 	// Because we move views between windows, we need to handle the event loop
 	// ourselves. Ideally we should use the standard event loop.
-	while (1) {
+	while (1) 
+	{
 		theEvent =
         [NSApp nextEventMatchingMask:NSLeftMouseUpMask | NSLeftMouseDraggedMask
                            untilDate:[NSDate distantFuture]
                               inMode:NSDefaultRunLoopMode dequeue:YES];
-		//NSPoint thisPoint = [NSEvent mouseLocation];
 		NSEventType type = [theEvent type];
 		
 		if (type == NSLeftMouseDragged)
@@ -292,14 +286,6 @@ const CGFloat kRapidCloseDist = 2.5;
 			[self mouseUp:theEvent];
 			break;
 		} 
-		else 
-		{
-			// TODO(viettrungluu): [crbug.com/23830] We can receive right-mouse-ups
-			// (and maybe even others?) for reasons I don't understand. So we
-			// explicitly check for both events we're expecting, and log others. We
-			// should figure out what's going on.
-				
-		}
 	}
 }
 
@@ -322,7 +308,6 @@ const CGFloat kRapidCloseDist = 2.5;
 	
 	if (draggingWithinTabStrip_) 
 	{
-		//NSRect frame = [self frame];
 		NSPoint thisPoint = [NSEvent mouseLocation];
 		CGFloat stretchiness = thisPoint.y - dragOrigin_.y;
 		stretchiness = copysign(sqrtf(fabs(stretchiness))/sqrtf(kTearDistance),
@@ -351,9 +336,6 @@ const CGFloat kRapidCloseDist = 2.5;
 		}
 	}
 	
-	/*NSPoint lastPoint =
-    [[theEvent window] convertBaseToScreen:[theEvent locationInWindow]];*/
-	
 	// Do not start dragging until the user has "torn" the tab off by
 	// moving more than 3 pixels.
 	NSDate* targetDwellDate = nil;  // The date this target was first chosen.
@@ -372,10 +354,6 @@ const CGFloat kRapidCloseDist = 2.5;
 		NSRect windowFrame = [[target window] frame];
 		if (NSPointInRect(thisPoint, windowFrame)) 
 		{
-			// TODO(pinkerton): If bringing the window to the front immediately is too
-			// annoying, use another dwell date. Can't use |targetDwellDate| because
-			// this hasn't yet become the new target until the mouse is in the tab
-			// strip.
 			[[target window] orderFront:self];
 			NSRect tabStripFrame = [[target tabStripView] frame];
 			tabStripFrame.origin = [[target window]
@@ -391,7 +369,6 @@ const CGFloat kRapidCloseDist = 2.5;
 	// target and reset how long we've been hovering over this new one.
 	if (targetController_ != newTarget) 
 	{
-		//targetDwellDate = [NSDate date];
 		[targetController_ removePlaceholder];
 		targetController_ = newTarget;
 		if (!newTarget) 
@@ -438,9 +415,8 @@ const CGFloat kRapidCloseDist = 2.5;
 		NSEnableScreenUpdates();
 	}
 	
-	// TODO(pinkerton): http://crbug.com/25682 demonstrates a way to get here by
-	// some weird circumstance that doesn't first go through mouseDown:. We
-	// really shouldn't go any farther.
+	// Just in case we get here without a |sourceController_|
+	// or |draggedController_|
 	if (!draggedController_ || !sourceController_)
 		return;
 	
@@ -495,14 +471,12 @@ const CGFloat kRapidCloseDist = 2.5;
 	{
 		if (![[targetController_ window] isKeyWindow]) 
 		{
-			// && ([targetDwellDate timeIntervalSinceNow] < -REQUIRED_DWELL)) {
 			[[targetController_ window] orderFront:nil];
 			targetDwellDate = nil;
 		}
 		
 		// Compute where placeholder should go and insert it into the
 		// destination tab strip.
-		//	NSRect dropTabFrame = [[targetController_ tabStripView] frame];
 		TabView *draggedTabView = (TabView*)[draggedController_ selectedTabView];
 		NSRect tabFrame = [draggedTabView frame];
 		tabFrame.origin = [dragWindow_ convertBaseToScreen:tabFrame.origin];
@@ -516,9 +490,7 @@ const CGFloat kRapidCloseDist = 2.5;
 									 yStretchiness:0];
 	} 
 	else
-	{
 		[dragWindow_ makeKeyAndOrderFront:nil];
-	}
 		
 	// Adjust the visibility of the window background. If there is a drop target,
 	// we want to hide the window background so the tab stands out for
@@ -540,9 +512,6 @@ const CGFloat kRapidCloseDist = 2.5;
 	// Cancel any delayed -mouseDragged: requests that may still be pending.
 	[NSObject cancelPreviousPerformRequestsWithTarget:self];
 	
-	// TODO(pinkerton): http://crbug.com/25682 demonstrates a way to get here by
-	// some weird circumstance that doesn't first go through mouseDown:. We
-	// really shouldn't go any farther.
 	if (!sourceController_)
 		return;
 	
@@ -602,7 +571,8 @@ const CGFloat kRapidCloseDist = 2.5;
 		return;
 	
 	// Support middle-click-to-close.
-	if ([theEvent buttonNumber] == 2) {
+	if ([theEvent buttonNumber] == 2) 
+	{
 		// |-hitTest:| takes a location in the superview's coordinates.
 		NSPoint upLocation =
         [[self superview] convertPoint:[theEvent locationInWindow]
@@ -661,10 +631,6 @@ const CGFloat kRapidCloseDist = 2.5;
 	[path lineToPoint:NSMakePoint(bottomRight.x + 1, bottomRight.y - 2)];
 	
 	GTMTheme* theme = [(TabbedWindowController *)[[self window] windowController] theme];
-	
-	// Setting the pattern phase
-	/*NSPoint phase = [self gtm_themePatternPhase];
-	[context setPatternPhase:phase];*/
 	
 	if (!selected) 
 	{
@@ -787,7 +753,8 @@ const CGFloat kRapidCloseDist = 2.5;
 {
 	closing_ = closing;  // Safe because the property is nonatomic.
 						 // When closing, ensure clicks to the close button go nowhere.
-	if (closing) {
+	if (closing) 
+	{
 		[closeButton_ setTarget:nil];
 		[closeButton_ setAction:nil];
 	}
@@ -813,9 +780,6 @@ const CGFloat kRapidCloseDist = 2.5;
 	
 	NSTimeInterval elapsed = [self timeElapsedSinceLastGlowUpdate];
 	NSTimeInterval currentTime = [NSDate timeIntervalSinceReferenceDate];
-	
-	// TODO(viettrungluu): <http://crbug.com/30617> -- split off the stuff below
-	// into a pure function and add a unit test.
 	
 	CGFloat hoverAlpha = [self hoverAlpha];
 	if (isMouseInside_) 
@@ -869,7 +833,7 @@ const CGFloat kRapidCloseDist = 2.5;
 	if (chromeIsVisible_ == shouldBeVisible)
 		return;
 	
-	// TODO(pinkerton): There appears to be a race-condition in CoreAnimation
+	// There appears to be a race-condition in CoreAnimation
 	// where if we use animators to set the alpha values, we can't guarantee
 	// that we cancel them. This has the side effect of sometimes leaving
 	// the dragged window translucent or invisible. We should re-visit this,

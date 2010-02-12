@@ -46,5 +46,4 @@
 @property (readwrite) BOOL isPaused;
 @property (readwrite, copy) NSString *oldThreadNumber;
 
-
 @end

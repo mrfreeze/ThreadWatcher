@@ -75,7 +75,7 @@ extern NSString *const failedResponse;
 	MyDocument *myDocument;
 	
 	// data about the thread
-	NSMutableArray *links;
+	NSMutableArray *postedImages;
 	NSMutableArray *allPosts;
 	NSString *threadNumber;
 	NSString *threadName;
@@ -239,7 +239,7 @@ extern NSString *const failedResponse;
 - (BOOL)isLoading;
 
 @property (readwrite, retain) MyDocument *myDocument;
-@property (readwrite, retain) NSMutableArray *links;
+@property (readwrite, retain) NSMutableArray *postedImages;
 @property (readwrite, assign) FRLinkFetcher *fetcher;
 @property (readwrite, retain, nonatomic) NSIndexSet *selectedIndexes;
 @property (readwrite, retain, nonatomic) NSArray *selectedImages;

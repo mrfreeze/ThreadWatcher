@@ -61,7 +61,7 @@ NSString *const failedResponse = @"Error: Upload failed.";
 
 // add posts
 - (void)addPostObject:(id)anObject;
-- (void)addLinksObject:(id)anObject;
+- (void)addpostedImagesObject:(id)anObject;
 
 // saving
 - (void)saveImages:(NSArray *)images withURL:(NSURL *)target;
@@ -118,7 +118,7 @@ NSString *const failedResponse = @"Error: Upload failed.";
 		myDocument = doc;
 		//tabStripController = [[myDocument tabStripModel] controller];
 		
-		links = [[NSMutableArray alloc] init];
+		postedImages = [[NSMutableArray alloc] init];
 		allPosts = [[NSMutableArray alloc] init];
 		
 		operationQueue = [[NSOperationQueue alloc] init];
@@ -326,7 +326,7 @@ NSString *const failedResponse = @"Error: Upload failed.";
 	{
 		selectedPosts = [indexset copy];
 		
-		// now work out which items in the links array are selected
+		// now work out which items in the postedImages array are selected
 		// so we can pass the correct indexset to setSelectedIndexes
 		// and fill the selectedImages array with the correct objects
 		// this is going to be ugly ..... 
@@ -344,7 +344,7 @@ NSString *const failedResponse = @"Error: Upload failed.";
 					if (k == current_index) 
 					{
 						// we have reached the index item. the number of images so far (j)
-						// gives us the index in the links array
+						// gives us the index in the postedImages array
 						
 						[newIndexSet addIndex:j];
 						break;
@@ -370,7 +370,7 @@ NSString *const failedResponse = @"Error: Upload failed.";
 	if (![indexset isEqualToIndexSet:selectedIndexes])
 	{
 		selectedIndexes = [indexset copy];
-		[self setSelectedImages:[links objectsAtIndexes:selectedIndexes]];
+		[self setSelectedImages:[postedImages objectsAtIndexes:selectedIndexes]];
 		
 		// update our tags array with the tags that are 
 		// shared by all selected images
@@ -517,12 +517,12 @@ NSString *const failedResponse = @"Error: Upload failed.";
 
 // method to use when adding objects to ensure the
 // array controller is notified
-- (void)addLinksObject:(id)anObject
+- (void)addpostedImagesObject:(id)anObject
 {
-	NSIndexSet *ind = [NSIndexSet indexSetWithIndex:[links count]]; 
-	[self willChange:NSKeyValueChangeInsertion valuesAtIndexes:ind forKey:@"links"];
+	NSIndexSet *ind = [NSIndexSet indexSetWithIndex:[postedImages count]]; 
+	[self willChange:NSKeyValueChangeInsertion valuesAtIndexes:ind forKey:@"postedImages"];
 	
-	[links addObject:anObject];
+	[postedImages addObject:anObject];
 	
 	// if a scripter has supplied tags and rating, apply them
 	if (scriptTags) 
@@ -530,7 +530,7 @@ NSString *const failedResponse = @"Error: Upload failed.";
 	if (scriptRating) 
 		[anObject setRating:[scriptRating doubleValue]];
 	
-	[self didChange:NSKeyValueChangeInsertion valuesAtIndexes:ind forKey:@"links"];
+	[self didChange:NSKeyValueChangeInsertion valuesAtIndexes:ind forKey:@"postedImages"];
 }
 
 - (void)addPostObject:(id)anObject
@@ -663,7 +663,6 @@ NSString *const failedResponse = @"Error: Upload failed.";
 		}			
 	}
 		
-	//[myDocument updateChangeCount:NSChangeCleared];
 	[self setChangeCount:0];
 	
 	// update UI to show result
@@ -885,7 +884,7 @@ NSString *const failedResponse = @"Error: Upload failed.";
 // with unsaved changes (if the user clicks save)
 - (void)saveDocumentWithDelegate:(id)delegate didSaveSelector:(SEL)didSaveSelector contextInfo:(void *)contextInfo
 {
-	[self save:links];
+	[self save:postedImages];
 	if ([delegate respondsToSelector:didSaveSelector]) 
 	{
 		void (*delegateMethod)(id, SEL, id, BOOL, void *);
@@ -1012,7 +1011,7 @@ NSString *const failedResponse = @"Error: Upload failed.";
 	}
 	
 	// record how many images we already have
-	numberBeforeDownload = [links count];
+	numberBeforeDownload = [postedImages count];
 	numberPostsBeforeDownload = [allPosts count];
 	
 	// go fetch the images on another thread
@@ -1035,7 +1034,7 @@ NSString *const failedResponse = @"Error: Upload failed.";
 // save all images
 - (IBAction)saveFiles:(id)sender
 {
-	[self save:[self links]];
+	[self save:[self postedImages]];
 }
 
 // save selected images
@@ -1092,8 +1091,8 @@ NSString *const failedResponse = @"Error: Upload failed.";
 - (IBAction)clearAllTags:(id)sender
 {
 	[self setTagsOfSelectedImages:[NSMutableArray array]];
-	[self willChangeValueForKey:@"links"];
-	for (FRPostedImage *i in links)
+	[self willChangeValueForKey:@"postedImages"];
+	for (FRPostedImage *i in postedImages)
 	{
 		[i setTags:[NSMutableSet set]];
 		if ([i savedURL]) 
@@ -1103,7 +1102,7 @@ NSString *const failedResponse = @"Error: Upload failed.";
 						   rating:[i rating]];
 		}
 	}
-	[self didChangeValueForKey:@"links"];
+	[self didChangeValueForKey:@"postedImages"];
 }
 
 // clear the tags on the selected images, and any tags
@@ -1111,7 +1110,7 @@ NSString *const failedResponse = @"Error: Upload failed.";
 - (IBAction)clearSelectedTags:(id)sender
 {
 	[self setTagsOfSelectedImages:[NSMutableArray array]];
-	[self willChangeValueForKey:@"links"];
+	[self willChangeValueForKey:@"postedImages"];
 	for (FRPostedImage *i in selectedImages)
 	{
 		[i setTags:[NSMutableSet set]];
@@ -1122,7 +1121,7 @@ NSString *const failedResponse = @"Error: Upload failed.";
 						   rating:[i rating]];
 		}
 	}
-	[self didChangeValueForKey:@"links"];
+	[self didChangeValueForKey:@"postedImages"];
 }
 
 // -------------------------------------------------------------------------
@@ -1176,9 +1175,7 @@ NSString *const failedResponse = @"Error: Upload failed.";
 		[self checkForRating:args];
 		
 		if ([comName isEqual:@"fetchThreadFromBrowser"])
-		{
 			[self fetchBrowserURL:self];
-		}
 		else if ([comName isEqual:@"watchThreadFromBrowser"]) 
 		{
 			willSave = TRUE;
@@ -1187,8 +1184,8 @@ NSString *const failedResponse = @"Error: Upload failed.";
 			[self toggleTimer:self];
 		}
 	}
-	else
-		NSLog(@"applescript command was not well formed"); // we should return a proper error to the applescripter here
+	else // TODO: we should return a proper error to the applescripter here
+		NSLog(@"applescript command was not well formed"); 
 }
 
 - (void)checkForTags:(NSDictionary *)args
@@ -1239,14 +1236,14 @@ NSString *const failedResponse = @"Error: Upload failed.";
 		
 		if (scriptSaveLocation) 
 		{
-			[self saveImages:links withURL:scriptSaveLocation];
+			[self saveImages:postedImages withURL:scriptSaveLocation];
 			scriptSaveLocation = nil;
 		}
 		else
-			[self save:links];
+			[self save:postedImages];
 	}
-	else
-		NSLog(@"applescript command was not well formed"); // we should return a proper error to the applescripter here
+	else // TODO: we should return a proper error to the applescripter here
+		NSLog(@"applescript command was not well formed"); 
 }
 
 - (void)scriptFetch:(NSScriptCommand *)command
@@ -1275,8 +1272,9 @@ NSString *const failedResponse = @"Error: Upload failed.";
 		// states of the buttons
 		[[self toolbarController] go:self];
 	}
-	else
-		NSLog(@"applescript command was not well formed"); // we should return a proper error to the applescripter here
+	else  // TODO: we should return a proper error to the applescripter here
+		NSLog(@"applescript command was not well formed"); 
+	
 }
 
 - (void)resetScriptParameters
@@ -1296,7 +1294,7 @@ NSString *const failedResponse = @"Error: Upload failed.";
 	{
 		// add the object to our arrays
 		if ([i theImage]) 
-			[self addLinksObject:i];
+			[self addpostedImagesObject:i];
 		
 		[self addPostObject:i];
 		[fullThreadView setContent:allPosts];
@@ -1305,7 +1303,7 @@ NSString *const failedResponse = @"Error: Upload failed.";
 		[downloadBar incrementBy:1.0];
 		[[self toolbarController] imageWasDownloaded];
 		
-		if ([links count] == 1)
+		if ([postedImages count] == 1)
 		{
 			NSString *newLabel = [NSString stringWithFormat:
 								  @"1 Image, %@", [FRPostedImage stringFromFileSize:[i filebytes]]];
@@ -1314,14 +1312,14 @@ NSString *const failedResponse = @"Error: Upload failed.";
 		else
 		{
 			NSString *newLabel = [NSString stringWithFormat:
-								  @"%d Images, %@", [links count],
+								  @"%d Images, %@", [postedImages count],
 								  [FRPostedImage stringFromFileSize:[self sizeOfAllFiles]]];
 			[numberOfImages setTitleWithMnemonic:newLabel];
 		}
 		
 		// update dock badge if we added a new image, and we are not the main window
-		if (![[ourView window] isMainWindow] && [i theImage]) // should we update for new text only posts as well?
-		{
+		// should we update for new text only posts as well?
+		if (![[ourView window] isMainWindow] && [i theImage]) 		{
 			NSDockTile *tile = [[NSApplication sharedApplication] dockTile];
 			@synchronized (tile)
 			{
@@ -1344,8 +1342,6 @@ NSString *const failedResponse = @"Error: Upload failed.";
 			}
 		}
 		
-		// increment change count, to make sure document gets marked as drity
-		//[myDocument updateChangeCount:NSChangeDone];
 		[self incrementChangeCount];
 	}
 }
@@ -1365,7 +1361,7 @@ NSString *const failedResponse = @"Error: Upload failed.";
 	// changed the url to a different thread
 	// so show show full progress, otherwise, 
 	// try to show how many additional files are going to be downloaded
-	if ([max doubleValue] < [links count]) 
+	if ([max doubleValue] < [postedImages count]) 
 		newnum = [max doubleValue];
 	else 
 		newnum = [max doubleValue] - (double)[allPosts count];
@@ -1389,9 +1385,9 @@ NSString *const failedResponse = @"Error: Upload failed.";
 
 	if ([allPosts count] > numberPostsBeforeDownload)
 	{
-		int numDownloaded = [links count] - numberBeforeDownload;
+		int numDownloaded = [postedImages count] - numberBeforeDownload;
 		int numPostsDownloaded = [allPosts count] - numberPostsBeforeDownload;
-		numberBeforeDownload = [links count];
+		numberBeforeDownload = [postedImages count];
 		numberPostsBeforeDownload = [allPosts count];
 		
 		NSString *growlstat = [NSString stringWithFormat:
@@ -1411,11 +1407,11 @@ NSString *const failedResponse = @"Error: Upload failed.";
 		
 		// check if extra parameters were provided with a script command
 		if (scriptSaveSheet)
-			[self save:links];
+			[self save:postedImages];
 		else if (scriptSaveLocation)
 		{
 			// scripter provided folder to save to
-			[self saveImages:links 
+			[self saveImages:postedImages 
 					 withURL:scriptSaveLocation];
 		}
 		// reset the location unless we are watching the thread
@@ -1511,11 +1507,9 @@ NSString *const failedResponse = @"Error: Upload failed.";
 					   owner:nil];
 	
 	NSMutableArray *fileList = [[NSMutableArray alloc] init];
-	NSArray *draggedObjects = [links objectsAtIndexes:indexes];
+	NSArray *draggedObjects = [postedImages objectsAtIndexes:indexes];
 	for (FRPostedImage *im in draggedObjects)
-	{
 		[fileList addObject:[[im localURL] path]];
-	}
 	
 	return [pasteboard setPropertyList:fileList forType:NSFilenamesPboardType];
 }
@@ -1577,7 +1571,7 @@ NSString *const failedResponse = @"Error: Upload failed.";
 // provides the rect on screen from which the quicklook panel will zoom
 - (NSRect)previewPanel:(QLPreviewPanel *)panel sourceFrameOnScreenForPreviewItem:(id <QLPreviewItem>)item
 {		
-	NSInteger indexu = [links indexOfObject:item];
+	NSInteger indexu = [postedImages indexOfObject:item];
 	if (indexu == NSNotFound) 
 		return NSZeroRect;
 	
@@ -1592,7 +1586,7 @@ NSString *const failedResponse = @"Error: Upload failed.";
 		
 		// convert icon rect to screen coordinates
 		// since our collectionview is using a coreimage backing layer, we have to manually 
-		// convert through the scrollview and adjust the mosition for some reason.
+		// convert through the scrollview and adjust the position for some reason.
 		// (there must be a proper way to convert the co-ordinates, but this works ok for now)
 		
 		iconRect = [ourScrollView convertRect:iconRect fromView:ourCollectionView];
@@ -1680,26 +1674,26 @@ NSString *const failedResponse = @"Error: Upload failed.";
 - (void)addScriptTagsToAllImages
 {
 	if (scriptTags)
-		[self addTags:scriptTags toImages:links];
+		[self addTags:scriptTags toImages:postedImages];
 }
 
 - (void)addScriptRatingToAllImages
 {
 	if (scriptRating) 
 	{
-		[self willChangeValueForKey:@"links"];
-		for (FRPostedImage *i in links)
+		[self willChangeValueForKey:@"postedImages"];
+		for (FRPostedImage *i in postedImages)
 		{
 			[i setRating:[scriptRating doubleValue]];
 		}
-		[self didChangeValueForKey:@"links"];
+		[self didChangeValueForKey:@"postedImages"];
 	}
 }
 
 // method where we update the tags on images
 - (void)addTags:(NSMutableArray *)newTags toImages:(NSArray *)targetImages
 {
-	[self willChangeValueForKey:@"links"];
+	[self willChangeValueForKey:@"postedImages"];
 	for (FRPostedImage *im in targetImages)
 	{
 		NSMutableSet *oldTags = [im tags];
@@ -1709,7 +1703,7 @@ NSString *const failedResponse = @"Error: Upload failed.";
 		[im tagsWereUpdated];
 	}
 	[removedTags removeAllObjects];
-	[self didChangeValueForKey:@"links"];
+	[self didChangeValueForKey:@"postedImages"];
 }
 
 - (void)insertObject:(tag *)t inTagsOfSelectedImagesAtIndex:(int)indexu
@@ -1772,9 +1766,8 @@ NSString *const failedResponse = @"Error: Upload failed.";
     id oldValue = [change objectForKey:NSKeyValueChangeOldKey];
 	
     if (oldValue == [NSNull null])
-	{
         oldValue = nil;
-    }
+
 	[[undo prepareWithInvocationTarget:self] changeKeyPath:keyPath
 												  ofObject:object
 												   toValue:oldValue];
@@ -1910,16 +1903,18 @@ NSString *const failedResponse = @"Error: Upload failed.";
 		ASIFormDataRequest *postRequest = [ASIFormDataRequest requestWithURL:[self boardPostURL]];
 		[postRequest setRequestMethod:@"POST"];
 		[postRequest setPostValue:threadNumber forKey:@"resto"];
-		[postRequest setPostValue:[[NSUserDefaults standardUserDefaults] stringForKey:FRPostName] forKey:@"name"];
-		[postRequest setPostValue:[[NSUserDefaults standardUserDefaults] stringForKey:FRPostEmail] forKey:@"email"];
+		[postRequest setPostValue:[[NSUserDefaults standardUserDefaults] stringForKey:FRPostName] 
+						   forKey:@"name"];
+		[postRequest setPostValue:[[NSUserDefaults standardUserDefaults] stringForKey:FRPostEmail] 
+						   forKey:@"email"];
 		[postRequest addRequestHeader:@"User-Agent" 
 								value:[[NSUserDefaults standardUserDefaults] stringForKey:FRUserAgent]];
 		[postRequest setPostValue:[self postSubject] forKey:@"sub"];
 		[postRequest setPostValue:[self postComment] forKey:@"com"];
+		
 		if ([imageToPost imageFileURL]) 
-		{
 			[postRequest setFile:[[imageToPost imageFileURL] path] forKey:@"upfile"];
-		}
+		
 		[postRequest setPostValue:@"" forKey:@"pwd"];
 		[postRequest setPostValue:@"regist" forKey:@"mode"];
 		[postRequest setPostValue:@"submit" forKey:@"submit"];
@@ -2105,10 +2100,9 @@ NSString *const failedResponse = @"Error: Upload failed.";
 		 ofSubviewAt:(NSInteger)dividerIndex
 {
 	// minimum size of the top view
-	// shouold be total hight of the splitview, minus 82 (the max for the bottom view)
+	// should be total hight of the splitview, minus 82 (the max for the bottom view)
 	NSSize splitViewSize = [splitView frame].size;
 	int totalHeight = splitViewSize.height;
-	
 	
 	return totalHeight - 83;
 }
@@ -2200,7 +2194,7 @@ NSString *const failedResponse = @"Error: Upload failed.";
 
 // ------------------------------------------------------------------------------------
 
-@synthesize links;
+@synthesize postedImages;
 @synthesize threadName;
 @synthesize repeatingTimer;
 @synthesize fetcher;
@@ -2214,7 +2208,8 @@ NSString *const failedResponse = @"Error: Upload failed.";
 @synthesize applicationDelegate;
 @synthesize ourCollectionView;
 @synthesize ourScrollView;
-@synthesize tagsSheet, tagTableView;
+@synthesize tagsSheet;
+@synthesize tagTableView;
 @synthesize tagsController;
 @synthesize previewViewer;
 @synthesize numberOfImages;

@@ -30,7 +30,7 @@ extern NSString *const kTabStripNumberOfTabsChanged;
 	TabStrip *tabStripView_;
 	NSView *switchView_;
 	NSView *dragBlockingView_; // avoid bad window server drags
-	NSButton *newTabButton_; // weak, obtained from the nib.
+	NSButton *newTabButton_;
 	
 	// TRacks the newTabButton for rollovers
 	NSTrackingArea *newTabTrackingArea_;
@@ -76,7 +76,7 @@ extern NSString *const kTabStripNumberOfTabsChanged;
 	// A tracking area that's the size of the tab strip used to be notified
 	// when the mouse moves in the tab strip
 	NSTrackingArea *trackingArea_;
-	TabView *hoveredTab_;  // weak. Tab that the mouse is hovering over
+	TabView *hoveredTab_;  // Tab that the mouse is hovering over
 	
 	// Array of subviews which are permanent (and which should never be removed),
 	// such as the new-tab button, but *not* the tabs themselves.

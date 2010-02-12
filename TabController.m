@@ -74,7 +74,6 @@
 	// titleView_ under those conditions.
 	NSRect titleFrame = [titleView_ frame];
 	iconTitleXOffset_ = 20;
-	//NSMinX(titleFrame) - NSMinX(originalIconFrame_);
 	titleCloseWidthOffset_ = NSMaxX([closeButton_ frame]) - NSMaxX(titleFrame);
 	
 	[self internalSetSelected:selected_];
@@ -178,15 +177,15 @@
 {
 	NSColor* titleColor = nil;
 	GTMTheme* theme = [[self view] gtm_theme];
-	if (![self selected]) {
+	if (![self selected]) 
 		titleColor = [theme textColorForStyle:GTMThemeStyleTabBarDeselected
 										state:GTMThemeStateActiveWindow];
-	}
+
 	// Default to the selected text color unless told otherwise.
-	if (!titleColor) {
+	if (!titleColor)
 		titleColor = [theme textColorForStyle:GTMThemeStyleTabBarSelected
 										state:GTMThemeStateActiveWindow];
-	}
+
 	[titleView_ setTextColor:titleColor ? titleColor : [NSColor textColor]];
 }
 
@@ -251,7 +250,7 @@
 }
 
 // Returns YES if we should show the icon. When tabs get too small, we clip
-// the favicon before the close button for selected tabs, and prefer the
+// the icon before the close button for selected tabs, and prefer the
 // favicon for unselected tabs.  The icon can also be suppressed more directly
 // by clearing iconView_.
 - (BOOL)shouldShowIcon 

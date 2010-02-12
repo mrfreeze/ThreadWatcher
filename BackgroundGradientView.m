@@ -14,12 +14,8 @@
 #import "TabbedWindowController.h"
 
 @interface BackgroundGradientView ()
-
 - (GTMTheme *)theme;
-
 @end
-
-
 
 @implementation BackgroundGradientView
 @synthesize showsDivider = showsDivider_;
@@ -86,20 +82,13 @@
 {
 	GTMTheme *windowTheme = [(TabbedWindowController *)[[self window] windowController] theme];
 	
-	// when a tab is being torn off, it may not be possible to get the theme from the
-	// window controller. since we don't ever change themes, and always use the defualt theme
+	// When a tab is being torn off, it may not be possible to get the theme from the
+	// window controller. Since we don't ever change themes, and always use the defualt theme
 	// just create a new defualt theme
 	if (!windowTheme) 
 		windowTheme = [GTMTheme defaultTheme];
 	
 	return windowTheme;
 }
-
-
-
-
-
-
-
 
 @end

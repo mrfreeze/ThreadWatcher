@@ -71,7 +71,7 @@
 
 - (NSArray *)tabs
 {
-	return [[self tabStripModel] objects];
+	return [[self tabStripModel] tabs];
 }
 
 - (void)newTab:(id)sender

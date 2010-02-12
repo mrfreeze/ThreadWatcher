@@ -32,11 +32,6 @@
 // right click menu
 - (NSMenu *)menuForEvent:(NSEvent *)theEvent
 {	
-	/*if ([self isTransparent]) 
-	{
-		[super menuForEvent:theEvent];
-	}*/
-	
 	NSMenu *theMenu = [[self class] defaultMenu];
 	
 	// if the clicked item was not already selected, deselect all items, and select it

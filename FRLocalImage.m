@@ -59,7 +59,6 @@
 		return FALSE;
 }
 
-
 - (NSURL *)previewItemURL
 {
 	return [self localURL];

@@ -30,7 +30,6 @@ const int kScrollbarWidth = 25;
 - (MyDocument *)myDocument;
 - (void)detachTabView:(NSView*)view;
 - (CGFloat)layoutToolbarAtMaxY:(CGFloat)maxY width:(CGFloat)width;
-- (void)modifyTheme;
 - (void)selectTabWithOpenSheet;
 @end
 
@@ -60,8 +59,6 @@ const int kScrollbarWidth = 25;
 		initializing = YES;
 		
 		theme_ =  [GTMTheme defaultTheme];
-		[self modifyTheme];
-
 		myDocument = document;
 		tabStripModel = [myDocument tabStripModel];
 		
@@ -93,7 +90,6 @@ const int kScrollbarWidth = 25;
 		else 
 			[tabStripModel addNewTab];
 		
-		
 		initializing = NO;
 	}
 	return self;
@@ -122,8 +118,8 @@ const int kScrollbarWidth = 25;
 - (void)removeOverlay 
 {
 	[self setUseOverlay:NO];
-	if (closeDeferred) {
-		// See comment in BrowserWindowCocoa::Close() about orderOut:.
+	if (closeDeferred) 
+	{
 		[[self window] orderOut:self];
 		[[self window] performClose:self];  // Autoreleases the controller.
 	}
@@ -134,7 +130,8 @@ const int kScrollbarWidth = 25;
 // content.
 - (void)moveViewsBetweenWindowAndOverlay:(BOOL)useOverlay 
 {
-	if (useOverlay) {
+	if (useOverlay) 
+	{
 		[[[overlayWindow_ contentView] superview] addSubview:[self tabStripView]];
 		// Add the original window's content view as a subview of the overlay
 		// window's content view.  We cannot simply use setContentView: here because
@@ -257,10 +254,10 @@ const int kScrollbarWidth = 25;
 	return YES;
 }
 
-// selects the first tab with an open sheet
+// Selects the first tab with an open sheet
 - (void)selectTabWithOpenSheet
 {
-	NSArray *theTabs = [tabStripModel objects];
+	NSArray *theTabs = [tabStripModel tabs];
 	for (FRWatcherTabContentsController *t in theTabs)
 	{
 		if ([t sheetOpen]) 
@@ -377,9 +374,6 @@ const int kScrollbarWidth = 25;
 	// Place the toolbar at the top of the reserved area.
 	maxY = [self layoutToolbarAtMaxY:maxY width:width];
 	
-	/*// Place the toolbar at the top of the reserved area.
-	maxY = [self layoutToolbarAtMaxY:maxY width:width];*/
-	
 	// Finally, the content area takes up all of the remaining space.
 	[self layoutTabContentAreaAtMinY:minY maxY:maxY width:width];
 }
@@ -404,18 +398,13 @@ const int kScrollbarWidth = 25;
 - (NSRect)windowWillUseStandardFrame:(NSWindow*)window
                         defaultFrame:(NSRect)frame 
 {
-	// Forget that we grew the window up (if we in fact did).
-	//[self resetWindowGrowthState];
-	
 	// |frame| already fills the current screen. Never touch y and height since we
 	// always want to fill vertically.
 	
 	// If the shift key is down, maximize. Hopefully this should make the
 	// "switchers" happy.
 	if ([[NSApp currentEvent] modifierFlags] & NSShiftKeyMask) 
-	{
 		return frame;
-	}
 	
 	// To prevent strange results on portrait displays, the basic minimum zoomed
 	// width is the larger of: 60% of available width, 60% of available height
@@ -425,10 +414,11 @@ const int kScrollbarWidth = 25;
 	MAX(kProportion * frame.size.width,
 			 MIN(kProportion * frame.size.height, frame.size.width));
 	
-	FRWatcherTabContentsController* contents = [[myDocument tabStripModel] selectedTabContents];
-	if (contents) {
+	FRWatcherTabContentsController *contents = [[myDocument tabStripModel] selectedTabContents];
+	if (contents) 
+	{
 		// If the intrinsic width is bigger, then make it the zoomed width.
-		const int kScrollbarWidth = 16;  // TODO(viettrungluu): ugh.
+		const int kScrollbarWidth = 16;
 		CGFloat intrinsicWidth = (CGFloat)[[contents view] frame].size.width + kScrollbarWidth;
 		zoomedWidth = MAX(zoomedWidth,
 							   MIN(intrinsicWidth, frame.size.width));
@@ -495,7 +485,6 @@ const int kScrollbarWidth = 25;
 {
 	return [tabStripController tabDraggingAllowed];
 }
-
 
 - (TabbedWindowController *)detachTabToNewWindow:(TabView *)tabView 
 {
@@ -649,18 +638,6 @@ const int kScrollbarWidth = 25;
 	return maxY;
 }
 
-- (void)modifyTheme
-{
-	/*NSColor *startColor = [NSColor colorWithCalibratedWhite:0.10 alpha:0.0];
-    NSColor *endColor = [NSColor colorWithCalibratedWhite:0.10 alpha:0.3];
-    NSGradient *gradient = [[NSGradient alloc] initWithStartingColor:startColor
-														 endingColor:endColor];*/
-	/*[theme_ setValue:gradient
-       forAttribute:@"gradient"
-              style:GTMThemeStyleToolBarButton
-              state:GTMThemeStateActiveWindow];*/
-}
-
 - (GTMTheme *)theme
 {
 	return theme_;
@@ -727,7 +704,7 @@ const int kScrollbarWidth = 25;
 	if ([theMenuItem action] == @selector(saveFiles:))
 	{
 		// diable if no images downloaded yet
-		if ([[[tabStripModel selectedTabContents] links] count] == 0) 
+		if ([[[tabStripModel selectedTabContents] postedImages] count] == 0) 
 			enabled = FALSE;
 	}
 	// Save Selected… menu item
@@ -741,7 +718,7 @@ const int kScrollbarWidth = 25;
 	if ([theMenuItem action] == @selector(clearAllTags:))
 	{
 		// diable if no images downloaded
-		if ([[[tabStripModel selectedTabContents] links] count] == 0)
+		if ([[[tabStripModel selectedTabContents] postedImages] count] == 0)
 			enabled = FALSE;
 	}
 	if ([theMenuItem action] == @selector(clearSelectedTags:))
@@ -844,7 +821,7 @@ const int kScrollbarWidth = 25;
 
 - (NSArray *)tabs
 {
-	return [tabStripModel objects];
+	return [tabStripModel tabs];
 }
 
 - (FRWatcherTabContentsController *)currentTab

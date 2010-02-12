@@ -1296,6 +1296,7 @@
 					"$(inherited)",
 					"\"$(SRCROOT)\"",
 				);
+				GCC_AUTO_VECTORIZATION = YES;
 				GCC_ENABLE_OBJC_GC = required;
 				GCC_MODEL_TUNING = G5;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
@@ -1304,7 +1305,7 @@
 				HEADER_SEARCH_PATHS = "/Users/frogblast/objc-appscript-trunk/src/Appscript/**";
 				INFOPLIST_FILE = "ThreadWatcher-Info.plist";
 				INSTALL_PATH = "$(HOME)/Applications";
-				LLVM_LTO = YES;
+				LLVM_LTO = NO;
 				OTHER_LDFLAGS = (
 					"-sectcreate",
 					__TEXT,
@@ -1312,6 +1313,7 @@
 					"ThreadWatcher-Info.plist",
 				);
 				PRODUCT_NAME = ThreadWatcher;
+				RUN_CLANG_STATIC_ANALYZER = NO;
 				STRIP_INSTALLED_PRODUCT = YES;
 				VALID_ARCHS = "i386 x86_64";
 			};

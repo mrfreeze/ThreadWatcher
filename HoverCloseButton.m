@@ -60,15 +60,14 @@ const NSString *kPressedImageString = @"close_bar_p.pdf";
 	// The hover button needs to hold onto itself here for a bit.  Otherwise,
 	// it can be freed while |super mouseDown:| is in it's loop, and the
 	// |checkImageState| call will crash.
-	// http://crbug.com/28220
 	HoverCloseButton *myself = [self retain];
 	
 	[super mouseDown:theEvent];
+	
 	// We need to check the image state after the mouseDown event loop finishes.
 	// It's possible that we won't get a mouseExited event if the button was
 	// moved under the mouse during tab resize, instead of the mouse moving over
 	// the button.
-	// http://crbug.com/31279
 	[self checkImageState];
 }
 
@@ -121,4 +120,5 @@ const NSString *kPressedImageString = @"close_bar_p.pdf";
 			[self setImage:newImage];
 	}
 }
+
 @end

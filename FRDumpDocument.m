@@ -1102,7 +1102,6 @@
 	[super windowControllerDidLoadNib:windowController];
 }
 
-
 - (NSString *)windowNibName 
 {
 	return @"DumpDocument";
@@ -1120,7 +1119,9 @@
 
 // override this so that the user can always imediatly close the document, reardless of dirty state
 // (document can becoem dirty due to the undo managers in the text fields, dirty state goes away once editing finishes)
-- (void)canCloseDocumentWithDelegate:(id)delegate shouldCloseSelector:(SEL)shouldCloseSelector contextInfo:(void *)contextInfo
+- (void)canCloseDocumentWithDelegate:(id)delegate 
+				 shouldCloseSelector:(SEL)shouldCloseSelector 
+						 contextInfo:(void *)contextInfo
 {
 	// crazy stuff required just to invoke the callback with shouldClose set to YES
 	NSInvocation *callBack = [NSInvocation invocationWithMethodSignature:[delegate methodSignatureForSelector:shouldCloseSelector]];
@@ -1181,4 +1182,5 @@
 @synthesize sizeOfAllFiles;
 @synthesize imagesController;
 @synthesize selectedImageIndexes;
+
 @end

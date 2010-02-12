@@ -888,8 +888,8 @@
 - (void)noteSizeForItemsChanged:(NSArray *)items
 {
 	/* Note by MF, 17/01/10
-	 * we don't ever change the size of a view when the window isn't changing
-	 * views get new sizes when first created, or after the window has resized
+	 * we don't ever change the size of a view when the window isn't changing -
+	 * views get new sizes when first created, or after the window has resized,
 	 * so we don't need to re-layout or re-display here
 	 * since it will already be happening anyway
 	*/
@@ -897,7 +897,6 @@
 	// !!!: we should optimize this
 	//[self setNeedsLayout:YES];
 	//[self setNeedsDisplay:YES];
-	
 }
 
 

@@ -50,8 +50,4 @@
 	return [super accessibilityAttributeValue:attribute];
 }
 
-
-
-
-
 @end

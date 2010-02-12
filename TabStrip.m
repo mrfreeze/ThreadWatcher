@@ -48,9 +48,9 @@
 	
 	NSRectFillUsingOperation(borderRect, NSCompositeSourceOver);
 	
-	// Draw drop-indicator arrow (if appropriate).
-	// TODO(viettrungluu): this is all a stop-gap measure.
-	if ([self dropArrowShown]) {
+	// Draw drop-indicator arrow (if appropriate) (turned off at the moment)
+	if ([self dropArrowShown]) 
+	{
 		// Programmer art: an arrow parametrized by many knobs. Note that the arrow
 		// points downwards (so understand "width" and "height" accordingly).
 		

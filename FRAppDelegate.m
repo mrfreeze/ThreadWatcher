@@ -288,6 +288,7 @@
 		}
 	}
 	
+	// go through the windows and check for tabs with unsaved images
 	for (NSWindow *w in windows)
 	{
 		id winController = [w windowController];

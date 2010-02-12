@@ -249,17 +249,6 @@
 		return NO;
 }
 
-- (void)createGreenText
-{
-	if (theText) 
-	{
-
-		
-		
-	}
-}
-
-
 // select linked post
 - (BOOL)textView:(NSTextView *)aTextView clickedOnLink:(id)link atIndex:(NSUInteger)charIndex
 {
@@ -279,9 +268,4 @@
 	return YES;
 }
 
-
-
 @end
-
-
-

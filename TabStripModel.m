@@ -22,7 +22,7 @@
 @synthesize controller = controller_;
 @synthesize delegate;
 @synthesize toolbarController = toolbarController_;
-@synthesize objects;
+@synthesize tabs;
 
 - (id)init
 {
@@ -30,16 +30,18 @@
 	if (self)
 	{
 		selectedIndex = 0;
-		objects = [[NSMutableArray alloc] init];
+		tabs = [[NSMutableArray alloc] init];
 		controller_ = nil;
 		toolbarController_ = nil;
 	}
 	return self;
 }
 
+
+// returns number of tabs in the model
 - (int)count
 {
-	return [objects count];
+	return [tabs count];
 }
 
 - (int)selectedIndex
@@ -50,7 +52,7 @@
 // returns YES if we don't contain any tabcontents
 - (BOOL)empty
 {
-	if ([objects count] == 0)
+	if ([tabs count] == 0)
 		return YES;
 	else
 		return NO;
@@ -76,12 +78,12 @@
 			[self didChangeValueForKey:@"selectedIndex"];
 		}
 		
-		[self willChangeValueForKey:@"objects"];
+		[self willChangeValueForKey:@"tabs"];
 		if (index == [self count]) 
-			[objects addObject:contents];
+			[tabs addObject:contents];
 		else 
-			[objects insertObject:contents atIndex:index];
-		[self didChangeValueForKey:@"objects"];
+			[tabs insertObject:contents atIndex:index];
+		[self didChangeValueForKey:@"tabs"];
 		
 		// tell the tab strip controler about the change
 		// we don't need to tell the stip to bring it to the
@@ -111,17 +113,13 @@
 - (void)selectTabContentsAtIndex:(int)index userGesture:(BOOL)gesture
 {
 	if ([self containsIndex:index]) 
-	{
 		[self  changeSelectedContentsFrom:selectedContents to:index userGesture:gesture];
-	}
 }
 
 - (FRWatcherTabContentsController *)getTabContentsAt:(int)index
 {
 	if ([self containsIndex:index])
-	{
-		return [objects objectAtIndex:index];
-	}
+		return [tabs objectAtIndex:index];
 		
 	return nil;
 }
@@ -132,12 +130,12 @@
 	// (usually when dragging it, which creates a new window and closes the old after removing the tab)
 	// so return nil if the selected tab doesn't exist for some reason, otherwise Bad
 	// Things(tm) will happen
-	@synchronized (objects)
+	@synchronized (tabs)
 	{
-		if (selectedIndex > ((NSInteger)[objects count] - 1))
+		if (selectedIndex > ((NSInteger)[tabs count] - 1))
 			return nil;
 			
-		return [objects objectAtIndex:selectedIndex];
+		return [tabs objectAtIndex:selectedIndex];
 	}
 }
 
@@ -148,9 +146,9 @@
 	if (from == toIndex) 
 		return;
 	
-	FRWatcherTabContentsController *moved = [objects objectAtIndex:from];
-	[objects removeObjectAtIndex:from];
-	[objects insertObject:moved atIndex:toIndex];
+	FRWatcherTabContentsController *moved = [tabs objectAtIndex:from];
+	[tabs removeObjectAtIndex:from];
+	[tabs insertObject:moved atIndex:toIndex];
 	
 	// if !select_after_move, keep the same tab selected as was selected before.
 	if (select_after_move || from == selectedIndex)
@@ -168,7 +166,7 @@
 {
 	int ind = 0;
 	
-	for (FRWatcherTabContentsController *c in objects)
+	for (FRWatcherTabContentsController *c in tabs)
 	{
 		if (c == contents) 
 			return ind;;
@@ -184,7 +182,7 @@
 {
 	int ind = 0;
 	
-	for (FRWatcherTabContentsController *c in objects)
+	for (FRWatcherTabContentsController *c in tabs)
 	{
 		if (c == cont) 
 			return ind;
@@ -217,8 +215,8 @@
 	[controller_ removeTabAtIndex:index];
 	
 	// remove the tab from the model
-	FRWatcherTabContentsController *tab = [objects objectAtIndex:index];
-	[objects removeObjectAtIndex:index];
+	FRWatcherTabContentsController *tab = [tabs objectAtIndex:index];
+	[tabs removeObjectAtIndex:index];
 	[tab close];
 	
 	// change the selection
@@ -274,14 +272,14 @@
 
 - (FRWatcherTabContentsController *)detachTabContentsAtIndex:(int)index 
 {
-	if ([objects count] == 0)
+	if ([tabs count] == 0)
 		return NULL;
 	
 	FRWatcherTabContentsController *removedContents = [self getTabContentsAt:index];
 	
-	[objects removeObjectAtIndex:index];
+	[tabs removeObjectAtIndex:index];
 	
-	if ([objects count] == 0) 
+	if ([tabs count] == 0) 
 		closingAll = TRUE;
 	
 	// Send a broadcast that the number of tabs have changed.
@@ -293,7 +291,7 @@
 
 - (void)selectNextSelectedTabAfter:(int)index
 {
-	if ([objects count] == 1) 
+	if ([tabs count] == 1) 
 	{
 		// only one tab in the window, so we don't need to select another
 		return;
@@ -320,11 +318,6 @@
 			   bringToFront:fore];
 }
 
-- (NSArray *)objects
-{
-	return objects;
-}
-
 - (void)changeTabTitle:(NSString *)title forTabContents:(FRWatcherTabContentsController *)contents
 {
 	[controller_ setTabTitle:title forTab:[self getIndexOfController:contents]];	
@@ -337,13 +330,13 @@
 
 - (void)closeAllTabs
 {
-	NSArray *temp = [objects copy];
+	NSArray *temp = [tabs copy];
 	
 	for (FRWatcherTabContentsController *t in temp)
 	{
-		int index = [objects indexOfObject:t];
+		int index = [tabs indexOfObject:t];
 		[controller_ removeTabAtIndex:index];
-		[objects removeObjectAtIndex:index];
+		[tabs removeObjectAtIndex:index];
 		[t close];
 	}
 }
@@ -358,9 +351,6 @@
 			[self closeTabContentsAtIndex:i];
 	}
 }
-
-
-
 
 - (void)addNewTabAtIndex:(NSInteger)index
 {

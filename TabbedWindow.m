@@ -44,9 +44,8 @@ const CGFloat kWindowGradientHeight = 24.0;
 	{
 		if (aStyle & NSTexturedBackgroundWindowMask) 
 		{
-			// The following two calls fix http://www.crbug.com/25684 by preventing
-			// the window from recalculating the border thickness as the window is
-			// resized.
+			// Prevent the window from recalculating the border 
+			// thickness as the window is resized.
 			// This was causing the window tint to change for the default system theme
 			// when the window was being resized.
 			[self setAutorecalculatesContentBorderThickness:NO forEdge:NSMaxYEdge];
@@ -112,12 +111,10 @@ const CGFloat kWindowGradientHeight = 24.0;
 										forStyleMask:aStyle];
 		NSRect closeButtonFrame = [closeButton frame];
 		CGFloat yOffset =  kTabbedWindowButtonsWithTabStripOffsetFromTop;
-		
 		closeButtonFrame.origin =
         NSMakePoint(kTabbedWindowButtonsOffsetFromLeft,
                     (NSHeight(frameViewBounds) -
                      NSHeight(closeButtonFrame) - yOffset));
-		
 		[closeButton setFrame:closeButtonFrame];
 		[closeButton setTarget:self];
 		[closeButton setAutoresizingMask:NSViewMaxXMargin | NSViewMinYMargin];
@@ -193,7 +190,8 @@ const CGFloat kWindowGradientHeight = 24.0;
 	struct {
 		NSString* attribute_;
 		id value_;
-	} attributeMap[] = {
+	}
+	attributeMap[] = {
 		{ NSAccessibilityCloseButtonAttribute, [closeButton cell]},
 		{ NSAccessibilityZoomButtonAttribute, [zoomButton cell]},
 		{ NSAccessibilityMinimizeButtonAttribute, [minimiseButton cell]},
@@ -359,6 +357,5 @@ const CGFloat kWindowGradientHeight = 24.0;
 	
 	return [super constrainFrameRect:frame toScreen:screen];
 }
-
 
 @end
