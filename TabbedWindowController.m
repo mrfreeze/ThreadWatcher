@@ -757,6 +757,13 @@ const int kScrollbarWidth = 25;
 		if ([tabStripModel count] < 2)
 			 enabled = FALSE;
 	}
+	if ([theMenuItem action] == @selector(fetchBrowserURL:))
+	{
+		// disable if we are downloading images
+		if ([[[tabStripModel selectedTabContents] 
+			  operationQueue] operationCount] > 0) 
+			enabled = FALSE;
+	}
 	
 	return enabled;
 }
