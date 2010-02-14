@@ -1492,6 +1492,9 @@ NSString *const failedResponse = @"Error: Upload failed.";
 	[[self repeatingTimer] invalidate];
 	[self setRepeatingTimer:nil];
 	[[self toolbarController] stoppedWatching];
+	[self setDownloadingThread:NO];
+	int indexu = [[self tabStripController] modelIndexForContentsView:[self view]];
+	[[self tabStripController] updateThrobberForTabContents:self atIndex:indexu];
 }
 
 // ---------------------------------------------------------------------------------------------------------
