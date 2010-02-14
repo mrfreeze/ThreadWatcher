@@ -20,6 +20,7 @@ extern NSString *const FRUserAgent;
 extern NSString *const FRLastSaveLocation;
 extern NSString *const FRShowCloseWindowAlert;
 extern NSString *const FRShowQuitWindowAlert;
+extern NSString *const FRAutomaticWatching;
 
 // preferences controller
 
@@ -28,10 +29,12 @@ extern NSString *const FRShowQuitWindowAlert;
 	IBOutlet NSButton *resaveToggleCheckBox;
 	IBOutlet NSButton *animatedThumbsToggle; 
 	IBOutlet NSButton *finderCommentCheckBox;
+	IBOutlet NSButton *automaticWatchingCheckBox;
 }
 
 - (IBAction)changeResave:(id)sender;
 - (IBAction)changeAnimatedThumbs:(id)sender;
 - (IBAction)changeFinderComment:(id)sender;
+- (IBAction)changeAutomatingWatching:(id)sender;
 
 @end

@@ -86,6 +86,13 @@
 	[watchSpinner stopAnimation:self];
 }
 
+// programatically start the watcher
+- (void)startWatcher
+{
+	[watchCheckBox setState:NSOnState];
+	[self watcherToggled:watchCheckBox];
+}
+
 // The tab contents controller runs this when there is a sheet open for the tab
 // disables the toolbar buttons
 - (void)sheetOpened
@@ -132,11 +139,6 @@
 - (void)focusURLInputField
 {
 	[[[self view] window] makeFirstResponder:urlTextBox];
-}
-
-- (void)watcherStarted
-{
-	[watchCheckBox setState:NSOnState];
 }
 
 - (void)startedFetcher
@@ -186,7 +188,6 @@
 
 - (IBAction)watcherToggled:(id)sender
 {
-	
 	[[self controller] toggleTimer:sender];
 }
 

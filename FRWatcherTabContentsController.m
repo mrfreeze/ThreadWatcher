@@ -1025,6 +1025,12 @@ NSString *const failedResponse = @"Error: Upload failed.";
 	// using quicklook easier and avoid extra input into url text box
 	[[ourCollectionView window] makeFirstResponder:ourCollectionView];
 	
+	// start watching thread if user set that preference
+	NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
+	BOOL autoWatch = [defaults boolForKey:FRAutomaticWatching];
+	if (autoWatch) 
+		[[self toolbarController] startWatcher];
+	
 	[self setDownloadingThread:YES];
 	int indexu = [[self tabStripController] modelIndexForContentsView:[self view]];
 	[[self tabStripController] updateThrobberForTabContents:self atIndex:indexu];
@@ -1180,8 +1186,7 @@ NSString *const failedResponse = @"Error: Upload failed.";
 		{
 			willSave = TRUE;
 			[self fetchBrowserURL:self];
-			[[self toolbarController] watcherStarted];
-			[self toggleTimer:self];
+			[[self toolbarController] startWatcher];
 		}
 	}
 	else // TODO: we should return a proper error to the applescripter here
@@ -1264,7 +1269,7 @@ NSString *const failedResponse = @"Error: Upload failed.";
 		if ([args objectForKey:@"Watch"]) 
 		{
 			willSave = [[args objectForKey:@"Watch"] boolValue];
-			[[self toolbarController] watcherStarted];
+			[[self toolbarController] startWatcher];
 			[self toggleTimer:self];
 		}
 		

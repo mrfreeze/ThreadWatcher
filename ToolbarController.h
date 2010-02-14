@@ -75,6 +75,7 @@
 - (IBAction)cancel:(id)sender;
 - (IBAction)changeViewTypeClicked:(id)sender;
 - (IBAction)postReply:(id)sender;
+- (IBAction)watcherToggled:(id)sender;
 
 // change the tab the toolbar is displaying
 - (void)changeToNewTab:(FRWatcherTabContentsController *)newController;
@@ -82,7 +83,8 @@
 // tell the toolbar if a thread is being watched or not
 - (void)startedWatching;
 - (void)stoppedWatching;
-- (void)watcherStarted; // changes the state of the watch check box, if watching is enabled by a script
+- (void)startWatcher; // checks the watchcheckbox and tells the current tab to start watching.
+					  // tabs can only start watching this way if they are the active tab.
 
 // inform the toolbar about the status of posts being sent
 - (void)postingReply;

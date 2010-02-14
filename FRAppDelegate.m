@@ -39,6 +39,7 @@
 	[defaultValues setObject:[NSString stringWithString:@"/"] forKey:FRLastSaveLocation];
 	[defaultValues setObject:[NSNumber numberWithBool:YES] forKey:FRShowCloseWindowAlert];
 	[defaultValues setObject:[NSNumber numberWithBool:YES] forKey:FRShowQuitWindowAlert];
+	[defaultValues setObject:[NSNumber numberWithBool:NO] forKey:FRAutomaticWatching];
 	
 	[[NSUserDefaults standardUserDefaults] registerDefaults:defaultValues];
 	

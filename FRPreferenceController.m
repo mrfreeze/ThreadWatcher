@@ -21,6 +21,7 @@ NSString *const FRUserAgent = @"UserAgent";
 NSString *const FRLastSaveLocation = @"LastSaveLocation";
 NSString *const FRShowCloseWindowAlert = @"ShowCloseWindowAlert";
 NSString *const FRShowQuitWindowAlert = @"ShowQuitAlert";
+NSString *const FRAutomaticWatching = @"AutomaticThreadWatching";
 
 @implementation FRPreferenceController
 
@@ -66,6 +67,13 @@ NSString *const FRShowQuitWindowAlert = @"ShowQuitAlert";
 	[defaults setBool:[finderCommentCheckBox state] forKey:FRFinderCommentKey];
 }
 
+- (IBAction)changeAutomatingWatching:(id)sender
+{
+	int state = [sender state];
+	NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
+	[defaults setBool:state forKey:FRAutomaticWatching];
+}
+
 - (BOOL)animate
 {
 	NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
@@ -84,11 +92,18 @@ NSString *const FRShowQuitWindowAlert = @"ShowQuitAlert";
 	return [defaults boolForKey:FRFinderCommentKey];
 }
 
+- (BOOL)watching
+{
+	NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
+	return [defaults boolForKey:FRAutomaticWatching];
+}
+
 - (void)windowDidLoad
 {
 	[resaveToggleCheckBox setState:[self resave]];
 	[animatedThumbsToggle setState:[self animate]];
 	[finderCommentCheckBox setState:[self finderComment]];
+	[automaticWatchingCheckBox setState:[self watching]];
 }
 
 @end
