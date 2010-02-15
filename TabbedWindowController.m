@@ -759,9 +759,8 @@ const int kScrollbarWidth = 25;
 	}
 	if ([theMenuItem action] == @selector(fetchBrowserURL:))
 	{
-		// disable if we are downloading images
-		if ([[[tabStripModel selectedTabContents] 
-			  operationQueue] operationCount] > 0) 
+		// disable if we have started fetching a thread in this tab
+		if ([[tabStripModel selectedTabContents] boardPostURL]) 
 			enabled = FALSE;
 	}
 	

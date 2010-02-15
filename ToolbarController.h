@@ -38,7 +38,6 @@
 	IBOutlet NSProgressIndicator *postSpinner;
 	IBOutlet NSButton *watchCheckBox;
 	IBOutlet NSProgressIndicator *watchSpinner;
-
 }
 
 @property (readwrite, retain) FRWatcherTabContentsController *controller;
@@ -100,5 +99,9 @@
 
 // tell the toolbar that the fetcher was started
 - (void)startedFetcher;
+
+// updates the toolbar to relfect the fact that the thread died
+// (disables post button and turns off watcher)
+- (void)threadDied;
 
 @end

@@ -1496,10 +1496,11 @@ NSString *const failedResponse = @"Error: Upload failed.";
 	[self resetScriptParameters];
 	[[self repeatingTimer] invalidate];
 	[self setRepeatingTimer:nil];
-	[[self toolbarController] stoppedWatching];
+	[[self toolbarController] threadDied];
 	[self setDownloadingThread:NO];
 	int indexu = [[self tabStripController] modelIndexForContentsView:[self view]];
 	[[self tabStripController] updateThrobberForTabContents:self atIndex:indexu];
+	[self setBoardPostURL:nil];
 }
 
 // ---------------------------------------------------------------------------------------------------------

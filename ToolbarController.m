@@ -15,7 +15,6 @@
 - (void)setButtonStateForTab:(FRWatcherTabContentsController *)tabController;
 @end
 
-
 @implementation ToolbarController
 
 @synthesize controller = controller_;
@@ -34,7 +33,6 @@
 
 - (void)setupInitialStates
 {
-
 	[saveAllButton setEnabled:NO];
 	[saveSelectedButton setEnabled:NO];
 	[postReplyButton setEnabled:NO];
@@ -84,6 +82,7 @@
 - (void)stoppedWatching
 {
 	[watchSpinner stopAnimation:self];
+	[watchCheckBox setState:NSOffState];
 }
 
 // programatically start the watcher
@@ -91,20 +90,6 @@
 {
 	[watchCheckBox setState:NSOnState];
 	[self watcherToggled:watchCheckBox];
-}
-
-// The tab contents controller runs this when there is a sheet open for the tab
-// disables the toolbar buttons
-- (void)sheetOpened
-{
-	[viewSwitchButton setEnabled:NO];
-	[urlTextBox setEnabled:NO];
-	[goButton setEnabled:NO];
-	[quicklookButton setEnabled:NO];
-	[saveAllButton setEnabled:NO];
-	[saveSelectedButton setEnabled:NO];
-	[postReplyButton setEnabled:NO];
-	[watchCheckBox setEnabled:NO];
 }
 
 // Run when a sheet gets closed so we can re-enable the toolbar buttons
@@ -126,6 +111,13 @@
 		[postReplyButton setEnabled:YES];
 }
 
+- (void)threadDied
+{
+	[postReplyButton setEnabled:NO];
+	[self stoppedWatching];
+	[watchCheckBox setEnabled:NO];
+}
+
 - (void)changeToIconView
 {
 	[viewSwitchButton setSelectedSegment:0];
@@ -145,6 +137,7 @@
 {
 	[goButton setImage:[NSImage imageNamed:NSImageNameStopProgressTemplate]];
 	[goButton setAction:@selector(cancel:)];
+	[urlTextBox setEnabled:NO];
 }
 
 // =======================================================================================
@@ -211,8 +204,15 @@
 	   options:nil];
 }
 
+// Find out what this tab is doing so we can enable/diable and
+// set the icons and actions on the buttons and the various 
+// spinners to the correct states
 - (void)setButtonStateForTab:(FRWatcherTabContentsController *)tabController
 {
+	[urlTextBox setEnabled:YES]; // text box enabled by default unless
+								 // we have fetched a thread in this tab,
+								 // in which case it will be disabled below
+	
 	if ([tabController sheetOpen]) 
 		[self sheetOpened];
 	else 
@@ -225,39 +225,38 @@
 		}
 		else 
 		{
+			// there are downloaded images in this tab
 			[saveAllButton setEnabled:YES];
-			
+			[urlTextBox setEnabled:NO];
 			if ([[tabController selectedImages] count] > 0) 
 				[saveSelectedButton setEnabled:YES];
 		}		
 		
-		if ([[self controller] boardPostURL]) 
+		if ([tabController boardPostURL]) 
 		{
 			// we have the posting url, so enable the post button
 			[postReplyButton setEnabled:YES];
 			[watchCheckBox setEnabled:YES];
+			[urlTextBox setEnabled:NO];
 		}
 		else
+		{
+			[postReplyButton setEnabled:NO];
 			[watchCheckBox setEnabled:NO];
-		
-		// Find out what this tab is doing so we can set the icon
-		// and action on the go button and the various spinners
-		// to the correct states
+		}
+			
 		if ([[tabController operationQueue] operationCount] > 0)
 		{
+			// curently downloading form the thread
 			[goButton setImage:[NSImage imageNamed:NSImageNameStopProgressTemplate]];
 			[goButton setAction:@selector(cancel:)];
 		}
 		else 
 		{
+			// idle
 			[goButton setImage:[NSImage imageNamed:NSImageNameRefreshTemplate]];
 			[goButton setAction:@selector(go:)];
 		}
-		
-		if ([tabController boardPostURL]) 
-			[postReplyButton setEnabled:YES];
-		else 
-			[postReplyButton setEnabled:NO];
 		
 		// See if a post is being sent
 		if ([[tabController postQueue] operationCount] > 0)
@@ -286,11 +285,25 @@
 			[watchSpinner stopAnimation:self];
 			[watchCheckBox setState:NSOffState];
 		}
+		
+		[quicklookButton setEnabled:YES];
+		[viewSwitchButton setEnabled:YES];
+		[goButton setEnabled:YES];
 	}
-	[quicklookButton setEnabled:YES];
-	[viewSwitchButton setEnabled:YES];
-	[goButton setEnabled:YES];
-	[urlTextBox setEnabled:YES];
+}
+
+// run when there is a sheet open for the tab,
+// disables the toolbar buttons
+- (void)sheetOpened
+{
+	[viewSwitchButton setEnabled:NO];
+	[urlTextBox setEnabled:NO];
+	[goButton setEnabled:NO];
+	[quicklookButton setEnabled:NO];
+	[saveAllButton setEnabled:NO];
+	[saveSelectedButton setEnabled:NO];
+	[postReplyButton setEnabled:NO];
+	[watchCheckBox setEnabled:NO];
 }
 
 @end
