@@ -62,11 +62,11 @@
 	<key>CFBundlePackageType</key>
 	<string>APPL</string>
 	<key>CFBundleShortVersionString</key>
-	<string>0.3.2</string>
+	<string>0.3.3</string>
 	<key>CFBundleSignature</key>
 	<string>????</string>
 	<key>CFBundleVersion</key>
-	<string>0.3.2</string>
+	<string>0.3.3</string>
 	<key>LSMinimumSystemVersion</key>
 	<string>${MACOSX_DEPLOYMENT_TARGET}</string>
 	<key>NSAppleScriptEnabled</key>
@@ -77,5 +77,9 @@
 	<string>NSApplication</string>
 	<key>OSAScriptingDefinition</key>
 	<string>ThreadWatcher.sdef</string>
+	<key>SUPublicDSAKeyFile</key>
+	<string>dsa_pub.pem</string>
+	<key>SUFeedURL</key>
+	<string>http://github.com/mrfreeze/ThreadWatcher/raw/master/Sparkle/appcast.xml</string>
 </dict>
 </plist>

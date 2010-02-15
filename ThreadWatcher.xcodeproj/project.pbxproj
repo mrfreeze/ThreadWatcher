@@ -137,6 +137,9 @@
 		9995ABE010D3207900EE41A6 /* QuickLook.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9995ABDF10D3207900EE41A6 /* QuickLook.framework */; };
 		9995AC0610D3218400EE41A6 /* Quartz.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9995AC0510D3218400EE41A6 /* Quartz.framework */; };
 		99AC8BE910D6EBB3009611C0 /* ThreadWatcher.icns in Resources */ = {isa = PBXBuildFile; fileRef = 99AC8BE810D6EBB3009611C0 /* ThreadWatcher.icns */; };
+		99D7E7AB1129F86400DD8F08 /* Sparkle.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 99D7E7AA1129F86400DD8F08 /* Sparkle.framework */; };
+		99D7E7B61129F87C00DD8F08 /* Sparkle.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 99D7E7AA1129F86400DD8F08 /* Sparkle.framework */; };
+		99D7E7B91129FA6200DD8F08 /* dsa_pub.pem in Resources */ = {isa = PBXBuildFile; fileRef = 99D7E7B81129FA6200DD8F08 /* dsa_pub.pem */; };
 		99E7003A10EFA539006533A7 /* OpenMeta.m in Sources */ = {isa = PBXBuildFile; fileRef = 99E7003510EFA539006533A7 /* OpenMeta.m */; };
 		99E7003B10EFA539006533A7 /* OpenMetaBackup.m in Sources */ = {isa = PBXBuildFile; fileRef = 99E7003710EFA539006533A7 /* OpenMetaBackup.m */; };
 		99E7003C10EFA539006533A7 /* OpenMetaPrefs.m in Sources */ = {isa = PBXBuildFile; fileRef = 99E7003910EFA539006533A7 /* OpenMetaPrefs.m */; };
@@ -179,6 +182,7 @@
 			dstPath = "";
 			dstSubfolderSpec = 10;
 			files = (
+				99D7E7B61129F87C00DD8F08 /* Sparkle.framework in CopyFiles */,
 				9909FDB7110616FE007E0B6A /* Appscript.framework in CopyFiles */,
 				9909F86B1103C447007E0B6A /* BWToolkitFramework.framework in CopyFiles */,
 				994B6E9310D5A1D700EF8928 /* Growl.framework in CopyFiles */,
@@ -396,6 +400,8 @@
 		9995ABDF10D3207900EE41A6 /* QuickLook.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QuickLook.framework; path = /System/Library/Frameworks/QuickLook.framework; sourceTree = "<absolute>"; };
 		9995AC0510D3218400EE41A6 /* Quartz.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Quartz.framework; path = /System/Library/Frameworks/Quartz.framework; sourceTree = "<absolute>"; };
 		99AC8BE810D6EBB3009611C0 /* ThreadWatcher.icns */ = {isa = PBXFileReference; lastKnownFileType = image.icns; path = ThreadWatcher.icns; sourceTree = "<group>"; };
+		99D7E7AA1129F86400DD8F08 /* Sparkle.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = Sparkle.framework; sourceTree = "<group>"; };
+		99D7E7B81129FA6200DD8F08 /* dsa_pub.pem */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = dsa_pub.pem; sourceTree = "<group>"; };
 		99E7003410EFA539006533A7 /* OpenMeta.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OpenMeta.h; sourceTree = "<group>"; };
 		99E7003510EFA539006533A7 /* OpenMeta.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = OpenMeta.m; sourceTree = "<group>"; };
 		99E7003610EFA539006533A7 /* OpenMetaBackup.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OpenMetaBackup.h; sourceTree = "<group>"; };
@@ -466,6 +472,7 @@
 				99402A1610FA454C009D38C6 /* Security.framework in Frameworks */,
 				9909F8681103C445007E0B6A /* BWToolkitFramework.framework in Frameworks */,
 				9909FD9E110616F5007E0B6A /* Appscript.framework in Frameworks */,
+				99D7E7AB1129F86400DD8F08 /* Sparkle.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -550,6 +557,7 @@
 		2A37F4B8FDCFA73011CA2CEA /* Resources */ = {
 			isa = PBXGroup;
 			children = (
+				99D7E7B81129FA6200DD8F08 /* dsa_pub.pem */,
 				994AD1201114FB3900EF6FA8 /* theme */,
 				99ECE8CE10FE2785008D958B /* save_all.tif */,
 				99ECE8BC10FE2287008D958B /* save.tif */,
@@ -582,6 +590,7 @@
 		2A37F4C3FDCFA73011CA2CEA /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				99D7E7AA1129F86400DD8F08 /* Sparkle.framework */,
 				994B6E8810D5A14400EF8928 /* Growl.framework */,
 				1058C7A6FEA54F5311CA2CBB /* Linked Frameworks */,
 				1058C7A8FEA54F5311CA2CBB /* Other Frameworks */,
@@ -1042,6 +1051,7 @@
 				994AD3A01114FB3D00EF6FA8 /* throbber_waiting_light.png in Resources */,
 				994AD3A61114FBD200EF6FA8 /* MyDocument.xib in Resources */,
 				9978C8FB111B38AA0041A5C6 /* throbber.png in Resources */,
+				99D7E7B91129FA6200DD8F08 /* dsa_pub.pem in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
