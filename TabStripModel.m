@@ -10,7 +10,7 @@
 
 @interface TabStripModel ()
 
-- (void)changeSelectedContentsFrom:(FRWatcherTabContentsController *)oldContents to:(int)index userGesture:(BOOL)gesture;
+- (void)changeSelectedContentsFrom:(FRWatcherTabContentsController *)oldContents to:(NSInteger)index userGesture:(BOOL)gesture;
 
 @end
 
@@ -39,14 +39,9 @@
 
 
 // returns number of tabs in the model
-- (int)count
+- (NSInteger)count
 {
 	return [tabs count];
-}
-
-- (int)selectedIndex
-{
-	return selectedIndex;
 }
 
 // returns YES if we don't contain any tabcontents
@@ -59,17 +54,17 @@
 }
 
 // Determines if the specified index is contained within the TabStripModel.
-- (BOOL)containsIndex:(int)i
+- (BOOL)containsIndex:(NSInteger)i
 {
 	return (i >= 0 && i < [self count]);
 }
 
-- (void)insertTabContents:(FRWatcherTabContentsController *)contents atIndex:(int)index bringToFront:(BOOL)fore
+- (void)insertTabContents:(FRWatcherTabContentsController *)contents atIndex:(NSInteger)indexu bringToFront:(BOOL)fore
 {
 	if (contents) 
 	{	
 		
-		if (index <= selectedIndex)
+		if (indexu <= selectedIndex)
 		{
 			// If a tab is inserted before the current selected index,
 			// then |selectedIndex| needs to be incremented.
@@ -79,26 +74,26 @@
 		}
 		
 		[self willChangeValueForKey:@"tabs"];
-		if (index == [self count]) 
+		if (indexu == [self count]) 
 			[tabs addObject:contents];
 		else 
-			[tabs insertObject:contents atIndex:index];
+			[tabs insertObject:contents atIndex:indexu];
 		[self didChangeValueForKey:@"tabs"];
 		
 		// tell the tab strip controler about the change
 		// we don't need to tell the stip to bring it to the
 		// front, that will happen if it gets selected by the model
 		[controller_ insertTabWithContents:contents
-								   atIndex:index
+								   atIndex:indexu
 							  inForeground:NO];
 		
 		// tell the tab contents what its new index is
-		[contents setTabIndex:index];
+		[contents setTabIndex:indexu];
 		
 		// if required, select tab in the model, this will also tell the tab strip
 		// to change selection
 		if (fore)
-			[self changeSelectedContentsFrom:selectedContents to:index userGesture:FALSE];
+			[self changeSelectedContentsFrom:selectedContents to:indexu userGesture:FALSE];
 	}
 }
 
@@ -106,20 +101,20 @@
 {
 	FRWatcherTabContentsController *new = [[FRWatcherTabContentsController alloc] initWithNibName:@"WatcherTabContents"
 																						 document:delegate];
-	int newPosition = [self count];
+	NSInteger newPosition = [self count];
 	[self insertTabContents:new atIndex:newPosition bringToFront:YES];
 }
 
-- (void)selectTabContentsAtIndex:(int)index userGesture:(BOOL)gesture
+- (void)selectTabContentsAtIndex:(NSInteger)indexu userGesture:(BOOL)gesture
 {
-	if ([self containsIndex:index]) 
-		[self  changeSelectedContentsFrom:selectedContents to:index userGesture:gesture];
+	if ([self containsIndex:indexu]) 
+		[self  changeSelectedContentsFrom:selectedContents to:indexu userGesture:gesture];
 }
 
-- (FRWatcherTabContentsController *)getTabContentsAt:(int)index
+- (FRWatcherTabContentsController *)getTabContentsAt:(NSInteger)indexu
 {
-	if ([self containsIndex:index])
-		return [tabs objectAtIndex:index];
+	if ([self containsIndex:indexu])
+		return [tabs objectAtIndex:indexu];
 		
 	return nil;
 }
@@ -139,7 +134,7 @@
 	}
 }
 
-- (void)moveTabContentsAtIndex:(int)from to:(int)toIndex select:(BOOL)select
+- (void)moveTabContentsAtIndex:(NSInteger)from to:(NSInteger)toIndex select:(BOOL)willSelect
 {
 	BOOL select_after_move = YES;
 	
@@ -162,9 +157,9 @@
 	[controller_ tabMovedWithContents:moved fromIndex:from toIndex:toIndex];
 }
 
-- (int)getIndexOfTabContents:(FRWatcherTabContentsController *)contents
+- (NSInteger)getIndexOfTabContents:(FRWatcherTabContentsController *)contents
 {
-	int ind = 0;
+	NSInteger ind = 0;
 	
 	for (FRWatcherTabContentsController *c in tabs)
 	{
@@ -178,9 +173,9 @@
 	return -1;
 }
 
-- (int)getIndexOfController:(FRWatcherTabContentsController *)cont
+- (NSInteger)getIndexOfController:(FRWatcherTabContentsController *)cont
 {
-	int ind = 0;
+	NSInteger ind = 0;
 	
 	for (FRWatcherTabContentsController *c in tabs)
 	{
@@ -194,16 +189,16 @@
 	return -1;
 }
 
-- (void)closeTabContentsAtIndex:(int)index
+- (void)closeTabContentsAtIndex:(NSInteger)indexu
 {
 	// make sure we select the correct next tab
-	if (index <= selectedIndex && selectedIndex != 0)
+	if (indexu <= selectedIndex && selectedIndex != 0)
 	{
 		// If a tab is closed before the current selected index,
 		// then |selectedIndex| needs to be decremented.
 		selectedIndex--;
 	}
-	else if (index == 0 && selectedIndex == 0)
+	else if (indexu == 0 && selectedIndex == 0)
 	{
 		// if we had the first tab selected, and then closed it, 
 		// select the new first tab
@@ -212,11 +207,11 @@
 	
 	// tell the tab strip view controller to remove the tab
 	// from the strip
-	[controller_ removeTabAtIndex:index];
+	[controller_ removeTabAtIndex:indexu];
 	
 	// remove the tab from the model
-	FRWatcherTabContentsController *tab = [tabs objectAtIndex:index];
-	[tabs removeObjectAtIndex:index];
+	FRWatcherTabContentsController *tab = [tabs objectAtIndex:indexu];
+	[tabs removeObjectAtIndex:indexu];
 	[tab close];
 	
 	// change the selection
@@ -253,31 +248,31 @@
 }
 
 - (void)changeSelectedContentsFrom:(FRWatcherTabContentsController *)oldContents 
-								to:(int)index 
+								to:(NSInteger)indexu
 					   userGesture:(BOOL)gesture
 {
-	FRWatcherTabContentsController *newContents = [self getTabContentsAt:index];
+	FRWatcherTabContentsController *newContents = [self getTabContentsAt:indexu];
 	if (oldContents == newContents) 
 		return;
 	
 	[self setSelectedContents:newContents];
-	[self setSelectedIndex:index];
+	[self setSelectedIndex:indexu];
 	
 	[controller_ selectTabWithContents:newContents 
 					  previousContents:oldContents 
-							   atIndex:index 
+							   atIndex:indexu
 						   userGesture:gesture];
 }
 
 
-- (FRWatcherTabContentsController *)detachTabContentsAtIndex:(int)index 
+- (FRWatcherTabContentsController *)detachTabContentsAtIndex:(NSInteger)indexu 
 {
 	if ([tabs count] == 0)
 		return NULL;
 	
-	FRWatcherTabContentsController *removedContents = [self getTabContentsAt:index];
+	FRWatcherTabContentsController *removedContents = [self getTabContentsAt:indexu];
 	
-	[tabs removeObjectAtIndex:index];
+	[tabs removeObjectAtIndex:indexu];
 	
 	if ([tabs count] == 0) 
 		closingAll = TRUE;
@@ -289,7 +284,7 @@
 	return removedContents;
 }
 
-- (void)selectNextSelectedTabAfter:(int)index
+- (void)selectNextSelectedTabAfter:(NSInteger)indexu
 {
 	if ([tabs count] == 1) 
 	{
@@ -297,7 +292,7 @@
 		return;
 	}
 	
-	if (index == 0)
+	if (indexu == 0)
 		nextSelectedIndex = 1;
 	else
 		nextSelectedIndex = selectedIndex-1;
@@ -323,7 +318,7 @@
 	[controller_ setTabTitle:title forTab:[self getIndexOfController:contents]];	
 }
 
-- (void)changeNewImageCount:(int)newCount forTabContents:(FRWatcherTabContentsController *)contents
+- (void)changeNewImageCount:(NSInteger)newCount forTabContents:(FRWatcherTabContentsController *)contents
 {
 	[controller_ setNewImageCount:newCount forTab:[self getIndexOfController:contents]];
 }
@@ -334,30 +329,30 @@
 	
 	for (FRWatcherTabContentsController *t in temp)
 	{
-		int index = [tabs indexOfObject:t];
-		[controller_ removeTabAtIndex:index];
-		[tabs removeObjectAtIndex:index];
+		NSInteger indexu = [tabs indexOfObject:t];
+		[controller_ removeTabAtIndex:indexu];
+		[tabs removeObjectAtIndex:indexu];
 		[t close];
 	}
 }
 
-- (void)closeAllExcept:(NSInteger)index
+- (void)closeAllExcept:(NSInteger)indexu
 {
-	int total = [self count];
+	NSInteger total = [self count];
 	
-	for (int i = total-1; i > -1; i--)
+	for (NSInteger i = total-1; i > -1; i--)
 	{
-		if (i != index)
+		if (i != indexu)
 			[self closeTabContentsAtIndex:i];
 	}
 }
 
-- (void)addNewTabAtIndex:(NSInteger)index
+- (void)addNewTabAtIndex:(NSInteger)indexu
 {
 	FRWatcherTabContentsController *new = 
 		[[FRWatcherTabContentsController alloc] initWithNibName:@"WatcherTabContents"
 													   document:delegate];
-	[self insertTabContents:new atIndex:index bringToFront:YES];
+	[self insertTabContents:new atIndex:indexu bringToFront:YES];
 }
 
 @end

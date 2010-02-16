@@ -58,7 +58,7 @@
 // turns a size in bytes into a human readable string
 + (NSString *)stringFromFileSize:(NSUInteger)theSize
 {
-	float floatSize = theSize;
+	CGFloat floatSize = theSize;
 	if (theSize<1000)
 		return [NSString stringWithFormat:@"%i bytes",theSize];
 	floatSize = floatSize / 1000;
@@ -127,8 +127,8 @@
 	[self setSize:s];
 	
 	// record the size of the original
-	int x = s.width;
-	int y = s.height;
+	NSInteger x = s.width;
+	NSInteger y = s.height;
 	[self setImageDimensions:[NSString stringWithFormat:@"%d x %d", x, y]];
 			
 	// create a thumbnail to display

@@ -11,9 +11,9 @@
 
 @interface FRTabBadge : NSView 
 {
-	int count_;
+	NSInteger count_;
 }
 
-@property (readwrite) int count;
+@property (readwrite) NSInteger count;
 
 @end

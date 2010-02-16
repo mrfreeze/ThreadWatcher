@@ -7,7 +7,7 @@
 
 #import "ThrobberView.h"
 
-static const float kAnimationIntervalSeconds = 0.03;  // 30ms
+static const CGFloat kAnimationIntervalSeconds = 0.03;  // 30ms
 
 @interface ThrobberView ()
 - (id)initWithFrame:(NSRect)frame delegate:(id<ThrobberDataDelegate>)delegate;
@@ -66,8 +66,8 @@ static const float kAnimationIntervalSeconds = 0.03;  // 30ms
 
 - (void)drawFrameInRect:(NSRect)rect 
 {
-	float imageDimension = [image_ size].height;
-	float xOffset = animationFrame_ * imageDimension;
+	CGFloat imageDimension = [image_ size].height;
+	CGFloat xOffset = animationFrame_ * imageDimension;
 	NSRect sourceImageRect =
 	NSMakeRect(xOffset, 0, imageDimension, imageDimension);
 	[image_ drawInRect:rect

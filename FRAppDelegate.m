@@ -15,6 +15,13 @@
 #import "TabbedWindowController.h"
 #import "TabStripController.h"
 
+@interface FRAppDelegate ()
+
+- (void)tabsChanged:(NSNotification*)notify;
+- (void)windowLayeringDidChange:(NSNotification*)notify;
+
+@end
+
 
 @implementation FRAppDelegate
 
@@ -135,7 +142,7 @@
 			[document showWindows];
 			
 			// select the correct tab
-			int tabIndex = [[document tabStripModel] getIndexOfController:theTab];
+			NSInteger tabIndex = [[document tabStripModel] getIndexOfController:theTab];
 			[[document tabStripModel] selectTabContentsAtIndex:tabIndex userGesture:YES];
 			
 			// open the reply sheet

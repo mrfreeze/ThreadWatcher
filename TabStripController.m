@@ -171,6 +171,7 @@ const int kPinnedTabWidth = 56;
 - (void)mouseMoved:(NSEvent*)event;
 - (void)setTabTrackingAreasEnabled:(BOOL)enabled;
 - (void)startClosingTabWithAnimation:(TabController *)closingTab;
+- (void)tabViewFrameChanged:(NSNotification*)info;
 @end
 
 // A simple view class that prevents the Window Server from dragging the area
@@ -296,8 +297,8 @@ const int kPinnedTabWidth = 56;
 // contents.
 - (void)swapInTabAtIndex:(NSInteger)modelIndex 
 {
-	NSInteger index = [self indexFromModelIndex:modelIndex];
-	FRWatcherTabContentsController *controller = [tabContentsArray_ objectAtIndex:index];
+	NSInteger indexu = [self indexFromModelIndex:modelIndex];
+	FRWatcherTabContentsController *controller = [tabContentsArray_ objectAtIndex:indexu];
 	
 	// Resize the new view to fit the window. Calling |view| may lazily
 	// instantiate the TabContentsController from the nib. Until we call
@@ -358,23 +359,23 @@ const int kPinnedTabWidth = 56;
 // closing. For example, if there are two tabs in the process of closing before
 // |index|, this returns |index| + 2. If there are no closing tabs, this will
 // return |index|.
-- (NSInteger)indexFromModelIndex:(NSInteger)index 
+- (NSInteger)indexFromModelIndex:(NSInteger)indexu 
 {
-	if (index < 0)
-		return index;
+	if (indexu < 0)
+		return indexu;
 	
 	NSInteger i = 0;
 	for (TabController *controller in tabArray_) 
 	{
 		if ([closingControllers_ containsObject:controller]) 
 		{
-			++index;
+			++indexu;
 		}
-		if (i == index)  // No need to check anything after, it has no effect.
+		if (i == indexu)  // No need to check anything after, it has no effect.
 			break;
 		++i;
 	}
-	return index;
+	return indexu;
 }
 
 // Returns the index of the subview |view|. Returns -1 if not present. Takes
@@ -383,15 +384,15 @@ const int kPinnedTabWidth = 56;
 // are no longer in the model.
 - (NSInteger)modelIndexForTabView:(NSView *)view 
 {
-	NSInteger index = 0;
+	NSInteger indexu = 0;
 	for (TabController *current in tabArray_) 
 	{
 		// If |current| is closing, skip it.
 		if ([closingControllers_ containsObject:current])
 			continue;
 		else if ([current view] == view)
-			return index;
-		++index;
+			return indexu;
+		++indexu;
 	}
 	NSLog(@"Error finding index of tab");
 	return -1;
@@ -403,7 +404,7 @@ const int kPinnedTabWidth = 56;
 // tabs are no longer in the model.
 - (NSInteger)modelIndexForContentsView:(NSView *)view 
 {
-	NSInteger index = 0;
+	NSInteger indexu = 0;
 	NSInteger i = 0;
 	for (FRWatcherTabContentsController *current in tabContentsArray_)
 	{
@@ -416,9 +417,9 @@ const int kPinnedTabWidth = 56;
 			continue;
 		} 
 		else if ([current view] == view) 
-			return index;
+			return indexu;
 		
-		++index;
+		++indexu;
 		++i;
 	}
 	NSLog(@"Error finding intex of tab contents");
@@ -427,21 +428,21 @@ const int kPinnedTabWidth = 56;
 
 // Returns the view at the given index, using the array of TabControllers to
 // get the associated view. Returns nil if out of range.
-- (NSView *)viewAtIndex:(NSUInteger)index 
+- (NSView *)viewAtIndex:(NSUInteger)indexu
 {
-	if (index >= [tabArray_ count])
+	if (indexu >= [tabArray_ count])
 		return NULL;
 	
-	return [[tabArray_ objectAtIndex:index] view];
+	return [[tabArray_ objectAtIndex:indexu] view];
 }
 
 // Called when the user clicks a tab. Tell the model the selection has changed,
 // which feeds back into us via a notification.
-- (void)selectTab:(id)sender 
+- (void)selectTab:(id)sender
 {
-	int index = [self modelIndexForTabView:sender];
-	if ([tabStripModel_ containsIndex:index])
-		[tabStripModel_ selectTabContentsAtIndex:index userGesture:TRUE];
+	NSInteger indexu = [self modelIndexForTabView:sender];
+	if ([tabStripModel_ containsIndex:indexu])
+		[tabStripModel_ selectTabContentsAtIndex:indexu userGesture:TRUE];
 }
 
 // Called when the user closes a tab. Asks the model to close the tab. |sender|
@@ -451,8 +452,8 @@ const int kPinnedTabWidth = 56;
 	if ([hoveredTab_ isEqual:sender]) 
 		hoveredTab_ = nil;
 	
-	NSInteger index = [self modelIndexForTabView:sender];
-	if (![tabStripModel_ containsIndex:index])
+	NSInteger indexu = [self modelIndexForTabView:sender];
+	if (![tabStripModel_ containsIndex:indexu])
 		return;
 	
 	// FRWatcherTabContentsController *contents = [tabStripModel_ getTabContentsAt:index];
@@ -460,7 +461,7 @@ const int kPinnedTabWidth = 56;
 	const NSInteger numberOfOpenTabs = [self numberOfOpenTabs];
 	if (numberOfOpenTabs > 1) 
 	{
-		BOOL isClosingLastTab = (index == numberOfOpenTabs - 1);
+		BOOL isClosingLastTab = (indexu == numberOfOpenTabs - 1);
 		if (!isClosingLastTab)
 		{
 			// Limit the width available for laying out tabs so that tabs are not
@@ -478,7 +479,7 @@ const int kPinnedTabWidth = 56;
 			availableResizeWidth_ = NSMaxX([lastTab frame]);
 		}
 		
-		BOOL isClosingFirstTab = (index == 0);
+		BOOL isClosingFirstTab = (indexu == 0);
 		if (isClosingFirstTab && ([tabStripModel_ selectedIndex] == 0)) 
 		{
 			// make sure the new first tab is selected if 
@@ -486,7 +487,7 @@ const int kPinnedTabWidth = 56;
 			[[tabArray_ objectAtIndex:1] setSelected:YES];
 		}
 		
-		[tabStripModel_ closeTabContentsAtIndex:index];
+		[tabStripModel_ closeTabContentsAtIndex:indexu];
 	} 
 	else 
 	{
@@ -749,15 +750,15 @@ const int kPinnedTabWidth = 56;
 }
 
 // Handles setting the title of the tab at |index| 
-- (void)setTabTitle:(NSString *)newTitle forTab:(int)index 
+- (void)setTabTitle:(NSString *)newTitle forTab:(NSInteger)indexu 
 {
-	[[tabArray_ objectAtIndex:index] setTitle:newTitle];
+	[[tabArray_ objectAtIndex:indexu] setTitle:newTitle];
 }
 
 // Handles setting the image count for the tab badge of the tab at |index| 
-- (void)setNewImageCount:(int)newCount forTab:(int)index
+- (void)setNewImageCount:(NSInteger)newCount forTab:(NSInteger)indexu
 {
-	int newIndex = [self indexFromModelIndex:index];
+	NSInteger newIndex = [self indexFromModelIndex:indexu];
 	[(TabController *)[tabArray_ objectAtIndex:newIndex] setCount:newCount];
 }
 
@@ -768,19 +769,19 @@ const int kPinnedTabWidth = 56;
                  inForeground:(BOOL)inForeground 
 {	
 	// Take closing tabs into account.
-	NSInteger index = [self indexFromModelIndex:modelIndex];
+	NSUInteger indexu = [self indexFromModelIndex:modelIndex];
 	
-	if ([tabContentsArray_ count] == index) 
+	if ([tabContentsArray_ count] == indexu) 
 		[tabContentsArray_ addObject:contents];
 	else 
-		[tabContentsArray_ insertObject:contents atIndex:index];
+		[tabContentsArray_ insertObject:contents atIndex:indexu];
 	
 	// Make a new tab and add it to the strip. Keep track of its controller.
 	TabController *newController = [self newTab];
-	if ([tabArray_ count] == index) 
+	if ([tabArray_ count] == indexu) 
 		[tabArray_ addObject:newController];
 	else 
-		[tabArray_ insertObject:newController atIndex:index];
+		[tabArray_ insertObject:newController atIndex:indexu];
 	
 	NSView* newView = [newController view];
 	
@@ -790,7 +791,7 @@ const int kPinnedTabWidth = 56;
 	[newView setFrame:NSOffsetRect([newView frame],
 								   0, -[[self class] defaultTabHeight])];
 	
-	[self setTabTitle:[contents threadName] forTab:index];
+	[self setTabTitle:[contents threadName] forTab:indexu];
 	
 	// If a tab is being inserted, we can again use the entire tab strip width
 	// for layout.
@@ -807,7 +808,7 @@ const int kPinnedTabWidth = 56;
 	{
 		[self selectTabWithContents:contents 
 				   previousContents:currentTab_ 
-							atIndex:index 
+							atIndex:indexu 
 						userGesture:YES];
 	}
 	
@@ -829,13 +830,13 @@ const int kPinnedTabWidth = 56;
 		return;
 	
 	// Take closing tabs into account.
-	NSInteger index = [self indexFromModelIndex:modelIndex];
+	NSInteger indexu = [self indexFromModelIndex:modelIndex];
 	
 	// De-select all other tabs and select the new tab.
-	int i = 0;
+	NSInteger i = 0;
 	for (TabController *current in tabArray_) 
 	{
-		[current setSelected:(i == index) ? YES : NO];
+		[current setSelected:(i == indexu) ? YES : NO];
 		++i;
 	}
 	
@@ -845,7 +846,7 @@ const int kPinnedTabWidth = 56;
 	
 	// Tell the new tab contents it is about to become the selected tab. Here it
 	// can do things like make sure the toolbar is up to date.
-	FRWatcherTabContentsController *newController = [tabContentsArray_ objectAtIndex:index];
+	FRWatcherTabContentsController *newController = [tabContentsArray_ objectAtIndex:indexu];
 	[newController willBecomeSelectedTab];
 	
 	// Relayout for new tabs and to let the selected tab grow to be larger in
@@ -855,12 +856,12 @@ const int kPinnedTabWidth = 56;
 
 	if (oldContents) 
 	{
-		int index = [[document_ tabStripModel] getIndexOfController:oldContents];
-		if (index != -1) 
+		indexu = [[document_ tabStripModel] getIndexOfController:oldContents];
+		if (indexu != -1) 
 		{  
 			// When closing a tab, the old tab may be gone.
 			FRWatcherTabContentsController *oldController =
-			[tabContentsArray_ objectAtIndex:index];
+			[tabContentsArray_ objectAtIndex:indexu];
 			[oldController willBecomeUnselectedTab];
 			[oldContents wasHidden];
 		}
@@ -873,7 +874,7 @@ const int kPinnedTabWidth = 56;
 		[newContents didBecomeSelected];
 }
 
-- (void)removeTabAtIndex:(int)indexu
+- (void)removeTabAtIndex:(NSInteger)indexu
 {
 	const NSInteger numberOfOpenTabs = [self numberOfOpenTabs];
 	if (numberOfOpenTabs == 0) 
@@ -891,13 +892,13 @@ const int kPinnedTabWidth = 56;
 // the view from the strip.
 - (void)removeTab:(TabController *)controller 
 {
-	NSUInteger index = [tabArray_ indexOfObject:controller];
+	NSUInteger indexu = [tabArray_ indexOfObject:controller];
 
 	// Release the tab contents controller so those views get destroyed. This
 	// will remove all the tab content Cocoa views from the hierarchy. A
 	// subsequent "select tab" notification will follow from the model. To
 	// tell us what to swap in in its absence.
-	[tabContentsArray_ removeObjectAtIndex:index];
+	[tabContentsArray_ removeObjectAtIndex:indexu];
 	
 	// Remove the view from the tab strip.
 	NSView *tab = [controller view];
@@ -918,7 +919,7 @@ const int kPinnedTabWidth = 56;
 	[targetFrames_ removeObjectForKey:identifier];
 	
 	// Once we're totally done with the tab, delete its controller
-	[tabArray_ removeObjectAtIndex:index];
+	[tabArray_ removeObjectAtIndex:indexu];
 }
 
 
@@ -1005,7 +1006,7 @@ const int kPinnedTabWidth = 56;
 
 - (NSView*)selectedTabView 
 {
-	int selectedIndex = [tabStripModel_ selectedIndex];
+	NSInteger selectedIndex = [tabStripModel_ selectedIndex];
 	// Take closing tabs into account. They can't ever be selected.
 	selectedIndex = [self indexFromModelIndex:selectedIndex];
 	return [self viewAtIndex:selectedIndex];
@@ -1014,37 +1015,37 @@ const int kPinnedTabWidth = 56;
 // Find the model index based on the x coordinate of the placeholder. If there
 // is no placeholder, this returns the end of the tab strip. Closing tabs are
 // not considered in computing the index.
-- (int)indexOfPlaceholder
+- (NSInteger)indexOfPlaceholder
 {
 	double placeholderX = placeholderFrame_.origin.x;
-	int index = 0;
-	int location = 0;
+	NSInteger indexu = 0;
+	NSInteger location = 0;
 	// Use |tabArray_| here instead of the tab strip count in order to get the
 	// correct index when there are closing tabs to the left of the placeholder.
-	const int count = [tabArray_ count];
-	while (index < count) 
+	const NSInteger count = [tabArray_ count];
+	while (indexu < count) 
 	{
 		// Ignore closing tabs for simplicity. The only drawback of this is that
 		// if the placeholder is placed right before one or several contiguous
 		// currently closing tabs, the associated TabController will start at the
 		// end of the closing tabs.
-		if ([closingControllers_ containsObject:[tabArray_ objectAtIndex:index]]) 
+		if ([closingControllers_ containsObject:[tabArray_ objectAtIndex:indexu]]) 
 		{
-			index++;
+			indexu++;
 			continue;
 		}
-		NSView* curr = [self viewAtIndex:index];
+		NSView *curr = [self viewAtIndex:indexu];
 		// The placeholder tab works by changing the frame of the tab being dragged
 		// to be the bounds of the placeholder, so we need to skip it while we're
 		// iterating, otherwise we'll end up off by one.  Note This only effects
 		// dragging to the right, not to the left.
 		if (curr == placeholderTab_) {
-			index++;
+			indexu++;
 			continue;
 		}
 		if (placeholderX <= NSMinX([curr frame]))
 			break;
-		index++;
+		indexu++;
 		location++;
 	}
 	return location;
@@ -1054,7 +1055,7 @@ const int kPinnedTabWidth = 56;
 // current placeholder.
 - (void)moveTabFromIndex:(NSInteger)from 
 {
-	int toIndex = [self indexOfPlaceholder];
+	NSInteger toIndex = [self indexOfPlaceholder];
 	[tabStripModel_ moveTabContentsAtIndex:from to:toIndex select:TRUE];
 }
 
@@ -1066,7 +1067,7 @@ const int kPinnedTabWidth = 56;
 // location when the tab is added to the model.
 - (void)dropTabContents:(FRWatcherTabContentsController *)contents withFrame:(NSRect)frame 
 {
-	int modelIndex = [self indexOfPlaceholder];
+	NSInteger modelIndex = [self indexOfPlaceholder];
 	
 	// Mark that the new tab being created should start at |frame|. It will be
 	// reset as soon as the tab has been positioned.
@@ -1248,15 +1249,15 @@ const int kPinnedTabWidth = 56;
 
 - (FRWatcherTabContentsController *)activeTabContentsController 
 {
-	int modelIndex = [tabStripModel_ selectedIndex];
+	NSInteger modelIndex = [tabStripModel_ selectedIndex];
 	if (modelIndex < 0)
 		return nil;
-	NSInteger index = [self indexFromModelIndex:modelIndex];
+	NSInteger indexu = [self indexFromModelIndex:modelIndex];
 	if (index < 0 ||
-		index >= (NSInteger)[tabContentsArray_ count])
+		indexu >= (NSInteger)[tabContentsArray_ count])
 		return nil;
 	
-	return [tabContentsArray_ objectAtIndex:index];
+	return [tabContentsArray_ objectAtIndex:indexu];
 }
 
 // Disable tab dragging when there are any pending animations.
@@ -1280,12 +1281,12 @@ const int kPinnedTabWidth = 56;
 								 contextInfo:tabController];
 
 	NSInteger modelIndex = [self modelIndexForContentsView:tabContentsView];
-	NSInteger index = [self indexFromModelIndex:modelIndex];
+	NSInteger indexu = [self indexFromModelIndex:modelIndex];
 
 	// Prevent tab from beign dragged while a sheet is open, 
 	// since GTMWindowSheetController can't currently move sheets between windows
 	if (index >= 0)
-		[controller setTab:[self viewAtIndex:index] isDraggable:NO];
+		[controller setTab:[self viewAtIndex:indexu] isDraggable:NO];
 }
 
 - (void)sheetDidEnd:(NSWindow *)sheet returnCode:(NSInteger)returnCode contextInfo:(void *)contextInfo
@@ -1293,13 +1294,13 @@ const int kPinnedTabWidth = 56;
 	NSView *tabContentsView = [(FRWatcherTabContentsController *)contextInfo ourView];
 
 	NSInteger modelIndex = [self modelIndexForContentsView:tabContentsView];
-	NSInteger index = [self indexFromModelIndex:modelIndex];
+	NSInteger indexu = [self indexFromModelIndex:modelIndex];
 	
 	TabbedWindowController *controller =
 		(TabbedWindowController *)[[switchView_ window] windowController];
 	
 	if (index >= 0)
-		[controller setTab:[self viewAtIndex:index] isDraggable:YES];
+		[controller setTab:[self viewAtIndex:indexu] isDraggable:YES];
 }
 
 - (void)updateThrobberForTabContents:(FRWatcherTabContentsController *)tabContentsController
@@ -1317,9 +1318,9 @@ const int kPinnedTabWidth = 56;
 		throbberLoadingImage = [NSImage imageNamed:@"throbber.png"];
 
 	// Take closing tabs into account.
-	NSInteger index = [self indexFromModelIndex:modelIndex];
+	NSInteger indexu = [self indexFromModelIndex:modelIndex];
 	
-	TabController *tabController = [tabArray_ objectAtIndex:index];
+	TabController *tabController = [tabArray_ objectAtIndex:indexu];
 	
 	enum TabLoadingState oldState = [tabController loadingState];
 	enum TabLoadingState newState = kTabDone;

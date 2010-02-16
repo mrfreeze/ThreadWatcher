@@ -10,6 +10,13 @@
 #import "FRPostedImage.h"
 #import "FRFullThreadCollectionView.h"
 
+@interface FRRoundedBox ()
+
+- (void)copyOrigURL;
+- (void)gotoPost;
+
+@end
+
 
 @implementation FRRoundedBox
 

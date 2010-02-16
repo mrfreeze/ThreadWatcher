@@ -49,7 +49,7 @@
 {
 	NSPoint down = [mouseDownEvent locationInWindow];
 	NSPoint drag = [theEvent locationInWindow];
-	float distance = hypot(down.x - drag.x, down.y - drag.y);
+	CGFloat distance = hypot(down.x - drag.x, down.y - drag.y);
 	
 	if (distance < 3) 
 		return;

@@ -37,7 +37,6 @@
 #import "AMCollectionView.h"
 #import "BWToolkitFramework.framework/Versions/A/Headers/BWGradientBox.h"
 
-@class FRImageViewer;
 @class FRAppDelegate;
 @class FRIconCollectionView;
 @class MyDocument;
@@ -82,10 +81,10 @@ extern NSString *const failedResponse;
 	NSUInteger sizeOfAllFiles;
 	NSString *tempDirPath;
 	NSURL *boardPostURL; // url to post to the board
-	unsigned int numberBeforeDownload; // the number of images already downloaded
-									   // before the current download operation
-	unsigned int newImages;
-	unsigned int numberPostsBeforeDownload;
+	NSUInteger numberBeforeDownload; // the number of images already downloaded
+									 // before the current download operation
+	NSUInteger newImages;
+	NSUInteger numberPostsBeforeDownload;
 	
 	// information about selected images
 	NSIndexSet *selectedPosts;
@@ -157,7 +156,7 @@ extern NSString *const failedResponse;
 	NSURL *scriptSaveLocation;
 	NSMutableArray *scriptTags;
 	NSNumber *scriptRating;
-	int tabIndex; // index of the tab in teh strip, left to right
+	NSInteger tabIndex; // index of the tab in teh strip, left to right
 	
 	// posting
 	IBOutlet NSWindow *postSheet;
@@ -169,7 +168,7 @@ extern NSString *const failedResponse;
 	BOOL sheetOpen;
 	BOOL downloadingThread;
 	
-	int changeCount;
+	NSInteger changeCount;
 }
 
 // initialisation
@@ -257,9 +256,9 @@ extern NSString *const failedResponse;
 @property (readonly, assign) NSOperationQueue *postQueue;
 @property (readwrite) BOOL sheetOpen;
 @property (readwrite) BOOL downloadingThread;
-@property (readwrite) int tabIndex;
+@property (readwrite) NSInteger tabIndex;
 @property (assign) __weak FRIKImageView *imageToPost;
-@property (readwrite) int changeCount;
+@property (readwrite) NSInteger changeCount;
 
 @property (assign) IBOutlet NSView *ourView;
 @property (assign) IBOutlet NSArrayController *theController;

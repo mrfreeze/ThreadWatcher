@@ -148,7 +148,7 @@
 	}
 	
 	[_delegate performSelectorOnMainThread:@selector(pageWasLoaded:)
-								withObject:[NSNumber numberWithInt:[replyNodes count]+1]
+								withObject:[NSNumber numberWithInteger:[replyNodes count]+1]
 							 waitUntilDone:YES];
 	
 	[self addImageWithInfo:opImageInfo 

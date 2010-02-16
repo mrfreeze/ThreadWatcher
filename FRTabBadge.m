@@ -52,8 +52,8 @@
 	NSSize badgeNumSize = [badge sizeWithAttributes:nil];
 	
 	// Calculate the badge's coordinates.
-	int badgeWidth = badgeNumSize.width + BADGE_BUFFER_SIDE * 2;
-	int bufferLeft = BADGE_BUFFER_LEFT;
+	NSInteger badgeWidth = badgeNumSize.width + BADGE_BUFFER_SIDE * 2;
+	NSInteger bufferLeft = BADGE_BUFFER_LEFT;
 	if (badgeNumSize.width < BADGE_TEXT_MINI)
 	{
 		// Make sure the width is at least the minimum size
@@ -61,9 +61,9 @@
 		bufferLeft = 5;
 	}
 	
-	int badgeX = aRect.origin.x + aRect.size.width - BADGE_CIRCLE_BUFFER_RIGHT - badgeWidth;
-	int badgeNumX = badgeX + bufferLeft;
-	int badgeY = aRect.origin.y + BADGE_BUFFER_TOP;
+	NSInteger badgeX = aRect.origin.x + aRect.size.width - BADGE_CIRCLE_BUFFER_RIGHT - badgeWidth;
+	NSInteger badgeNumX = badgeX + bufferLeft;
+	NSInteger badgeY = aRect.origin.y + BADGE_BUFFER_TOP;
 	if (badgeNumSize.width < BADGE_TEXT_MINI)
 		badgeNumX += BADGE_BUFFER_LEFT_SMALL;
 

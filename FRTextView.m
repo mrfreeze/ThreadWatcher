@@ -10,6 +10,13 @@
 #import "FRPostedImage.h"
 #import "FRFullThreadCollectionView.h"
 
+@interface FRTextView ()
+
+- (void)copyOrigURL;
+- (void)gotoPost;
+
+@end
+
 
 @implementation FRTextView
 
@@ -29,9 +36,9 @@
 #pragma mark internal links
 
 // user clicked on an internal link, so tell delegate
-- (void)clickedOnLink:(id)link atIndex:(NSUInteger)charIndex
+- (void)clickedOnLink:(id)aLink atIndex:(NSUInteger)charIndex
 {
-	[[self delegate] textView:self clickedOnLink:(id)link atIndex:(NSUInteger)charIndex];
+	[[self delegate] textView:self clickedOnLink:(id)aLink atIndex:(NSUInteger)charIndex];
 }
 
 // -----------------------------------------------------------------------------------------------

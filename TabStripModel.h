@@ -18,8 +18,8 @@
 {
 	NSMutableArray *tabs;
 	
-	int selectedIndex;
-	int nextSelectedIndex;
+	NSInteger selectedIndex;
+	NSInteger nextSelectedIndex;
 	FRWatcherTabContentsController *selectedContents;
 	__weak ToolbarController *toolbarController_;
 	
@@ -31,35 +31,35 @@
 }
 
 @property (readwrite, retain) FRWatcherTabContentsController *selectedContents;
-@property (readwrite, retain) __weak ToolbarController *toolbarController;
-@property (readwrite) int selectedIndex;
-@property (readwrite, retain) __weak TabStripController *controller;
+@property (readwrite, assign) __weak ToolbarController *toolbarController;
+@property (readwrite) NSInteger selectedIndex;
+@property (readwrite, assign) __weak TabStripController *controller;
 @property (readwrite, retain) MyDocument *delegate;
 @property (readonly) NSMutableArray *tabs;
 
 // the number of tabs
-- (int)count;
+- (NSInteger)count;
 
 // return true if i is the index of a tab in the model
-- (BOOL)containsIndex:(int)i;
+- (BOOL)containsIndex:(NSInteger)i;
 
 // select the tab at intex |index|.
-- (void)selectTabContentsAtIndex:(int)index userGesture:(BOOL)gesture;
+- (void)selectTabContentsAtIndex:(NSInteger)index userGesture:(BOOL)gesture;
 
 // returns the tab contents at index |index|
-- (FRWatcherTabContentsController *)getTabContentsAt:(int)index;
+- (FRWatcherTabContentsController *)getTabContentsAt:(NSInteger)index;
 
 // returns the index of the tab contents controller |cont|
-- (int)getIndexOfController:(FRWatcherTabContentsController *)cont;
+- (NSInteger)getIndexOfController:(FRWatcherTabContentsController *)cont;
 
 // returns the index of the currently selected tab
-- (int)selectedIndex;
+- (NSInteger)selectedIndex;
 
 // close the tab at |index|
-- (void)closeTabContentsAtIndex:(int)index;
+- (void)closeTabContentsAtIndex:(NSInteger)index;
 
 // mova a tab from intex |from| to index |to|. if |select| is true, it will be selected after the move
-- (void)moveTabContentsAtIndex:(int)from to:(int)toIndex select:(BOOL)select;
+- (void)moveTabContentsAtIndex:(NSInteger)from to:(NSInteger)toIndex select:(BOOL)select;
 
 // returns the tab contents controller of the currently selected tab
 // will return nil if there is no selected contents 
@@ -70,11 +70,11 @@
 - (void)addNewTab;
 
 // inserts |contents| at index |index|, if |fore| is true, the tab will be selected after being inserted
-- (void)insertTabContents:(FRWatcherTabContentsController *)contents atIndex:(int)index bringToFront:(BOOL)fore;
+- (void)insertTabContents:(FRWatcherTabContentsController *)contents atIndex:(NSInteger)index bringToFront:(BOOL)fore;
 
 // removes a tab from the model and returns it. does not remove the tab from the tab strip
 // so make sure that the tab is removed from the strip after calling this
-- (FRWatcherTabContentsController *)detachTabContentsAtIndex:(int)index;
+- (FRWatcherTabContentsController *)detachTabContentsAtIndex:(NSInteger)indexu;
 
 // returns a new nsdocument with a single tab with contents |contents| and window frame |browserRect|
 // the tab contents should be removed form the model using |detachTabContentsAtIndex:| before calling this
@@ -99,11 +99,11 @@
 
 // selects the tab that should next be selected after the removal of the tab at |index| (the tab to the left)
 // does nothing if there is only one tab in the window
-- (void)selectNextSelectedTabAfter:(int)index;
+- (void)selectNextSelectedTabAfter:(NSInteger)index;
 
 // change the new image count for the given tab - lets the tab strip controller 
 // know so that the tab badge can be updated
-- (void)changeNewImageCount:(int)newCount forTabContents:(FRWatcherTabContentsController *)contents;
+- (void)changeNewImageCount:(NSInteger)newCount forTabContents:(FRWatcherTabContentsController *)contents;
 
 // close all the tabs in the window. only use this when the entire window is being 
 // closed, and only after it has been hidden from view

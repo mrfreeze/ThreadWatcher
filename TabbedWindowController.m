@@ -262,7 +262,7 @@ const int kScrollbarWidth = 25;
 	{
 		if ([t sheetOpen]) 
 		{
-			int indexu = [tabStripModel getIndexOfController:t];
+			NSInteger indexu = [tabStripModel getIndexOfController:t];
 			[tabStripModel selectTabContentsAtIndex:indexu userGesture:NO];
 			return;
 		}
@@ -418,8 +418,8 @@ const int kScrollbarWidth = 25;
 	if (contents) 
 	{
 		// If the intrinsic width is bigger, then make it the zoomed width.
-		const int kScrollbarWidth = 16;
-		CGFloat intrinsicWidth = (CGFloat)[[contents view] frame].size.width + kScrollbarWidth;
+		const NSInteger kScrollbarWidthSmaller = 16;
+		CGFloat intrinsicWidth = (CGFloat)[[contents view] frame].size.width + kScrollbarWidthSmaller;
 		zoomedWidth = MAX(zoomedWidth,
 							   MIN(intrinsicWidth, frame.size.width));
 	}
@@ -492,7 +492,7 @@ const int kScrollbarWidth = 25;
 	NSDisableScreenUpdates();
 
 	// Fetch the tab contents for the tab being dragged
-	int index = [tabStripController modelIndexForTabView:tabView];
+	NSInteger indexu = [tabStripController modelIndexForTabView:tabView];
 	
 	// Set the window size. Need to do this before we detach the tab so it's
 	// still in the window. We have to flip the coordinates as that's what
@@ -509,7 +509,7 @@ const int kScrollbarWidth = 25;
 	NSRect tabRect = [tabView frame];
 	
 	// Select a different tab. This will do nothing if there is only 1 tab.
-	[tabStripModel selectNextSelectedTabAfter:index];
+	[tabStripModel selectNextSelectedTabAfter:indexu];
 	
 	// Detach the tab from the source window, which just updates the model without
 	// deleting the tab contents. Make sure nothing else tries to talk to the 
@@ -518,7 +518,7 @@ const int kScrollbarWidth = 25;
 	@synchronized (tabStripModel)
 	{
 		FRWatcherTabContentsController *contents = 
-		[tabStripModel detachTabContentsAtIndex:index];
+		[tabStripModel detachTabContentsAtIndex:indexu];
 		
 		[contents setMyDocument:nil];
 		// Create the new window with a single tab in its model, the one being
@@ -537,7 +537,7 @@ const int kScrollbarWidth = 25;
 		[[controller tabStripController] setFrameOfSelectedTab:tabRect];
 	}
 	// Remove the tab from the old tab strip, which will close the old window if required.
-	[tabStripController removeTabAtIndex:index];
+	[tabStripController removeTabAtIndex:indexu];
 	
 	NSEnableScreenUpdates();
 	return controller;
@@ -562,9 +562,9 @@ const int kScrollbarWidth = 25;
 
 		if (!isBrowser) return;
 		TabbedWindowController *dragTWC = (TabbedWindowController *)dragController;
-		int index = [[dragTWC tabStripController] modelIndexForTabView:view];
+		NSInteger indexu = [[dragTWC tabStripController] modelIndexForTabView:view];
 		FRWatcherTabContentsController* contents =
-        [[[dragTWC myDocument] tabStripModel] getTabContentsAt:index];
+        [[[dragTWC myDocument] tabStripModel] getTabContentsAt:indexu];
 		// The tab contents may have gone away if given a window.close() while it
 		// is being dragged. If so, bail, we've got nothing to drop.
 		if (!contents)
@@ -596,8 +596,8 @@ const int kScrollbarWidth = 25;
 	else 
 	{
 		// Moving within a window.
-		int index = [tabStripController modelIndexForTabView:view];
-		[tabStripController moveTabFromIndex:index];
+		NSInteger indexu = [tabStripController modelIndexForTabView:view];
+		[tabStripController moveTabFromIndex:indexu];
 	}
 	
 	// Remove the placeholder since the drag is now complete.
@@ -613,8 +613,8 @@ const int kScrollbarWidth = 25;
 // put into a different tab strip, such as during a drop on another window.
 - (void)detachTabView:(NSView*)view 
 {
-	int index = [tabStripController modelIndexForTabView:view];
-	[[myDocument tabStripModel] detachTabContentsAtIndex:index];
+	NSInteger indexu = [tabStripController modelIndexForTabView:view];
+	[[myDocument tabStripModel] detachTabContentsAtIndex:indexu];
 }
 
 - (BOOL)hasToolbar
@@ -651,9 +651,9 @@ const int kScrollbarWidth = 25;
 	[[self window] makeKeyAndOrderFront:self];
 	
 	// ...and raise a tab with a sheet.
-	NSInteger index = [tabStripController modelIndexForContentsView:view];
-	if (index >= 0)
-		[tabStripModel selectTabContentsAtIndex:index userGesture:FALSE];
+	NSInteger indexu = [tabStripController modelIndexForContentsView:view];
+	if (indexu >= 0)
+		[tabStripModel selectTabContentsAtIndex:indexu userGesture:FALSE];
 }
 
 

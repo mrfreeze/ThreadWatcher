@@ -88,6 +88,6 @@ enum TabLoadingState {
 - (BOOL)shouldShowIcon;
 
 // set the number to be shown in the tab badge
-- (void)setCount:(int)newCount;
+- (void)setCount:(NSInteger)newCount;
 
 @end

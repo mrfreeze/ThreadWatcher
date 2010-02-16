@@ -43,6 +43,10 @@ const CGFloat kRapidCloseDist = 2.5;
 - (void)adjustGlowValue;
 - (NSArray *)dropTargetsForController:(TabbedWindowController *)dragController;
 - (void)setWindowBackgroundVisibility:(BOOL)shouldBeVisible;
+- (void)reloadTab;
+- (void)closeTab;
+- (void)closeOtherTabs;
+- (void)newTab;
 @end
 
 @implementation TabView
@@ -310,10 +314,10 @@ const CGFloat kRapidCloseDist = 2.5;
 	{
 		NSPoint thisPoint = [NSEvent mouseLocation];
 		CGFloat stretchiness = thisPoint.y - dragOrigin_.y;
-		stretchiness = copysign(sqrtf(fabs(stretchiness))/sqrtf(kTearDistance),
+		stretchiness = copysign(sqrt(fabs(stretchiness))/sqrt(kTearDistance),
 								stretchiness) / 2.0;
 		CGFloat offset = thisPoint.x - dragOrigin_.x;
-		if (fabsf(offset) > 100) stretchiness = 0;
+		if (fabs(offset) > 100) stretchiness = 0;
 		[sourceController_ insertPlaceholderForTab:self
 											 frame:NSOffsetRect(sourceTabFrame_,
 																offset, 0)
@@ -429,7 +433,7 @@ const CGFloat kRapidCloseDist = 2.5;
 	// point).
 	NSTimeInterval tearProgress = [NSDate timeIntervalSinceReferenceDate] - tearTime_;
 	tearProgress /= kTearDuration;  // Normalize.
-	tearProgress = sqrtf(MAX(MIN(tearProgress, 1.0), 0.0));
+	tearProgress = sqrt(MAX(MIN(tearProgress, 1.0), 0.0));
 	
 	// Move the dragged window to the right place on the screen.
 	NSPoint origin = sourceWindowFrame_.origin;

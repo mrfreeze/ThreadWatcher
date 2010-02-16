@@ -68,7 +68,7 @@
 
 @property (readonly, nonatomic) TabStrip *tabStripView;
 @property (readonly, nonatomic) NSView *tabContentsArea;
-@property (readonly, retain) __weak ToolbarController *toolbarController;
+@property (readonly, assign) __weak ToolbarController *toolbarController;
 @property (readonly, retain) GTMWindowSheetController *sheetController;
 @property (readonly) TabStripModel *tabStripModel;
 

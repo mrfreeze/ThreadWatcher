@@ -40,7 +40,7 @@
 - (void)addImageURLsFromDirectory:(NSURL *)dir atIndex:(NSNumber *)indexu;
 - (void)addURL:(NSURL *)url atIndex:(NSNumber *)indexu;
 - (BOOL)isImageFile:(NSString*)filePath;
-- (BOOL)tableView:(NSTableView *)tv didDropRows:(NSIndexSet *)dragged at:(int)newRow;
+- (BOOL)tableView:(NSTableView *)tv didDropRows:(NSIndexSet *)dragged at:(NSInteger)newRow;
 
 // close window stuff
 - (void)alertDidEnd:(NSAlert *)alert returnCode:(NSInteger)returnCode contextInfo:(void *)contextInfo;
@@ -395,7 +395,7 @@
 */
 - (IBAction)addRemoveClicked:(id)sender
 {
-	int clickedSegment = [sender selectedSegment];
+	NSInteger clickedSegment = [sender selectedSegment];
 	if (clickedSegment == 0) 
 		[self openDialog];
 	else if (clickedSegment == 1)
@@ -590,7 +590,7 @@
 	
 	// remember selection in user defaults
 	NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
-	[defaults setObject:[NSNumber numberWithInt:[boardSelection indexOfSelectedItem]] forKey:FRDumpBoard];
+	[defaults setObject:[NSNumber numberWithInteger:[boardSelection indexOfSelectedItem]] forKey:FRDumpBoard];
 	
 	NSArray *components = [selection componentsSeparatedByString:@"/"];
 	
@@ -604,7 +604,7 @@
 {
 	NSURL *base = [[NSURL URLWithString:s] URLByDeletingLastPathComponent];
 	NSMutableString *clean = [FRLinkFetcher cleanBaseURLAsMutableString:base];	
-	int length = [clean length];
+	NSInteger length = [clean length];
 	if ([clean replaceOccurrencesOfString:@"http://boards.4chan.org/" 
 							   withString:@"" 
 								  options:NSAnchoredSearch 
@@ -783,14 +783,14 @@
 	@discussion used when we drag items within the table view
 				the set of selected items are all moved to the location newRow
 */
-- (BOOL)tableView:(NSTableView *)tv didDropRows:(NSIndexSet *)dragged at:(int)newRow
+- (BOOL)tableView:(NSTableView *)tv didDropRows:(NSIndexSet *)dragged at:(NSInteger)newRow
 {
 	void (^dragBlock)(NSUInteger, BOOL *) = ^(NSUInteger idx, BOOL *stop)
 	{
 		if (newRow != -1 && idx != -1)
 		{
 			FRLocalImage *rowObject = [imageURLs objectAtIndex:idx];
-			if (newRow < [imageURLs count]-1) 
+			if (newRow < ((NSInteger)[imageURLs count])-1) 
 			{
 				[imageURLs removeObjectAtIndex:idx];
 				[imageURLs insertObject:rowObject atIndex:newRow];

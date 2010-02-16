@@ -129,8 +129,8 @@ static void ClearBitmapImageRep(NSBitmapImageRep *bitmap)
             maskScalingFilter = [CIFilter filterWithName:@"CILanczosScaleTransform"];
             [maskScalingFilter setDefaults];
             maskExtent = [inputMaskImage extent];
-            float xScale = rect.size.width / maskExtent.size.width;
-            float yScale = rect.size.height / maskExtent.size.height;
+            CGFloat xScale = rect.size.width / maskExtent.size.width;
+            CGFloat yScale = rect.size.height / maskExtent.size.height;
             [maskScalingFilter setValue:[NSNumber numberWithFloat:yScale] forKey:@"inputScale"];
             [maskScalingFilter setValue:[NSNumber numberWithFloat:xScale / yScale] forKey:@"inputAspectRatio"];
             [maskScalingFilter setValue:inputMaskImage forKey:@"inputImage"];

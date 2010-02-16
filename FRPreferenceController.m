@@ -35,25 +35,25 @@ NSString *const FRAutomaticWatching = @"AutomaticThreadWatching";
 
 - (IBAction)changeResave:(id)sender
 {
-	int state = [resaveToggleCheckBox state];
+	NSInteger state = [resaveToggleCheckBox state];
 	NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
 	[defaults setBool:state forKey:FRResaveKey];
 }
 
 - (IBAction)changeAnimatedThumbs:(id)sender
 {
-	int state = [animatedThumbsToggle state];
+	NSInteger state = [animatedThumbsToggle state];
 	NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
 	[defaults setBool:state forKey:FRAnimatedThumbsKey];
 }
 
 - (IBAction)changeFinderComment:(id)sender
 {
-	int state = [finderCommentCheckBox state];
+	NSInteger state = [finderCommentCheckBox state];
 	if (state == 1) 
 	{
 		// warn user about problems using spotlight comments
-		int result = NSRunAlertPanel(@"Spotlight Comments", 
+		NSInteger result = NSRunAlertPanel(@"Spotlight Comments", 
 									 @"Comments will not appear in Get Info windows in the Finder, however they will still be searchable using Spotlight and viewable with other file browsers. See the documentation for more info.", 
 									 @"Enable", @"Cancel", nil);
 		
@@ -69,7 +69,7 @@ NSString *const FRAutomaticWatching = @"AutomaticThreadWatching";
 
 - (IBAction)changeAutomatingWatching:(id)sender
 {
-	int state = [sender state];
+	NSInteger state = [sender state];
 	NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
 	[defaults setBool:state forKey:FRAutomaticWatching];
 }

@@ -103,6 +103,11 @@ NSString *const failedResponse = @"Error: Upload failed.";
 - (void)updateDockBadge;
 
 - (void)incrementChangeCount;
+
+- (void)selectionDidChange:(NSNotification *)aNotification;
+- (void)openPanelDidEnd:(NSOpenPanel *)panel 
+			 returnCode:(int)returnCode  
+			contextInfo:(void  *)contextInfo;
 @end
 
 
@@ -188,7 +193,7 @@ NSString *const failedResponse = @"Error: Upload failed.";
 		[fullThreadView setContent:allPosts];
 		[fullThreadView setAllowsMultipleSelection:YES];
 		[fullThreadView setDrawsBackground:NO];
-		[fullThreadView setRowHeight:143.0];
+		[fullThreadView setRowHeight:(float)143.0];
 		[[NSNotificationCenter defaultCenter] addObserver:self
 												 selector:@selector(selectionDidChange:) 
 													 name:AMCollectionViewSelectionDidChangeNotification 
@@ -295,7 +300,7 @@ NSString *const failedResponse = @"Error: Upload failed.";
 		NSString *oldBadge = [tile badgeLabel];
 		if (oldBadge) 
 		{
-			int newNum = [oldBadge intValue] - newImages;
+			NSInteger newNum = [oldBadge intValue] - newImages;
 			if (newNum > 0) 
 			{
 				NSString *newBadge = [NSString stringWithFormat:@"%d", newNum];
@@ -556,7 +561,7 @@ NSString *const failedResponse = @"Error: Upload failed.";
 
 - (void)incrementChangeCount
 {
-	int old = [self changeCount];
+	NSInteger old = [self changeCount];
 	[self setChangeCount:old+1];
 }
 
@@ -1032,7 +1037,7 @@ NSString *const failedResponse = @"Error: Upload failed.";
 		[[self toolbarController] startWatcher];
 	
 	[self setDownloadingThread:YES];
-	int indexu = [[self tabStripController] modelIndexForContentsView:[self view]];
+	NSInteger indexu = [[self tabStripController] modelIndexForContentsView:[self view]];
 	[[self tabStripController] updateThrobberForTabContents:self atIndex:indexu];
 }
 
@@ -1135,7 +1140,7 @@ NSString *const failedResponse = @"Error: Upload failed.";
 
 - (IBAction)changeViewClicked:(id)sender
 {
-	int clickedSegment = [sender selectedSegment];
+	NSInteger clickedSegment = [sender selectedSegment];
 	if (clickedSegment == 0) 
 	{
 		[viewSwitcher selectFirstTabViewItem:sender];
@@ -1390,8 +1395,8 @@ NSString *const failedResponse = @"Error: Upload failed.";
 
 	if ([allPosts count] > numberPostsBeforeDownload)
 	{
-		int numDownloaded = [postedImages count] - numberBeforeDownload;
-		int numPostsDownloaded = [allPosts count] - numberPostsBeforeDownload;
+		NSInteger numDownloaded = [postedImages count] - numberBeforeDownload;
+		NSInteger numPostsDownloaded = [allPosts count] - numberPostsBeforeDownload;
 		numberBeforeDownload = [postedImages count];
 		numberPostsBeforeDownload = [allPosts count];
 		
@@ -1431,7 +1436,7 @@ NSString *const failedResponse = @"Error: Upload failed.";
 	}
 	
 	[self setDownloadingThread:NO];
-	int indexu = [[self tabStripController] modelIndexForContentsView:[self view]];
+	NSInteger indexu = [[self tabStripController] modelIndexForContentsView:[self view]];
 	[[self tabStripController] updateThrobberForTabContents:self atIndex:indexu];
 }
 
@@ -1481,7 +1486,7 @@ NSString *const failedResponse = @"Error: Upload failed.";
 	[self resetScriptParameters];
 	
 	[self setDownloadingThread:NO];
-	int indexu = [[self tabStripController] modelIndexForContentsView:[self view]];
+	NSInteger indexu = [[self tabStripController] modelIndexForContentsView:[self view]];
 	[[self tabStripController] updateThrobberForTabContents:self atIndex:indexu];
 }
 
@@ -1498,7 +1503,7 @@ NSString *const failedResponse = @"Error: Upload failed.";
 	[self setRepeatingTimer:nil];
 	[[self toolbarController] threadDied];
 	[self setDownloadingThread:NO];
-	int indexu = [[self tabStripController] modelIndexForContentsView:[self view]];
+	NSInteger indexu = [[self tabStripController] modelIndexForContentsView:[self view]];
 	[[self tabStripController] updateThrobberForTabContents:self atIndex:indexu];
 	[self setBoardPostURL:nil];
 }
@@ -1605,8 +1610,8 @@ NSString *const failedResponse = @"Error: Upload failed.";
 		NSSize imageSize = [[(FRPostedImage *)item theImage] size];
 		iconRect.size = imageSize;
 		
-		int x = 49 - (imageSize.width / 2);
-		int y = 49 - (imageSize.height / 2);
+		NSInteger x = 49 - (imageSize.width / 2);
+		NSInteger y = 49 - (imageSize.height / 2);
 		
 		// if these number seem arbritrary, it's because they are...
 		iconRect.origin.y = iconRect.origin.y + y + 121;
@@ -1661,7 +1666,7 @@ NSString *const failedResponse = @"Error: Upload failed.";
 - (IBAction)addRemoveTagWasClicked:(id)sender
 {
 	// in segmented control, 0 is add, 1 is remove
-	int clickedSegment = [sender selectedSegment];
+	NSInteger clickedSegment = [sender selectedSegment];
 	if (clickedSegment == 0) 
 		[self createTag:sender];
 	else if (clickedSegment == 1)
@@ -1806,7 +1811,7 @@ NSString *const failedResponse = @"Error: Upload failed.";
 	
 	// begin editing the newly added tag
 	NSArray *sorted = [tagsController arrangedObjects];
-	int row = [sorted indexOfObjectIdenticalTo:t];
+	NSInteger row = [sorted indexOfObjectIdenticalTo:t];
 	[tagTableView editColumn:0
 						 row:row
 				   withEvent:nil
@@ -2076,7 +2081,7 @@ NSString *const failedResponse = @"Error: Upload failed.";
 {
 	NSURL *base = [[NSURL URLWithString:s] URLByDeletingLastPathComponent];
 	NSMutableString *clean = [FRLinkFetcher cleanBaseURLAsMutableString:base];	
-	int length = [clean length];
+	NSInteger length = [clean length];
 	if ([clean replaceOccurrencesOfString:@"http://boards.4chan.org/" 
 							   withString:@"" 
 								  options:NSAnchoredSearch 
@@ -2111,7 +2116,7 @@ NSString *const failedResponse = @"Error: Upload failed.";
 	// minimum size of the top view
 	// should be total hight of the splitview, minus 82 (the max for the bottom view)
 	NSSize splitViewSize = [splitView frame].size;
-	int totalHeight = splitViewSize.height;
+	NSInteger totalHeight = splitViewSize.height;
 	
 	return totalHeight - 83;
 }
@@ -2169,7 +2174,7 @@ NSString *const failedResponse = @"Error: Upload failed.";
 		NSString *oldBadge = [tile badgeLabel];
 		if (oldBadge) 
 		{
-			int newNum = [oldBadge intValue] - newImages;
+			NSInteger newNum = [oldBadge intValue] - newImages;
 			if (newNum > 0) 
 			{
 				NSString *newBadge = [NSString stringWithFormat:@"%d", newNum];

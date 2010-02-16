@@ -116,7 +116,7 @@
 	
 	(void) [layoutManager glyphRangeForTextContainer:textContainer];
 	
-	float grow = [layoutManager usedRectForTextContainer:textContainer].size.height;
+	CGFloat grow = [layoutManager usedRectForTextContainer:textContainer].size.height;
 	
 	// make sure our view is always at least the minimum size
 	if (grow < 99.0) 
@@ -155,7 +155,7 @@
 		{
 			NSString *aLink = nil;
 			[scanner scanUpToString:linkStart intoString:nil];
-			[linkLocations addObject:[NSNumber numberWithInt:[scanner scanLocation]]];
+			[linkLocations addObject:[NSNumber numberWithInteger:[scanner scanLocation]]];
 			[scanner scanString:linkStart intoString:nil]; 
 			[scanner scanUpToCharactersFromSet:[NSCharacterSet whitespaceAndNewlineCharacterSet] 
 									intoString:&aLink];
@@ -176,17 +176,17 @@
 			[quoteScanner scanUpToString:quoteStart intoString:nil];
 			
 			// ignore if it's a link rather than a quote
-			BOOL link = FALSE;
+			BOOL aLink = FALSE;
 			for (NSNumber *n in linkLocations)
 			{
-				if ([quoteScanner scanLocation] == [n intValue])
+				if ([quoteScanner scanLocation] == [n unsignedIntegerValue])
 				{
-					link = TRUE;
+					aLink = TRUE;
 					break;
 				}
 			}
 			
-			if (link)
+			if (aLink)
 			{
 				// get rid of the second > character so we don't hit it 
 				// again next time
@@ -235,13 +235,13 @@
 	}
 }
 
-- (BOOL)validLink:(NSString *)link
+- (BOOL)validLink:(NSString *)aLink
 {
-	if (!link)
+	if (!aLink)
 		return NO;
 	
 	NSNumberFormatter *formatter = [[NSNumberFormatter alloc] init];
-	NSNumber *num = [formatter numberFromString:link];
+	NSNumber *num = [formatter numberFromString:aLink];
 	
 	if (num)
 		return YES;
@@ -250,14 +250,14 @@
 }
 
 // select linked post
-- (BOOL)textView:(NSTextView *)aTextView clickedOnLink:(id)link atIndex:(NSUInteger)charIndex
+- (BOOL)textView:(NSTextView *)aTextView clickedOnLink:(id)aLink atIndex:(NSUInteger)charIndex
 {
 	// get array of posts in the thread
 	NSArray *posts = [collectionView content];
 	
 	for (FRPostedImage *post in posts)
 	{
-		if ([[post postNumber] isEqual:(NSString *)link])
+		if ([[post postNumber] isEqual:(NSString *)aLink])
 		{
 			// found the matching post
 			[(FRFullThreadCollectionView *)collectionView selectItemsForObjects:[NSArray arrayWithObject:post]];

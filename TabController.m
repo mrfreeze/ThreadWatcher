@@ -13,6 +13,13 @@
 #import "GTMTheme.h"
 #import "TabView.h"
 
+@interface TabController ()
+
+- (void)viewResized:(NSNotification*)info;
+
+@end
+
+
 @implementation TabController
 
 @synthesize target = target_;
@@ -107,12 +114,12 @@
 // Return a rough approximation of the number of icons we could fit in the
 // tab. We never actually do this, but it's a helpful guide for determining
 // how much space we have available.
-- (int)iconCapacity 
+- (NSInteger)iconCapacity 
 {
 	CGFloat width = NSMaxX([closeButton_ frame]) - NSMinX(originalIconFrame_);
 	CGFloat iconWidth = NSWidth(originalIconFrame_);
 	
-	return width / iconWidth;
+	return (width / iconWidth);
 }
 
 // Returns YES if we should be showing the close button. The selected tab
@@ -238,7 +245,7 @@
 	return iconView_;
 }
 
-- (void)setCount:(int)newCount
+- (void)setCount:(NSInteger)newCount
 {
 	if (newCount == 0)
 		[(TabView *)[self view] expandTitleFrame];
@@ -258,7 +265,7 @@
 	if (!iconView_)
 		return NO;
 	
-	int iconCapacity = [self iconCapacity];
+	NSInteger iconCapacity = [self iconCapacity];
 	if ([self selected])
 		return iconCapacity >= 2;
 	return iconCapacity >= 1;

@@ -72,7 +72,7 @@ extern NSString *const kTabStripNumberOfTabsChanged;
 	// button). Used to restrict the available width when closing many tabs at
 	// once to prevent them from resizing to fit the full width. If the entire
 	// width should be used, this will have a value of |kUseFullAvailableWidth|.
-	float availableResizeWidth_;
+	CGFloat availableResizeWidth_;
 	// A tracking area that's the size of the tab strip used to be notified
 	// when the mouse moves in the tab strip
 	NSTrackingArea *trackingArea_;
@@ -146,8 +146,11 @@ extern NSString *const kTabStripNumberOfTabsChanged;
                       atIndex:(NSInteger)modelIndex
                   userGesture:(BOOL)wasUserGesture;
 
+// called by the tab when it is clicked to select it
+- (void)selectTab:(id)sender;
+
 // remove a tab from the strip and animate it out
-- (void)removeTabAtIndex:(int)indexu;
+- (void)removeTabAtIndex:(NSInteger)indexu;
 
 // insert a placefolder at position given by |frame|
 // will relayout the tabs to make space
@@ -178,10 +181,10 @@ extern NSString *const kTabStripNumberOfTabsChanged;
 - (void)swapInTabAtIndex:(NSInteger)modelIndex;
 
 // Handles setting the title of the tab at |index| 
-- (void)setTabTitle:(NSString *)newTitle forTab:(int)index;
+- (void)setTabTitle:(NSString *)newTitle forTab:(NSInteger)index;
 
 // Handles setting the image count for the tab badge of the tab at |index| 
-- (void)setNewImageCount:(int)newCount forTab:(int)index;
+- (void)setNewImageCount:(NSInteger)newCount forTab:(NSInteger)index;
 
 - (NSInteger)modelIndexForContentsView:(NSView*)view;
 

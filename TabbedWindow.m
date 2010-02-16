@@ -26,6 +26,7 @@ const CGFloat kWindowGradientHeight = 24.0;
 @interface TabbedWindow ()
 
 - (NSView*)frameView;
+- (void)systemThemeDidChangeNotification:(NSNotification*)aNotification;
 
 @end
 

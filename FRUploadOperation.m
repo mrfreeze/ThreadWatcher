@@ -38,7 +38,7 @@
 	self = [super init];
 	if (self)
 	{
-		delay = 20.0;
+		delay = 20;
 		theName = nil;
 		email = nil;
 		subject = nil;
@@ -302,10 +302,10 @@
 - (void)main
 {
 	// update ui to show we are starting
-	int oldnum = [delegate numberPosted];
+	NSInteger oldnum = [delegate numberPosted];
 	[local setPosted:@"posting"];
-	int newnum = oldnum +1;
-	int total = [[delegate imageURLs] count];
+	NSInteger newnum = oldnum +1;
+	NSInteger total = [[delegate imageURLs] count];
 	NSString *stat = [NSString stringWithFormat:@"Posting Image %d of %d…", newnum, total];
 	[delegate performSelectorOnMainThread:@selector(updateUIWithString:)
 							   withObject:stat
@@ -383,7 +383,7 @@
 			// post was successful
 			[local setPosted:@"posted"];
 			[local setPostedBOOL:TRUE];
-			int newtotal = [[delegate imageURLs] count];
+			NSInteger newtotal = [[delegate imageURLs] count];
 			NSString *status = [NSString stringWithFormat:
 								@"%d of %d Images Posted. Waiting…", newnum, newtotal];
 			[delegate performSelectorOnMainThread:@selector(updateUIWithString:)

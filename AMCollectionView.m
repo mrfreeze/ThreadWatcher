@@ -221,7 +221,8 @@
 	NSEnumerator *enumerator = [content objectEnumerator];
 	id object;
 	AMCollectionViewItem *item;
-	while (object = [enumerator nextObject]) {
+	while ((object = [enumerator nextObject])) 
+	{
 		item = [am_itemsForObjects objectForKey:[NSValue valueWithNonretainedObject:object]];
 		if ([item isSelected]) {
 			[result addIndex:index];
@@ -238,7 +239,7 @@
 	int index = 0;
 	NSEnumerator *enumerator = [content objectEnumerator];
 	id object;
-	while (object = [enumerator nextObject]) {
+	while ((object = [enumerator nextObject])) {
 		item = [am_itemsForObjects objectForKey:[NSValue valueWithNonretainedObject:object]];
 		[item setSelected:[indexSet containsIndex:index]];
 		index++;
@@ -511,7 +512,7 @@
 	AMCollectionViewItem *item;
 	id object;
 	id previousObject = nil;
-	int row, selectedRow = NSNotFound;;
+	NSInteger row, selectedRow = NSNotFound;;
 	for (row = 0; row < [objects count]; row++) {
 		object = [objects objectAtIndex:row];
 		item = [self itemForObject:object];
@@ -536,7 +537,7 @@
 	AMCollectionViewItem *item;
 	id object;
 	id previousObject = nil;
-	int row, selectedRow = NSNotFound;;
+	NSInteger row, selectedRow = NSNotFound;;
 	for (row = [objects count]-1; row >= 0 ; row--) {
 		object = [objects objectAtIndex:row];
 		item = [self itemForObject:object];
