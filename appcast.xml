@@ -11,10 +11,10 @@
 							http://mrfreeze.github.com/ThreadWatcher/release_notes.html
 						</sparkle:releaseNotesLink>
             <pubDate>Mon 15 Feb 2010 22:14:38 +0000</pubDate>
-            <enclosure url="http://github.com/downloads/mrfreeze/ThreadWatcher/ThreadWatcher_0.3.3_beta.zip" 
+            <enclosure url="http://github.com/downloads/mrfreeze/ThreadWatcher/ThreadWatcher_0.3.3_beta_sparkle.zip" 
 							sparkle:version="0.3.3"
 							type="application/octet-stream" 
-							sparkle:dsaSignature="MC0CFATyjb9IU4hneXTiB+FVTpvrQ32iAhUAlVIg1at6KEGwp3vcOy1dMnQiDLc=" />
+							sparkle:dsaSignature="MC0CFQC+VuM5EgLYXT8RhibFs9UArDZ/NwIUAik9mbJUPRoxWHnHFbiBND3akQ8=" />
 						<sparkle:minimumSystemVersion>10.6.0</sparkle:minimumSystemVersion>
          </item>
    </channel>
