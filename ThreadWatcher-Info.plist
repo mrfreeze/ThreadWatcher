@@ -80,6 +80,6 @@
 	<key>SUPublicDSAKeyFile</key>
 	<string>dsa_pub.pem</string>
 	<key>SUFeedURL</key>
-	<string>http://github.com/mrfreeze/ThreadWatcher/raw/master/Sparkle/appcast.xml</string>
+	<string>http://mrfreeze.github.com/ThreadWatcher/appcast.xml</string>
 </dict>
 </plist>
