@@ -2,13 +2,13 @@
 <rss version="2.0" xmlns:sparkle="http://www.andymatuschak.org/xml-namespaces/sparkle"  xmlns:dc="http://purl.org/dc/elements/1.1/">
    <channel>
       <title>ThreadWatcher Appcast</title>
-      <link>http://you.com/app/appcast.xml</link>
+      <link>http://mrfreeze.github.com/ThreadWatcher/appcast.xml</link>
       <description>Most recent version available.</description>
       <language>en</language>
          <item>
             <title>ThreadWatcher 0.3.3</title>
 						<sparkle:releaseNotesLink>
-							http://github.com/mrfreeze/ThreadWatcher/raw/master/Sparkle/release_notes.html
+							http://mrfreeze.github.com/ThreadWatcher/release_notes.html
 						</sparkle:releaseNotesLink>
             <pubDate>Mon 15 Feb 2010 22:14:38 +0000</pubDate>
             <enclosure url="http://github.com/downloads/mrfreeze/ThreadWatcher/ThreadWatcher_0.3.3_beta.zip" 
