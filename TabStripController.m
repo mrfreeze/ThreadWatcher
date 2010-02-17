@@ -452,12 +452,23 @@ const int kPinnedTabWidth = 56;
 	if ([hoveredTab_ isEqual:sender]) 
 		hoveredTab_ = nil;
 	
+	// find the index of the tab contents we want to close
 	NSInteger indexu = [self modelIndexForTabView:sender];
 	if (![tabStripModel_ containsIndex:indexu])
 		return;
 	
-	// FRWatcherTabContentsController *contents = [tabStripModel_ getTabContentsAt:index];
-	
+	// check if the tab has an open sheet
+	NSView *contentsView = [[tabStripModel_ getTabContentsAt:indexu] ourView];
+	BOOL hasSheet = [[(TabbedWindowController *)[[sender window] windowController] 
+					  sheetController] isSheetAttachedToView:contentsView];
+	if (hasSheet)
+	{
+		// don't close, but switch to the tab in case it wasn't front, 
+		// so the user knows why it won't close
+		[tabStripModel_ selectTabContentsAtIndex:indexu userGesture:NO];
+		return;
+	}
+		
 	const NSInteger numberOfOpenTabs = [self numberOfOpenTabs];
 	if (numberOfOpenTabs > 1) 
 	{
