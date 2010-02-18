@@ -41,7 +41,8 @@
 {
 	am_initializing = YES;
 	self = [super initWithFrame:frame];
-	if (self) {
+	if (self) 
+	{
 		[self setPostsFrameChangedNotifications:YES];
 		[self setPostsBoundsChangedNotifications:YES];
 		[self setItemsForObjects:[[[NSMutableDictionary alloc] init] autorelease]];
@@ -164,9 +165,8 @@
 
 - (void)setRowHeight:(float)value
 {
-	if (rowHeight != value) {
+	if (rowHeight != value)
 		rowHeight = value;
-	}
 }
 
 - (NSArray *)content
@@ -176,17 +176,16 @@
 
 - (void)setContent:(NSArray *)value
 {
-	if (content != value) {
+	if (content != value) 
+	{
 		[content release];
 		content = [value copy];
 		
 		// reuse previous items
 		NSMutableArray *oldItems = [[am_itemsForObjects allValues] mutableCopy]; // release at end of method
 		NSMutableDictionary *newItems = [[[NSMutableDictionary alloc] init] autorelease];
-		NSEnumerator *enumerator = [content objectEnumerator];
-		id object;
 		AMCollectionViewItem *item;
-		while ((object = [enumerator nextObject])) 
+		for (id object in content)
 		{
 			item = [self itemForObject:object];
 			if (item)
@@ -202,11 +201,9 @@
 		[self setItemsForObjects:newItems];
 
 		// remove old items
-		enumerator = [oldItems objectEnumerator];
-		while ((item = [enumerator nextObject])) 
-		{
-			[item removeFromCollectionView];
-		}
+		for (AMCollectionViewItem *oldItem in oldItems)
+			[oldItem removeFromCollectionView];
+
 		[oldItems release];
 
 		[self doLayout];
@@ -218,15 +215,13 @@
 {
 	NSMutableIndexSet *result = [[[NSMutableIndexSet alloc] init] autorelease];
 	int index = 0;
-	NSEnumerator *enumerator = [content objectEnumerator];
-	id object;
 	AMCollectionViewItem *item;
-	while ((object = [enumerator nextObject])) 
+	for (id object in content)
 	{
 		item = [am_itemsForObjects objectForKey:[NSValue valueWithNonretainedObject:object]];
-		if ([item isSelected]) {
+		if ([item isSelected])
 			[result addIndex:index];
-		}
+
 		index++;
 	}
 	return result;
@@ -237,9 +232,8 @@
 	// change selection for items
 	AMCollectionViewItem *item = nil;
 	int index = 0;
-	NSEnumerator *enumerator = [content objectEnumerator];
-	id object;
-	while ((object = [enumerator nextObject])) {
+	for (id object in content)
+	{
 		item = [am_itemsForObjects objectForKey:[NSValue valueWithNonretainedObject:object]];
 		[item setSelected:[indexSet containsIndex:index]];
 		index++;
@@ -254,9 +248,8 @@
 
 - (void)setSelectable:(BOOL)value
 {
-	if (selectable != value) {
+	if (selectable != value)
 		selectable = value;
-	}
 }
 
 - (BOOL)allowsMultipleSelection
@@ -266,9 +259,8 @@
 
 - (void)setAllowsMultipleSelection:(BOOL)value
 {
-	if (allowsMultipleSelection != value) {
+	if (allowsMultipleSelection != value)
 		allowsMultipleSelection = value;
-	}
 }
 
 - (BOOL)drawsBackground
@@ -278,9 +270,8 @@
 
 - (void)setDrawsBackground:(BOOL)value
 {
-	if (am_drawsBackground != value) {
+	if (am_drawsBackground != value)
 		am_drawsBackground = value;
-	}
 }
 
 - (BOOL)usesAlternatingRowBackgroundColors
@@ -290,23 +281,23 @@
 
 - (void)setUsesAlternatingRowBackgroundColors:(BOOL)value
 {
-	if (usesAlternatingRowBackgroundColors != value) {
+	if (usesAlternatingRowBackgroundColors != value)
 		usesAlternatingRowBackgroundColors = value;
-	}
 }
 
 - (NSColor *)selectedRowColor
 {
 	NSColor *result = [[selectedRowColor retain] autorelease];
-	if (!result) {
+	if (!result)
 		result = [NSColor selectedControlColor];
-	}
+
 	return result;
 }
 
 - (void)setSelectedRowColor:(NSColor *)value
 {
-	if (selectedRowColor != value) {
+	if (selectedRowColor != value) 
+	{
 		[selectedRowColor release];
 		selectedRowColor = [value copy];
 	}
@@ -315,15 +306,16 @@
 - (NSColor *)secondarySelectedRowColor
 {
 	NSColor *result = [[secondarySelectedRowColor retain] autorelease];
-	if (!result) {
+	if (!result)
 		result = [NSColor secondarySelectedControlColor];
-	}
+
 	return result;
 }
 
 - (void)setSecondarySelectedRowColor:(NSColor *)value
 {
-	if (secondarySelectedRowColor != value) {
+	if (secondarySelectedRowColor != value) 
+	{
 		[secondarySelectedRowColor release];
 		secondarySelectedRowColor = [value copy];
 	}
@@ -342,7 +334,8 @@
 
 - (void)setItemsForObjects:(NSDictionary *)value
 {
-	if (am_itemsForObjects != value) {
+	if (am_itemsForObjects != value) 
+	{
 		[am_itemsForObjects release];
 		am_itemsForObjects = [value retain];
 	}
@@ -365,7 +358,8 @@
 
 - (void)setArchivedItemPrototype:(NSData *)value
 {
-	if (am_archivedItemPrototype != value) {
+	if (am_archivedItemPrototype != value) 
+	{
 		[am_archivedItemPrototype release];
 		am_archivedItemPrototype = [value retain];
 	}
@@ -381,9 +375,7 @@
 //	NSLog(@"drawRect:%f, %f, %f, %f", rect.origin.x, rect.origin.y, rect.size.width, rect.size.height);
 	
 	if ([self needsLayout]) 
-	{
 		[self doLayout];
-	}
 
 	if ([self drawsBackground]) 
 	{
@@ -399,7 +391,9 @@
 		{
 			// active
 			currentSelectionColor = [self selectedRowColor];
-		} else {
+		} 
+		else 
+		{
 			// inactive
 			currentSelectionColor = [self secondarySelectedRowColor];
 		}
@@ -422,11 +416,9 @@
 		int colorCount = [bgColors count];
 		int colorIndex;
 		int index = 0;
-		id object;
 		AMCollectionViewItem *item;
 		NSRect itemFrame;
-		NSEnumerator *enumerator = [[self content] objectEnumerator];
-		while ((object = [enumerator nextObject])) 
+		for (id object in [self content])
 		{
 			item = [self itemForObject:object];
 			if (item) 
@@ -513,10 +505,12 @@
 	id object;
 	id previousObject = nil;
 	NSInteger row, selectedRow = NSNotFound;;
-	for (row = 0; row < [objects count]; row++) {
+	for (row = 0; row < [objects count]; row++) 
+	{
 		object = [objects objectAtIndex:row];
 		item = [self itemForObject:object];
-		if ([item isSelected]) {
+		if ([item isSelected]) 
+		{
 			selectedRow = row;
 			break;
 		}
@@ -538,10 +532,12 @@
 	id object;
 	id previousObject = nil;
 	NSInteger row, selectedRow = NSNotFound;;
-	for (row = [objects count]-1; row >= 0 ; row--) {
+	for (row = [objects count]-1; row >= 0 ; row--) 
+	{
 		object = [objects objectAtIndex:row];
 		item = [self itemForObject:object];
-		if ([item isSelected]) {
+		if ([item isSelected]) 
+		{
 			selectedRow = row;
 			break;
 		}
@@ -626,15 +622,13 @@
 - (NSArray *)selectedObjects
 {
 	NSMutableArray *result = [NSMutableArray array];
-	NSEnumerator *enumerator = [[am_itemsForObjects allKeys] objectEnumerator];
-	id key;
 	AMCollectionViewItem *item;
-	while ((key = [enumerator nextObject])) {
+	for (id key in [am_itemsForObjects allKeys])
+	{
 		id object = [(NSValue *)key nonretainedObjectValue];
 		item = [self itemForObject:object];
-		if ([item isSelected]) {
+		if ([item isSelected])
 			[result addObject:object];
-		}
 	}
 	return result;
 }
@@ -643,27 +637,26 @@
 {
 	NSMutableArray *itemsToDeselect = [[am_itemsForObjects allValues] mutableCopy];
 	AMCollectionViewItem *item;
-	NSEnumerator *enumerator = [objects objectEnumerator];
-	id object;
-	while ((object = [enumerator nextObject])) {
+	for (id object in objects)
+	{
 		item = [self itemForObject:object];
-		if (item) {
+		if (item) 
+		{
 			[item setSelected:YES];
 			[itemsToDeselect removeObject:item];
 		}
 	}
-	enumerator = [itemsToDeselect objectEnumerator];
-	while ((item = [enumerator nextObject])) {
-		[item setSelected:NO];
-	}
+
+	for (AMCollectionViewItem *deselectItem in itemsToDeselect)
+		[deselectItem setSelected:NO];
+
 	[self sendSelectionDidChangeNotification];
 }
 
 - (void)deselectAll:(id)sender
 {
-	if ([self deselectAllButItems:nil]) {
+	if ([self deselectAllButItems:nil])
 		[self sendSelectionDidChangeNotification];
-	}
 }
 
 - (void)scrollObjectToVisible:(id)object
@@ -672,7 +665,8 @@
 	NSView *view = [item view];
 	NSRect viewFrame = [view frame];
 	NSClipView *clipView = [[self enclosingScrollView] contentView];
-	if ([clipView respondsToSelector:@selector(scrollToPoint:)]) {
+	if ([clipView respondsToSelector:@selector(scrollToPoint:)]) 
+	{
 		BOOL needsScroll = NO;
 		NSPoint newOrigin;
 		NSRect visibleRect = [clipView documentVisibleRect];
@@ -683,13 +677,15 @@
 			// scroll to top
 			newOrigin = viewFrame.origin;
 			needsScroll = YES;
-		} else if (NSMaxY(viewFrame) > NSMaxY(visibleRect)) 
+		} 
+		else if (NSMaxY(viewFrame) > NSMaxY(visibleRect)) 
 		{
 			// scroll to bottom
 			newOrigin = NSMakePoint(0.0, viewFrame.origin.y-visibleRect.size.height+viewFrame.size.height);
 			needsScroll = YES;
 		}
-		if (needsScroll) {
+		if (needsScroll) 
+		{
 			newOrigin = [clipView constrainScrollPoint:newOrigin];
 			[clipView scrollToPoint:newOrigin];
 			[[self enclosingScrollView] reflectScrolledClipView:clipView];
@@ -707,23 +703,20 @@
 	[self setNeedsLayout:NO];
 	
 	[self removeAllSubviews];
-	NSEnumerator *enumerator = [[self content] objectEnumerator];
-	id object;
 	float y = 0.0;
 	AMCollectionViewItem *item;
 	NSView *view;
 	NSSize viewSize;
 	NSRect viewFrame;
-	while ((object = [enumerator nextObject])) 
+	for (id object in [self content])
 	{
 		item = [self itemForObject:object];
 		view = [item view];
 		viewSize = [view frame].size;
 		viewSize.width = [self frame].size.width;
 		if ([item respondsToSelector:@selector(sizeForViewWithProposedSize:)]) 
-		{
 			viewSize = [item sizeForViewWithProposedSize:viewSize];
-		}
+
 		viewFrame.origin = NSMakePoint(0.0, y);
 		viewFrame.size = viewSize;
 		[view setFrame:viewFrame];
@@ -745,9 +738,7 @@
 
 - (void)redrawAllSubviewsInRect:(NSRect)rect
 {
-	NSEnumerator *enumerator = [[self subviews] objectEnumerator];
-	id view;
-	while ((view = [enumerator nextObject])) 
+	for (id view in [self subviews])
 	{
 		if (NSIntersectsRect(rect, [view frame])) 
 		{
@@ -769,12 +760,9 @@
 	if (am_itemRespondsToSizeForViewWithProposedSize) 
 	{
 		// variable row height
-		// !!!: some optimization might be in order ...
-		NSEnumerator *enumerator = [[self content] objectEnumerator];
-		id object;
 		AMCollectionViewItem *item;
 		NSRect viewFrame;
-		while ((object = [enumerator nextObject])) 
+		for (id object in [self content]) 
 		{
 			item = [self itemForObject:object];
 			viewFrame = [[item view] frame];
@@ -802,9 +790,7 @@
 	BOOL result = NO;
 	NSMutableArray *changedItems = [NSMutableArray array];
 	AMCollectionViewItem *item;
-	NSEnumerator *enumerator = [[self content] objectEnumerator];
-	id object;
-	while ((object = [enumerator nextObject])) 
+	for (id object in [self content])
 	{
 		item = [self itemForObject:object];
 		if (item && ![items containsObject:item]) 
@@ -823,9 +809,7 @@
 
 - (void)setNeedsDisplayForItems:(NSArray *)items
 {
-	NSEnumerator *enumerator = [items objectEnumerator];
-	AMCollectionViewItem *item;
-	while ((item = [enumerator nextObject])) 
+	for (AMCollectionViewItem *item in items)
 	{
 		NSRect rect = [[item view] frame];
 		[self setNeedsDisplayInRect:rect];
@@ -835,10 +819,8 @@
 - (NSArray *)setNeedsDisplayForSelectedItems
 {
 	NSMutableArray *result = [NSMutableArray array];
-	NSEnumerator *enumerator = [[am_itemsForObjects allKeys] objectEnumerator];
-	id key;
 	AMCollectionViewItem *item;
-	while ((key = [enumerator nextObject])) 
+	for (id key in [am_itemsForObjects allKeys])
 	{
 		id object = [(NSValue *)key nonretainedObjectValue];
 		item = [self itemForObject:object];
@@ -894,7 +876,6 @@
 	 * so we don't need to re-layout or re-display here
 	 * since it will already be happening anyway
 	*/
-	
 	// !!!: we should optimize this
 	//[self setNeedsLayout:YES];
 	//[self setNeedsDisplay:YES];
