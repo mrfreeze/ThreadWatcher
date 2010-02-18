@@ -62,6 +62,7 @@
 {
 	[goButton setImage:[NSImage imageNamed:NSImageNameRefreshTemplate]];
 	[goButton setAction:@selector(go:)];
+	[goLabel setTitleWithMnemonic:@"Go"];
 }
 
 // there was a change to the selction. if some images are selected
@@ -138,6 +139,7 @@
 	[goButton setImage:[NSImage imageNamed:NSImageNameStopProgressTemplate]];
 	[goButton setAction:@selector(cancel:)];
 	[urlTextBox setEnabled:NO];
+	[goLabel setTitleWithMnemonic:@"Cancel"];
 }
 
 // =======================================================================================
@@ -250,12 +252,14 @@
 			// curently downloading form the thread
 			[goButton setImage:[NSImage imageNamed:NSImageNameStopProgressTemplate]];
 			[goButton setAction:@selector(cancel:)];
+			[goLabel setTitleWithMnemonic:@"Cancel"];
 		}
 		else 
 		{
 			// idle
 			[goButton setImage:[NSImage imageNamed:NSImageNameRefreshTemplate]];
 			[goButton setAction:@selector(go:)];
+			[goLabel setTitleWithMnemonic:@"Go"];
 		}
 		
 		// See if a post is being sent

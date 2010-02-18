@@ -38,6 +38,7 @@
 	IBOutlet NSProgressIndicator *postSpinner;
 	IBOutlet NSButton *watchCheckBox;
 	IBOutlet NSProgressIndicator *watchSpinner;
+	IBOutlet NSTextField *goLabel;
 }
 
 @property (readwrite, retain) FRWatcherTabContentsController *controller;
