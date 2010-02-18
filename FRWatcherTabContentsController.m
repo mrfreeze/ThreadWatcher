@@ -1475,6 +1475,8 @@ NSString *const failedResponse = @"Error: Upload failed.";
 								   clickContext:nil];
 	}
 	[[NSApplication sharedApplication] requestUserAttention:NSInformationalRequest];
+	NSInteger indexu = [[self tabStripController] modelIndexForContentsView:[self view]];
+	[[self tabStripController] updateThrobberForTabContents:self atIndex:indexu];
 }
 
 - (void)wasCancelled
