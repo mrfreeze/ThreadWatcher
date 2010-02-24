@@ -64,6 +64,7 @@ NSString *const failedResponse = @"Error: Upload failed.";
 - (void)addpostedImagesObject:(id)anObject;
 
 // saving
+- (void)save:(NSArray *)images;
 - (void)saveImages:(NSArray *)images withURL:(NSURL *)target;
 - (BOOL)attemptToCopyFileWithFM:(NSFileManager *)fm proposedURL:(NSURL *)url source:(NSURL *)source tags:(NSMutableSet *)tags rating:(double)rate;
 - (NSString *)incrementSingleLastNumber:(NSString *)input;
@@ -93,6 +94,10 @@ NSString *const failedResponse = @"Error: Upload failed.";
 - (void)addScriptRatingToAllImages;
 - (void)checkForTags:(NSDictionary *)args;
 - (void)checkForRating:(NSDictionary *)args;
+- (void)openScripterSaveSheet;
+- (void)scriptingOpenPanelDidEnd:(NSOpenPanel *)panel 
+					  returnCode:(int)returnCode  
+					 contextInfo:(void  *)contextInfo;
 
 // posting stuff
 - (void)postSent;
@@ -537,6 +542,11 @@ NSString *const failedResponse = @"Error: Upload failed.";
 	if (scriptRating) 
 		[anObject setRating:[scriptRating doubleValue]];
 	
+	// save the image if the scripter has provided a location
+	if (scriptSaveLocation) 
+		[self saveImages:[NSArray arrayWithObject:anObject] 
+				 withURL:scriptSaveLocation];
+	
 	[self didChange:NSKeyValueChangeInsertion valuesAtIndexes:ind forKey:@"postedImages"];
 }
 
@@ -611,21 +621,32 @@ NSString *const failedResponse = @"Error: Upload failed.";
 		NSString *location = [[panel URL] path];
 		NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
 		[defaults setObject:location forKey:FRLastSaveLocation];
+		
+		// if the save sheet was requested by a script command, remember the
+		// save location so it will be used for additional downloads
+		if (scriptSaveSheet) 
+			scriptSaveLocation = [panel URL];
 	}
 }
 
 // this gets run from a block when user clicks ok in the save sheet
 // so ui updates should be run back on the main thread
 - (void)saveImages:(NSArray *)images withURL:(NSURL *)target
-{
-	[self performSelectorOnMainThread:@selector(updateStatusLabel:) 
-						   withObject:@"Saving…" waitUntilDone:YES];
+{	
 	NSNumber *current = [NSNumber numberWithDouble:0.0];
 	NSNumber *max = [NSNumber numberWithDouble:(double)[images count]];
 	NSArray *barStats = [NSArray arrayWithObjects:current, max, nil];
-	[self performSelectorOnMainThread:@selector(updateDownloadBar:) 
-						   withObject:barStats 
-						waitUntilDone:YES];
+	
+	// only update the save bars if we are saving from a user command
+	// do not update if we are saving due to a script
+	if (!scriptSaveLocation)
+	{
+		[self performSelectorOnMainThread:@selector(updateStatusLabel:) 
+							   withObject:@"Saving…" waitUntilDone:YES];
+		[self performSelectorOnMainThread:@selector(updateDownloadBar:) 
+							   withObject:barStats 
+							waitUntilDone:YES];
+	}
 	
 	int numberOfFilesSaved = 0;
 	int numberOfTagsUpdated = 0;
@@ -639,7 +660,9 @@ NSString *const failedResponse = @"Error: Upload failed.";
 		
 		// check if we have already saved this file
 		// if we have, only update the tags
-		if (![[NSUserDefaults standardUserDefaults] boolForKey:FRResaveKey])
+		// if we are saving because of a script command, do not resave already saved images
+		if (![[NSUserDefaults standardUserDefaults] boolForKey:FRResaveKey] 
+			&& !scriptSaveLocation)
 		{
 			if ([[i savedURL] isEqual:namedTarget]) 
 			{
@@ -662,45 +685,54 @@ NSString *const failedResponse = @"Error: Upload failed.";
 			numberOfFilesSaved++;
 			[i setSavedURL:namedTarget];
 			
-			current = [NSNumber numberWithInt:numberOfFilesSaved];
-			barStats = [NSArray arrayWithObjects:current, max, nil];
-			[self performSelectorOnMainThread:@selector(updateDownloadBar:) 
-								   withObject:barStats 
-								waitUntilDone:YES];
+			if (!scriptSaveLocation) 
+			{
+				current = [NSNumber numberWithInt:numberOfFilesSaved];
+				barStats = [NSArray arrayWithObjects:current, max, nil];
+				[self performSelectorOnMainThread:@selector(updateDownloadBar:) 
+									   withObject:barStats 
+									waitUntilDone:YES];
+			}
 		}			
 	}
 		
 	[self setChangeCount:0];
 	
 	// update UI to show result
-	NSString *s;
-	if (numberOfFilesSaved == 1) 
-		s = [NSString stringWithFormat:@"Saved %d File.", numberOfFilesSaved];
-	else if (numberOfFilesSaved == 0 && numberOfTagsUpdated == 1)
-		s = [NSString stringWithFormat:@"Updated Tags on %d File.", numberOfTagsUpdated];
-	else if (numberOfFilesSaved == 0 && numberOfTagsUpdated > 1)
-		s = [NSString stringWithFormat:@"Updated Tags on %d Files.", numberOfTagsUpdated];
-	else
-		s = [NSString stringWithFormat:@"Saved %d Files.", numberOfFilesSaved];
-	
-	[self performSelectorOnMainThread:@selector(updateStatusLabel:) withObject:s waitUntilDone:YES];
-	
-	if (growling) 
+	if (!scriptSaveLocation)
 	{
-		[GrowlApplicationBridge notifyWithTitle:@"Saved Files"
-									description:s
-							   notificationName:@"Saved Files"
-									   iconData:[NSData data] 
-									   priority:0 
-									   isSticky:NO 
-								   clickContext:nil];
+		NSString *s;
+		if (numberOfFilesSaved == 1) 
+			s = [NSString stringWithFormat:@"Saved %d File.", numberOfFilesSaved];
+		else if (numberOfFilesSaved == 0 && numberOfTagsUpdated == 1)
+			s = [NSString stringWithFormat:@"Updated Tags on %d File.", numberOfTagsUpdated];
+		else if (numberOfFilesSaved == 0 && numberOfTagsUpdated > 1)
+			s = [NSString stringWithFormat:@"Updated Tags on %d Files.", numberOfTagsUpdated];
+		else
+			s = [NSString stringWithFormat:@"Saved %d Files.", numberOfFilesSaved];
+		
+		[self performSelectorOnMainThread:@selector(updateStatusLabel:) withObject:s waitUntilDone:YES];
+		
+		if (growling) 
+		{
+			[GrowlApplicationBridge notifyWithTitle:@"Saved Files"
+										description:s
+								   notificationName:@"Saved Files"
+										   iconData:[NSData data] 
+										   priority:0 
+										   isSticky:NO 
+									   clickContext:nil];
+		}
 	}
 	
-	current = [NSNumber numberWithDouble:0.0];
-	barStats = [NSArray arrayWithObjects:current, max, nil];
-	[self performSelectorOnMainThread:@selector(updateDownloadBar:) 
-						   withObject:barStats 
-						waitUntilDone:YES];
+	if (!scriptSaveLocation) 
+	{
+		current = [NSNumber numberWithDouble:0.0];
+		barStats = [NSArray arrayWithObjects:current, max, nil];
+		[self performSelectorOnMainThread:@selector(updateDownloadBar:) 
+							   withObject:barStats 
+							waitUntilDone:YES];
+	}
 }
 
 // methods so that we can update the UI from other threads
@@ -1071,7 +1103,6 @@ NSString *const failedResponse = @"Error: Upload failed.";
 	[[self tabStripController] updateThrobberForTabContents:self atIndex:indexu];
 }
 
-
 // save all images
 - (IBAction)saveFiles:(id)sender
 {
@@ -1215,6 +1246,9 @@ NSString *const failedResponse = @"Error: Upload failed.";
 		[self checkForTags:args];
 		[self checkForRating:args];
 		
+		if (scriptSaveSheet) 
+			[self openScripterSaveSheet];
+		
 		if ([comName isEqual:@"fetchThreadFromBrowser"])
 			[self fetchBrowserURL:self];
 		else if ([comName isEqual:@"watchThreadFromBrowser"]) 
@@ -1224,8 +1258,8 @@ NSString *const failedResponse = @"Error: Upload failed.";
 			[[self toolbarController] startWatcher];
 		}
 	}
-	else // TODO: we should return a proper error to the applescripter here
-		NSLog(@"applescript command was not well formed"); 
+	else
+		NSLog(@"applescript command was not well formed");	
 }
 
 - (void)checkForTags:(NSDictionary *)args
@@ -1282,8 +1316,8 @@ NSString *const failedResponse = @"Error: Upload failed.";
 		else
 			[self save:postedImages];
 	}
-	else // TODO: we should return a proper error to the applescripter here
-		NSLog(@"applescript command was not well formed"); 
+	else
+		NSLog(@"applescript command was not well formed");
 }
 
 - (void)scriptFetch:(NSScriptCommand *)command
@@ -1295,8 +1329,7 @@ NSString *const failedResponse = @"Error: Upload failed.";
 		scriptSaveLocation = [args objectForKey:@"ToLocation"];
 		scriptSaveSheet = [[args objectForKey:@"WantSaveSheet"] boolValue];
 		
-		if (scriptSaveLocation)
-			[self setUserEnteredURL:scriptURL];
+		[self setUserEnteredURL:scriptURL];
 		
 		[self checkForTags:args];
 		[self checkForRating:args];
@@ -1308,13 +1341,66 @@ NSString *const failedResponse = @"Error: Upload failed.";
 			[self toggleTimer:self];
 		}
 		
+		if (scriptSaveSheet) 
+			[self openScripterSaveSheet];
+		
 		// send this through the toolbarcontroller so it knows to update the 
 		// states of the buttons
 		[[self toolbarController] go:self];
 	}
-	else  // TODO: we should return a proper error to the applescripter here
-		NSLog(@"applescript command was not well formed"); 
+	else
+		NSLog(@"applescript command was not well formed");
+}
+
+- (void)openScripterSaveSheet
+{
+	NSOpenPanel *oPanel = [NSOpenPanel openPanel];
+	[oPanel setCanChooseDirectories:YES];
+	[oPanel setCanChooseFiles:NO];
+	[oPanel setCanCreateDirectories:YES];
+	[oPanel setAllowsMultipleSelection:NO];
 	
+	GTMWindowSheetController *sheetController = 
+	[[[[self view] window] windowController] sheetController];
+	
+	SEL didEndSelector = @selector(scriptingOpenPanelDidEnd:returnCode:contextInfo:);
+	NSValue *selectorValue = [NSValue valueWithPointer:didEndSelector];
+	NSValue *contextValue = [NSValue valueWithPointer:nil];
+	NSString *dirPath = [[NSUserDefaults standardUserDefaults] 
+						 objectForKey:FRLastSaveLocation];
+	NSArray *parameters = [NSArray arrayWithObjects:dirPath, @"", 
+						   [NSArray array], [NSNull null], self, 
+						   selectorValue, contextValue, nil];
+	
+	[sheetController beginSystemSheet:oPanel 
+						 modalForView:[self ourView] 
+					   withParameters:parameters];
+	
+	[[self toolbarController] sheetOpened];
+	[self setSheetOpen:YES];
+}
+
+- (void)scriptingOpenPanelDidEnd:(NSOpenPanel *)panel 
+			 returnCode:(int)returnCode  
+			contextInfo:(void  *)contextInfo
+{
+	[self setSheetOpen:NO];
+	[[self toolbarController] sheetClosed];
+	
+	if (returnCode == NSFileHandlingPanelOKButton) 
+	{		
+		// remember the save location so it will be used for additional downloads
+		if (scriptSaveSheet) 
+			scriptSaveLocation = [panel URL];
+		
+		// save all the images, incase images were downloaded while
+		// the sheet was open
+		[self saveImages:[self postedImages] withURL:[panel URL]];
+		
+		NSString *location = [[panel URL] path];
+		NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
+		[defaults setObject:location forKey:FRLastSaveLocation];
+	}
 }
 
 - (void)resetScriptParameters
@@ -1445,15 +1531,6 @@ NSString *const failedResponse = @"Error: Upload failed.";
 									   clickContext:nil];
 		}
 		
-		// check if extra parameters were provided with a script command
-		if (scriptSaveSheet)
-			[self save:postedImages];
-		else if (scriptSaveLocation)
-		{
-			// scripter provided folder to save to
-			[self saveImages:postedImages 
-					 withURL:scriptSaveLocation];
-		}
 		// reset the location unless we are watching the thread
 		if (!willSave)
 			scriptSaveLocation = nil;
