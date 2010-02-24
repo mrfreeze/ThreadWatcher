@@ -1,0 +1,60 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+	<head>
+		<meta http-equiv="content-type" content="text/html;charset=utf-8" />
+		<title>ThreadWatcher Example Scripts</title>
+		<style type="text/css" media="screen"><!--
+			#outline { position: relative; height: relative; margin: auto;}
+			#title { width: auto; position: relative; visibility: visible; margin-top: -47px;}
+			#back { position: relative; visibility: visible; color: #666; text-decoration: none; font-size: 16px; font-family: "Lucida Grande", Helvetica, Arial, sans-serif;}
+			#intro { width: 70%; position: relative; visibility: visible; margin: 0px auto 0;}
+			.code {width:350px; position: relative; visibility: visible; margin-left: 40px; margin-right: 0px auto 0; margin-top: 20px; margin-bottom: 20px; background-color: #EBEBEB; }
+			#footer { position: relative; margin-top: 0px}
+			
+			p { text-align: left; color: #666; font-size: 16px; font-family: "Lucida Grande", Helvetica, Arial, sans-serif; font-weight: normal; margin-top: 0; }
+			a { color: #666; text-decoration: underline; }
+			h1 { color: #778fbd; font-size: 20px; font-family: "Lucida Grande", Helvetica, Arial, sans-serif; font-weight: 500; line-height: 32px; margin-top: 4px; }
+			h2 {text-align: left; color: #666; font-size: 16px; font-family: "Lucida Grande", Helvetica, Arial, sans-serif; font-weight: normal; margin-top: 0;}
+			h3 { color: #666; font-size: 57px; font-family: "Helvetica Neue", Helvetica, Arial, sans-serif; font-weight: 200; letter-spacing: 8px; text-align: center;}
+			h4 {text-align: left; color: black; font-size: 14px; font-family: Monaco, Courier, monospace; font-weight: normal;}
+			h5 { color: #666; font-size: 10px; font-family: "Lucida Grande", Helvetica, Arial, sans-serif; font-weight: normal; margin-top: 0; }
+		--></style>
+	</head>
+
+	<body>
+		<div id="outline">	
+			<div id="back">
+				<a href="index.html">&#60; Back</a>
+			</div>
+			<div id="title"><h3>Example Scripts</h3></div>	
+							
+			<div id="intro">
+			<p>These scripts cover most of the basic scriptable tasks supported by ThreadWatcher. To use the Python or Ruby scripts, you will need to have <a href='http://appscript.sourceforge.net/index.html'>Appscript</a> installed. In the case of Ruby this means installing the rubygem:</p>
+			<div class="code">
+				<h4>sudo gem install rb-appscript</h4>
+			</div>
+			
+			<p>For Python use setuptools:</p>
+			<div class="code"><h4>sudo easy_install appscript</h4></div>
+			
+			<p>If you don't want to apply tags or ratings to images, those parts of the scripts can be deleted; most of the parameters to the main commands are optional. Any of the commands are usable from any language, the choice of language for each example is entirely arbitrary.</p>
+			
+			<h1>The Scripts</h1>
+			<p><a href="scripts/download.scpt">Download, rate, tag &amp; save (Applescript)</a> &mdash; Asks for tags and ratings before downloading the thread to your downloads folder.
+			<br/>
+			<br/>
+			<a href="scripts/download.rb">Download, watch &amp; save (Ruby)</a> &mdash; Asks for a save location, then saves images as they are downloaded and continues to watch the thread and save new images.
+			<br/>
+			<br/>
+			<a href="scripts/download.py">Download using URL from Safari (Python)</a> &mdash; Gets the URL from Safari and downloads the thread; does not automatically save or apply any tags.			
+			</p>
+			</div>
+			
+			<div id="footer">
+				<center><h5>Copyright &copy; Mr. Freeze, 2010</h5></center>
+			</div>
+		</div>
+	</body>
+</html>
