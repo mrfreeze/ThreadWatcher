@@ -926,7 +926,7 @@ NSString *const failedResponse = @"Error: Upload failed.";
 		CMReference *tabRef = [windowRef currentTab];
 		url = [[[tabRef URL] get] sendWithError:&error];
 	}
-	if ([opera isRunning])
+	else if ([opera isRunning])
 	{
 		// The Opera dictionary seems kind of broken - we can't just get
 		// the windows with |windows| and query the |url| property.
