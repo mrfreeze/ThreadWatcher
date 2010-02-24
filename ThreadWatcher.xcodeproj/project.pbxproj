@@ -121,6 +121,11 @@
 		9978C100111906180041A5C6 /* FRTabBadge.m in Sources */ = {isa = PBXBuildFile; fileRef = 9978C0FF111906180041A5C6 /* FRTabBadge.m */; };
 		9978C8ED111B22FB0041A5C6 /* ThrobberView.m in Sources */ = {isa = PBXBuildFile; fileRef = 9978C8EC111B22FB0041A5C6 /* ThrobberView.m */; };
 		9978C8FB111B38AA0041A5C6 /* throbber.png in Resources */ = {isa = PBXBuildFile; fileRef = 9978C8FA111B38AA0041A5C6 /* throbber.png */; };
+		9984B82E11355FEA00232BA3 /* CMApplicationGlue.m in Sources */ = {isa = PBXBuildFile; fileRef = 9984B82411355FEA00232BA3 /* CMApplicationGlue.m */; };
+		9984B82F11355FEA00232BA3 /* CMCommandGlue.m in Sources */ = {isa = PBXBuildFile; fileRef = 9984B82611355FEA00232BA3 /* CMCommandGlue.m */; };
+		9984B83011355FEA00232BA3 /* CMConstantGlue.m in Sources */ = {isa = PBXBuildFile; fileRef = 9984B82811355FEA00232BA3 /* CMConstantGlue.m */; };
+		9984B83111355FEA00232BA3 /* CMReferenceGlue.m in Sources */ = {isa = PBXBuildFile; fileRef = 9984B82B11355FEA00232BA3 /* CMReferenceGlue.m */; };
+		9984B83211355FEA00232BA3 /* CMReferenceRendererGlue.m in Sources */ = {isa = PBXBuildFile; fileRef = 9984B82D11355FEA00232BA3 /* CMReferenceRendererGlue.m */; };
 		9995A16610D199A200EE41A6 /* FRCollectionItemView.m in Sources */ = {isa = PBXBuildFile; fileRef = 9995A16510D199A200EE41A6 /* FRCollectionItemView.m */; };
 		9995A81310D2E5C000EE41A6 /* SFApplicationGlue.m in Sources */ = {isa = PBXBuildFile; fileRef = 9995A7FC10D2E5C000EE41A6 /* SFApplicationGlue.m */; };
 		9995A81410D2E5C000EE41A6 /* SFCommandGlue.m in Sources */ = {isa = PBXBuildFile; fileRef = 9995A7FE10D2E5C000EE41A6 /* SFCommandGlue.m */; };
@@ -367,6 +372,18 @@
 		9978C8EB111B22FB0041A5C6 /* ThrobberView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ThrobberView.h; sourceTree = "<group>"; };
 		9978C8EC111B22FB0041A5C6 /* ThrobberView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ThrobberView.m; sourceTree = "<group>"; };
 		9978C8FA111B38AA0041A5C6 /* throbber.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = throbber.png; sourceTree = "<group>"; };
+		9984B82211355FEA00232BA3 /* CMAEMConstants.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CMAEMConstants.h; sourceTree = "<group>"; };
+		9984B82311355FEA00232BA3 /* CMApplicationGlue.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CMApplicationGlue.h; sourceTree = "<group>"; };
+		9984B82411355FEA00232BA3 /* CMApplicationGlue.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CMApplicationGlue.m; sourceTree = "<group>"; };
+		9984B82511355FEA00232BA3 /* CMCommandGlue.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CMCommandGlue.h; sourceTree = "<group>"; };
+		9984B82611355FEA00232BA3 /* CMCommandGlue.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CMCommandGlue.m; sourceTree = "<group>"; };
+		9984B82711355FEA00232BA3 /* CMConstantGlue.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CMConstantGlue.h; sourceTree = "<group>"; };
+		9984B82811355FEA00232BA3 /* CMConstantGlue.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CMConstantGlue.m; sourceTree = "<group>"; };
+		9984B82911355FEA00232BA3 /* CMGlue.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CMGlue.h; sourceTree = "<group>"; };
+		9984B82A11355FEA00232BA3 /* CMReferenceGlue.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CMReferenceGlue.h; sourceTree = "<group>"; };
+		9984B82B11355FEA00232BA3 /* CMReferenceGlue.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CMReferenceGlue.m; sourceTree = "<group>"; };
+		9984B82C11355FEA00232BA3 /* CMReferenceRendererGlue.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CMReferenceRendererGlue.h; sourceTree = "<group>"; };
+		9984B82D11355FEA00232BA3 /* CMReferenceRendererGlue.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CMReferenceRendererGlue.m; sourceTree = "<group>"; };
 		9995A16410D199A200EE41A6 /* FRCollectionItemView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FRCollectionItemView.h; sourceTree = "<group>"; };
 		9995A16510D199A200EE41A6 /* FRCollectionItemView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FRCollectionItemView.m; sourceTree = "<group>"; };
 		9995A7FA10D2E5C000EE41A6 /* SFAEMConstants.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SFAEMConstants.h; sourceTree = "<group>"; };
@@ -776,9 +793,29 @@
 			path = SEGlue;
 			sourceTree = "<group>";
 		};
+		9984B82111355FEA00232BA3 /* CMGlue */ = {
+			isa = PBXGroup;
+			children = (
+				9984B82211355FEA00232BA3 /* CMAEMConstants.h */,
+				9984B82311355FEA00232BA3 /* CMApplicationGlue.h */,
+				9984B82411355FEA00232BA3 /* CMApplicationGlue.m */,
+				9984B82511355FEA00232BA3 /* CMCommandGlue.h */,
+				9984B82611355FEA00232BA3 /* CMCommandGlue.m */,
+				9984B82711355FEA00232BA3 /* CMConstantGlue.h */,
+				9984B82811355FEA00232BA3 /* CMConstantGlue.m */,
+				9984B82911355FEA00232BA3 /* CMGlue.h */,
+				9984B82A11355FEA00232BA3 /* CMReferenceGlue.h */,
+				9984B82B11355FEA00232BA3 /* CMReferenceGlue.m */,
+				9984B82C11355FEA00232BA3 /* CMReferenceRendererGlue.h */,
+				9984B82D11355FEA00232BA3 /* CMReferenceRendererGlue.m */,
+			);
+			path = CMGlue;
+			sourceTree = "<group>";
+		};
 		9995A7F810D2E5C000EE41A6 /* appscript-glue */ = {
 			isa = PBXGroup;
 			children = (
+				9984B82111355FEA00232BA3 /* CMGlue */,
 				994B6F0E10D678C300EF8928 /* SEGlue */,
 				994B6EFC10D6785700EF8928 /* FRGlue */,
 				9995A7F910D2E5C000EE41A6 /* SFGlue */,
@@ -1132,6 +1169,11 @@
 				9978C0FB1118FA870041A5C6 /* GTMWindowSheetController.m in Sources */,
 				9978C100111906180041A5C6 /* FRTabBadge.m in Sources */,
 				9978C8ED111B22FB0041A5C6 /* ThrobberView.m in Sources */,
+				9984B82E11355FEA00232BA3 /* CMApplicationGlue.m in Sources */,
+				9984B82F11355FEA00232BA3 /* CMCommandGlue.m in Sources */,
+				9984B83011355FEA00232BA3 /* CMConstantGlue.m in Sources */,
+				9984B83111355FEA00232BA3 /* CMReferenceGlue.m in Sources */,
+				9984B83211355FEA00232BA3 /* CMReferenceRendererGlue.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

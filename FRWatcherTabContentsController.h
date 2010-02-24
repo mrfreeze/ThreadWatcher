@@ -27,6 +27,7 @@
 #import "appscript-glue/WKGlue/WKGlue.h"
 #import "appscript-glue/FRGlue/FRGlue.h"
 #import "appscript-glue/SEGlue/SEGlue.h"
+#import "appscript-glue/CMGlue/CMGlue.h"
 
 #import "Growl.framework/Headers/GrowlApplicationBridge.h"
 
@@ -146,6 +147,7 @@ extern NSString *const failedResponse;
 	WKApplication *webkit;
 	FRApplication *firefox;
 	SEApplication *systemEvents;
+	CMApplication *camino;
 	
 	//quicklook stuff
 	QLPreviewPanel *previewPanel;

@@ -151,6 +151,7 @@ NSString *const failedResponse = @"Error: Upload failed.";
 		// initialise our appscript objects
 		safari = [[SFApplication alloc] initWithBundleID:@"com.apple.safari"];
 		webkit = [[WKApplication alloc] initWithBundleID:@"org.webkit.nightly.WebKit"];
+		camino = [[CMApplication alloc] initWithBundleID:@"org.mozilla.camino"];
 		firefox = nil;
 		systemEvents = nil;
 		
@@ -902,10 +903,9 @@ NSString *const failedResponse = @"Error: Upload failed.";
 #pragma mark action methods
 
 // get the url of the front webkit, safari or firefox page
-// looks for webkit first, then safari then firefox
+// looks for webkit first, then safari, then camino, then firefox
 - (IBAction)fetchBrowserURL:(id)sender
 {
-	// TODO: support more browsers.
 	id url = nil;
 	NSError *error = nil;
 	
@@ -918,6 +918,12 @@ NSString *const failedResponse = @"Error: Upload failed.";
 	{
 		SFReference *docRef = [[safari documents] at:1];
 		url = [[[docRef URL] get] sendWithError:&error];
+	}	
+	else if ([camino isRunning]) 
+	{
+		CMReference *windowRef = [[camino windows] at:1];
+		CMReference *tabRef = [windowRef currentTab];
+		url = [[[tabRef URL] get] sendWithError:&error];
 	}
 	else  // begin pile of shit required by failfox
 	{
