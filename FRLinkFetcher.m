@@ -374,7 +374,7 @@
 								 waitUntilDone:NO];
 		[_delegate performSelectorOnMainThread:@selector(threadDied)
 									withObject:nil 
-								 waitUntilDone:YES];
+								 waitUntilDone:NO];
 		return;
 	}
 	

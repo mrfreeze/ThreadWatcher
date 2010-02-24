@@ -89,7 +89,7 @@ It is also possible to tell a document to save all already downloaded images wit
 \
 If you use a browser that isn't Safari, Webkit or Firefox, or you just want to input a url directly, you can use the 
 \b \cf2 fetch 
-\b0 withURL \cf0 command. This may also be useful if Firefox's applescript support gets fixed and you want to get the url directly rather than using ThreadWatchers hack method. The Chrome developers are planning to add Applescript support that mirrors the Safari dictionary soon (if not already), so you could use this after doing getURL on a Chrome document. This command also supports all the optional parameters described above (\cf2 to, tags, tagsList, ratings,  saveSheet\cf0 ), as well as a boolean \cf2 watch\cf0  parameter to trigger thread watching (watching is not activated if you do not use the parameter). \
+\b0 withURL \cf0 command. This may also be useful if Firefox's applescript support gets fixed and you want to get the url directly rather than using ThreadWatchers hack method. The Chrome developers are planning to add Applescript support that mirrors the Safari dictionary soon (if not already), so you could use this after doing getURL on a Chrome document. This command also supports all the optional parameters described above (\cf2 to, tags, tagsList, ratings, saveSheet\cf0 ), as well as a boolean \cf2 watch\cf0  parameter to trigger thread watching (watching is not activated if you do not use the parameter). \
 \
 \pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\tx7280\tx7840\tx8400\tx8960\tx9520\tx10080\tx10640\tx11200\tx11760\tx12320\tx12880\tx13440\tx14000\tx14560\tx15120\tx15680\tx16240\tx16800\tx17360\tx17920\tx18480\tx19040\tx19600\tx20160\tx20720\tx21280\tx21840\tx22400\tx22960\tx23520\tx24080\tx24640\tx25200\tx25760\tx26320\tx26880\tx27440\tx28000\tx28560\tx29120\tx29680\tx30240\tx30800\tx31360\tx31920\tx32480\tx33040\tx33600\tx34160\tx34720\tx35280\tx35840\tx36400\tx36960\tx37520\tx38080\tx38640\tx39200\tx39760\tx40320\tx40880\tx41440\tx42000\tx42560\tx43120\tx43680\tx44240\tx44800\tx45360\tx45920\tx46480\tx47040\tx47600\tx48160\tx48720\tx49280\tx49840\tx50400\tx50960\tx51520\tx52080\tx52640\tx53200\tx53760\tx54320\tx54880\tx55440\tx56000\fi-1\ql\qnatural\pardirnatural
 
@@ -106,10 +106,20 @@ If it crashes after downloading images, but before you get a chance to save , yo
 \
 \pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\tx7280\tx7840\tx8400\tx8960\tx9520\tx10080\tx10640\tx11200\tx11760\tx12320\tx12880\tx13440\tx14000\tx14560\tx15120\tx15680\tx16240\tx16800\tx17360\tx17920\tx18480\tx19040\tx19600\tx20160\tx20720\tx21280\tx21840\tx22400\tx22960\tx23520\tx24080\tx24640\tx25200\tx25760\tx26320\tx26880\tx27440\tx28000\tx28560\tx29120\tx29680\tx30240\tx30800\tx31360\tx31920\tx32480\tx33040\tx33600\tx34160\tx34720\tx35280\tx35840\tx36400\tx36960\tx37520\tx38080\tx38640\tx39200\tx39760\tx40320\tx40880\tx41440\tx42000\tx42560\tx43120\tx43680\tx44240\tx44800\tx45360\tx45920\tx46480\tx47040\tx47600\tx48160\tx48720\tx49280\tx49840\tx50400\tx50960\tx51520\tx52080\tx52640\tx53200\tx53760\tx54320\tx54880\tx55440\tx56000\fi-1\ql\qnatural\pardirnatural
 
-\fs24 \cf0 0.3.4\
+\fs24 \cf0 0.3.5\
 \pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\tx7280\tx7840\tx8400\tx8960\tx9520\tx10080\tx10640\tx11200\tx11760\tx12320\tx12880\tx13440\tx14000\tx14560\tx15120\tx15680\tx16240\tx16800\tx17360\tx17920\tx18480\tx19040\tx19600\tx20160\tx20720\tx21280\tx21840\tx22400\tx22960\tx23520\tx24080\tx24640\tx25200\tx25760\tx26320\tx26880\tx27440\tx28000\tx28560\tx29120\tx29680\tx30240\tx30800\tx31360\tx31920\tx32480\tx33040\tx33600\tx34160\tx34720\tx35280\tx35840\tx36400\tx36960\tx37520\tx38080\tx38640\tx39200\tx39760\tx40320\tx40880\tx41440\tx42000\tx42560\tx43120\tx43680\tx44240\tx44800\tx45360\tx45920\tx46480\tx47040\tx47600\tx48160\tx48720\tx49280\tx49840\tx50400\tx50960\tx51520\tx52080\tx52640\tx53200\tx53760\tx54320\tx54880\tx55440\tx56000\fi-1\ql\qnatural\pardirnatural
 
-\b0 \cf0 - Fixed bug that allowed tabs to be closed while a sheet was open (which prevented windows from closing)\
+\b0 \cf0 - Added support for fetching thread URLs from Opera and Camino\
+- Newer versions of Growl, Appscript and BWToolkit frameworks\
+- The positions of the dividers in the watcher window now get saved\
+- Fixed several problems when using script commands to save images\
+- The saveSheet script parameter now opens the sheet immediately\
+- Created some new example scripts
+\b \
+\
+0.3.4\
+
+\b0 - Fixed bug that allowed tabs to be closed while a sheet was open (which prevented windows from closing)\
 - Fixed posts being cut off in full thread view.\
 - Minor changes to toolbar\
 - Fixed throbber not stopping after an error fetching a thread
