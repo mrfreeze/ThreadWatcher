@@ -152,6 +152,7 @@ NSString *const failedResponse = @"Error: Upload failed.";
 		safari = [[SFApplication alloc] initWithBundleID:@"com.apple.safari"];
 		webkit = [[WKApplication alloc] initWithBundleID:@"org.webkit.nightly.WebKit"];
 		camino = [[CMApplication alloc] initWithBundleID:@"org.mozilla.camino"];
+		opera = [[OPApplication alloc] initWithBundleID:@"com.operasoftware.Opera"];
 		firefox = nil;
 		systemEvents = nil;
 		
@@ -903,7 +904,7 @@ NSString *const failedResponse = @"Error: Upload failed.";
 #pragma mark action methods
 
 // get the url of the front webkit, safari or firefox page
-// looks for webkit first, then safari, then camino, then firefox
+// looks for webkit first, then safari, then camino, then opera, then firefox
 - (IBAction)fetchBrowserURL:(id)sender
 {
 	id url = nil;
@@ -914,16 +915,39 @@ NSString *const failedResponse = @"Error: Upload failed.";
 		WKReference *docRef = [[webkit documents] at:1];
 		url = [[[docRef URL] get] sendWithError:&error];
 	}
-	else if ([safari isRunning]) 
+	else if ([safari isRunning])
 	{
 		SFReference *docRef = [[safari documents] at:1];
 		url = [[[docRef URL] get] sendWithError:&error];
-	}	
-	else if ([camino isRunning]) 
+	}
+	else if ([camino isRunning])
 	{
 		CMReference *windowRef = [[camino windows] at:1];
 		CMReference *tabRef = [windowRef currentTab];
 		url = [[[tabRef URL] get] sendWithError:&error];
+	}
+	if ([opera isRunning])
+	{
+		// The Opera dictionary seems kind of broken - we can't just get
+		// the windows with |windows| and query the |url| property.
+		// So we have to use the provided commands to get window IDs
+		// and info about a window
+
+		// get a list of window IDs
+		OPListWindowsCommand *windowList = [opera ListWindows];
+		NSArray *windows = [windowList sendWithError:&error];
+
+		if (windows && [windows count] > 0)
+		{
+			// The front most window will be first in the list of window IDs
+			OPGetWindowInfoCommand *windowInfo = [opera GetWindowInfo:
+												  [windows objectAtIndex:0]];
+			NSArray *info = [windowInfo sendWithError:&error];
+
+			// The url is the first item in the list returned by |GetWindowInfo|
+			if (info && [info count] == 2)
+				url = [info objectAtIndex:0];
+		}
 	}
 	else  // begin pile of shit required by failfox
 	{

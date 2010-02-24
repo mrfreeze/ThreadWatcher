@@ -28,6 +28,7 @@
 #import "appscript-glue/FRGlue/FRGlue.h"
 #import "appscript-glue/SEGlue/SEGlue.h"
 #import "appscript-glue/CMGlue/CMGlue.h"
+#import "appscript-glue/OPGlue/OPGlue.h"
 
 #import "Growl.framework/Headers/GrowlApplicationBridge.h"
 
@@ -148,6 +149,7 @@ extern NSString *const failedResponse;
 	FRApplication *firefox;
 	SEApplication *systemEvents;
 	CMApplication *camino;
+	OPApplication *opera;
 	
 	//quicklook stuff
 	QLPreviewPanel *previewPanel;
