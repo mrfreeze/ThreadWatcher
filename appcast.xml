@@ -6,15 +6,15 @@
       <description>Most recent version available.</description>
       <language>en</language>
          <item>
-            <title>ThreadWatcher 0.3.4</title>
+            <title>ThreadWatcher 0.3.5</title>
 						<sparkle:releaseNotesLink>
 							http://mrfreeze.github.com/ThreadWatcher/release_notes.html
 						</sparkle:releaseNotesLink>
-            <pubDate>Thu 18 Feb 2010 20:07:21 +0000</pubDate>
-            <enclosure url="http://github.com/downloads/mrfreeze/ThreadWatcher/ThreadWatcher_0.3.4_sparkle.zip" 
-							sparkle:version="0.3.4"
+            <pubDate>Wed 24 Feb 2010 23:46:32 +0000</pubDate>
+            <enclosure url="http://github.com/downloads/mrfreeze/ThreadWatcher/ThreadWatcher_0.3.5_sparkle.zip" 
+							sparkle:version="0.3.5"
 							type="application/octet-stream" 
-							sparkle:dsaSignature="MC4CFQDJpGNrUGtVs19ZHuGYcWr+tcMibQIVALT+tJvF8tkr3cwzQ/tuasQiAIRi" />
+							sparkle:dsaSignature="MCwCFG5SyxHiqkA0ko7KjQRqpNcmiDUMAhQnXOaI4b58cNrGFC4VuqzvUFXDEQ==" />
 						<sparkle:minimumSystemVersion>10.6.0</sparkle:minimumSystemVersion>
          </item>
    </channel>
